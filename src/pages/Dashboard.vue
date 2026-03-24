@@ -9,17 +9,17 @@
             <v-card-text class="pt-4">
             <v-row>
                     <v-col cols="12" md="4">
-                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Controlo de Motores</div>
+                        <div class="text-caption mb-2 text-center font-weight-bold"></div>
                         <toolhead-control-panel />
                     </v-col>
                     
                     <v-col cols="12" md="4">
-                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Gestão de Filamento</div>
+                        <div class="text-caption mb-2 text-center font-weight-bold"></div>
                         <spoolman-panel />
                     </v-col>
 
                     <v-col cols="12" md="4">
-                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Mini Consola</div>
+                        <div class="text-caption mb-2 text-center font-weight-bold"></div>
                         <miniconsole-panel />
                     </v-col>
                 </v-row>
