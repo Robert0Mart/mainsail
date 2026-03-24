@@ -18,6 +18,7 @@ import {
     mdiHistory,
     mdiTimelapse,
     mdiWrench,
+    mdiFlaskOutline // <-- NOVO: Adicionei um ícone de "Laboratório/Testes" para a tua página
 } from '@mdi/js'
 
 const routes: AppRoute[] = [
@@ -31,6 +32,18 @@ const routes: AppRoute[] = [
         showInNavi: true,
         position: 10,
     },
+    // --- INÍCIO DA TUA NOVA PÁGINA (SANDBOX) ---
+    {
+        name: 'playground',
+        title: 'Sandbox', // O nome que vai aparecer no menu
+        path: '/playground', // O endereço web (localhost:4173/playground)
+        icon: mdiFlaskOutline, // O ícone que importámos acima
+        component: () => import('../pages/Playground.vue'), // Vai procurar o ficheiro que criaste no Passo 1
+        alwaysShow: true, // Garante que a página carrega
+        showInNavi: true, // MAGIA: Isto é o que faz o botão aparecer no menu lateral!
+        position: 15, // Posição no menu (entre a Dashboard [10] e a Webcam [20])
+    },
+    // --- FIM DA TUA NOVA PÁGINA ---
     {
         name: 'farm',
         title: 'Printers',

@@ -419,4 +419,30 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     /*noinspection CssUnresolvedCustomProperty*/
     color: var(--v-btn-text-primary);
 }
+
+/* ========================================= */
+/* TEMA RGB GLOBAL (CORRIGIDO)               */
+/* ========================================= */
+
+@keyframes rgb-festa-louca {
+    0%   { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, inset 0 0 10px rgba(255,0,0,0.2); }
+    25%  { border-color: #00ff00; box-shadow: 0 0 20px #00ff00, inset 0 0 10px rgba(0,255,0,0.2); }
+    50%  { border-color: #00e5ff; box-shadow: 0 0 20px #00e5ff, inset 0 0 10px rgba(0,229,255,0.2); }
+    75%  { border-color: #d500f9; box-shadow: 0 0 20px #d500f9, inset 0 0 10px rgba(213,0,249,0.2); }
+    100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, inset 0 0 10px rgba(255,0,0,0.2); }
+}
+
+/* Aplica a todos os cartões escuros dentro da aplicação */
+#app .theme--dark.v-card {
+    border-width: 2px !important;
+    border-style: solid !important;
+    animation: rgb-festa-louca 4s linear infinite !important;
+    background-color: #0a0b0e !important;
+    border-radius: 0px !important; /* Cantos super afiados */
+}
+
+/* Fundo da página para dar contraste ao brilho */
+.theme--dark.v-application {
+    background-color: #050507 !important;
+}
 </style>

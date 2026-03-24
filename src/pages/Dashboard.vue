@@ -1,5 +1,31 @@
 <template>
     <div>
+        <v-card class="mx-4 mt-4 mb-6" elevation="8" rounded="xl">
+            <v-card-title class="d-flex align-center">
+                <v-icon class="mr-2">mdi-palette-swatch</v-icon>
+                Área de Design Customizado - Sovol SV07+
+            </v-card-title>
+            
+            <v-card-text class="pt-4">
+            <v-row>
+                    <v-col cols="12" md="4">
+                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Controlo de Motores</div>
+                        <toolhead-control-panel />
+                    </v-col>
+                    
+                    <v-col cols="12" md="4">
+                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Gestão de Filamento</div>
+                        <spoolman-panel />
+                    </v-col>
+
+                    <v-col cols="12" md="4">
+                        <div class="text-caption mb-2 text-center font-weight-bold">👇 Mini Consola</div>
+                        <miniconsole-panel />
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+
         <v-row v-if="isMobile">
             <v-col>
                 <status-panel />
