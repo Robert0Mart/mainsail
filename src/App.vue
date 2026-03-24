@@ -1,5 +1,7 @@
 <template>
     <v-app :style="cssVars">
+        <cyber-dragon />
+
         <template v-if="socketIsConnected && guiIsReady">
             <the-sidebar />
             <the-topbar />
@@ -25,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import CyberDragon from '@/components/CyberDragon.vue'
 import Component from 'vue-class-component'
 import TheSidebar from '@/components/TheSidebar.vue'
 import BaseMixin from '@/components/mixins/base'
@@ -37,17 +40,18 @@ import TheSelectPrinterDialog from '@/components/TheSelectPrinterDialog.vue'
 import TheEditor from '@/components/TheEditor.vue'
 import { panelToolbarHeight, topbarHeight, navigationItemHeight } from '@/store/variables'
 import TheTimelapseRenderingSnackbar from '@/components/TheTimelapseRenderingSnackbar.vue'
+import { AppRoute } from '@/routes'
 import TheFullscreenUpload from '@/components/TheFullscreenUpload.vue'
 import TheUploadSnackbar from '@/components/TheUploadSnackbar.vue'
 import TheManualProbeDialog from '@/components/dialogs/TheManualProbeDialog.vue'
+import { setAndLoadLocale } from './plugins/i18n'
 import TheBedScrewsDialog from '@/components/dialogs/TheBedScrewsDialog.vue'
 import TheScrewsTiltAdjustDialog from '@/components/dialogs/TheScrewsTiltAdjustDialog.vue'
-import { setAndLoadLocale } from './plugins/i18n'
 import TheMacroPrompt from '@/components/dialogs/TheMacroPrompt.vue'
-import { AppRoute } from '@/routes'
 
 @Component({
     components: {
+        CyberDragon,
         TheMacroPrompt,
         TheTimelapseRenderingSnackbar,
         TheEditor,
@@ -66,9 +70,7 @@ import { AppRoute } from '@/routes'
 export default class App extends Mixins(BaseMixin, ThemeMixin) {
     get title(): string {
         let title = this.$store.getters['getTitle']
-
         if (this.isPrinterPowerOff) title = this.$t('App.Titles.PrinterOff')
-
         return title
     }
 
@@ -81,20 +83,14 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     }
 
     get mainStyle() {
-        let style: any = {
-            paddingLeft: '0',
-        }
-
+        let style: any = { paddingLeft: '0' }
         if (this.mainBgImage !== null) {
             style.backgroundImage = 'url(' + this.mainBgImage + ')'
         }
-
-        // overwrite padding left for the sidebar
         if (this.naviDrawer && !this.$vuetify.breakpoint.mdAndDown) {
             if (this.navigationStyle === 'iconsAndText') style.paddingLeft = '220px'
             if (this.navigationStyle === 'iconsOnly') style.paddingLeft = '56px'
         }
-
         return style
     }
 
@@ -137,10 +133,8 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
             const g = parseInt(splits[2], 16) * 0.7152
             const b = parseInt(splits[3], 16) * 0.0722
             const perceivedLightness = (r + g + b) / 255
-
             return perceivedLightness > 0.7 ? '#222' : '#fff'
         }
-
         return '#ffffff'
     }
 
@@ -165,7 +159,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
         const currentRouteOptions = this.$router.options.routes?.find(
             (route) => route.name === this.$route.name
         ) as AppRoute
-
         return {
             'px-3': true,
             'px-sm-6': true,
@@ -207,7 +200,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     @Watch('current_file')
     current_fileChanged(newVal: string): void {
         if (newVal === '') return
-
         this.$socket.emit('server.files.metadata', { filename: newVal }, { action: 'files/getMetadataCurrentFile' })
     }
 
@@ -222,7 +214,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     modeChanged(newVal: string): void {
         const dark = newVal !== 'light'
         this.$vuetify.theme.dark = dark
-
         const doc = document.documentElement
         doc.className = dark ? 'theme--dark' : 'theme--light'
     }
@@ -230,14 +221,9 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     async drawFavicon(val: number): Promise<void> {
         const favicon16: HTMLLinkElement | null = document.querySelector("link[rel*='icon'][sizes='16x16']")
         const favicon32: HTMLLinkElement | null = document.querySelector("link[rel*='icon'][sizes='32x32']")
-
-        // if no favicon is found, stop
         if (!favicon16 || !favicon32) return
-
-        // if progressAsFavicon is enabled and the printer is printing, draw the progress as favicon
         if (this.progressAsFavicon && this.printerIsPrinting) {
             let faviconSize = 64
-
             let canvas = document.createElement('canvas')
             canvas.width = faviconSize
             canvas.height = faviconSize
@@ -245,10 +231,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
             const centerX = canvas.width / 2
             const centerY = canvas.height / 2
             const radius = 32
-
             if (!context) return
-
-            // draw the grey circle
             context.beginPath()
             context.moveTo(centerX, centerY)
             context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
@@ -257,8 +240,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
             context.fill()
             context.strokeStyle = 'rgba(200, 208, 218, 0.66)'
             context.stroke()
-
-            // draw the green circle based on percentage
             let startAngle = 1.5 * Math.PI
             let endAngle = 0
             let unitValue = (Math.PI - 0.5 * Math.PI) / 25
@@ -266,93 +247,56 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
             else if (val > 25 && val <= 50) endAngle = startAngle + val * unitValue
             else if (val > 50 && val <= 75) endAngle = startAngle + val * unitValue
             else if (val > 75 && val <= 100) endAngle = startAngle + val * unitValue
-
             context.beginPath()
             context.moveTo(centerX, centerY)
             context.arc(centerX, centerY, radius, startAngle, endAngle, false)
             context.closePath()
             context.fillStyle = this.logoColor
             context.fill()
-
             favicon16.href = canvas.toDataURL('image/png')
             favicon32.href = canvas.toDataURL('image/png')
-
             return
         }
-
-        // if custom favicons are set, use them
         if (this.customFavicons) {
             const [favicon16Path, favicon32Path] = this.customFavicons
             favicon16.href = favicon16Path
             favicon32.href = favicon32Path
-
             return
         }
-
-        // if a theme sidebar logo is set, use it
         if ((this.theme?.logo?.show ?? false) && this.sidebarLogo.endsWith('.svg')) {
             const response = await fetch(this.sidebarLogo)
             if (!response.ok) return
-
             const text = await response.text()
             const modifiedSvg = text.replace(/fill="var\(--color-logo, #[0-9a-fA-F]{6}\)"/g, `fill="${this.logoColor}"`)
-
             const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' })
             const reader = new FileReader()
-
             reader.onloadend = () => {
                 const base64data = reader.result as string
                 favicon16.href = base64data
                 favicon32.href = base64data
             }
-
             reader.readAsDataURL(blob)
-
             return
         }
-
-        // if no custom favicon is set, use the default one
-        const favicon =
-            'data:image/svg+xml;base64,' +
-            window.btoa(`
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 599.38 523.11" xml:space="preserve">
-                <g>
-                    <path style="fill:${this.logoColor};" d="M382.29,142.98L132.98,522.82L0,522.68L344.3,0l0,0C352.18,49.06,365.2,97.68,382.29,142.98"/>
-                    <path style="fill:${this.logoColor};" d="M413.28,213.54L208.5,522.92l132.94,0.19l135.03-206.33l0,0C452.69,284.29,431.53,249.77,413.28,213.54 L413.28,213.54"/>
-                    <path style="fill:${this.logoColor};" d="M599.38,447.69l-49.25,75.42L417,522.82l101.6-153.67l0,0C543.48,397.35,570.49,423.61,599.38,447.69 L599.38,447.69z"/>
-                </g>
-            </svg>
-        `)
-
+        const favicon = 'data:image/svg+xml;base64,' + window.btoa(`<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 599.38 523.11" xml:space="preserve"><g><path style="fill:${this.logoColor};" d="M382.29,142.98L132.98,522.82L0,522.68L344.3,0l0,0C352.18,49.06,365.2,97.68,382.29,142.98"/><path style="fill:${this.logoColor};" d="M413.28,213.54L208.5,522.92l132.94,0.19l135.03-206.33l0,0C452.69,284.29,431.53,249.77,413.28,213.54 L413.28,213.54"/><path style="fill:${this.logoColor};" d="M599.38,447.69l-49.25,75.42L417,522.82l101.6-153.67l0,0C543.48,397.35,570.49,423.61,599.38,447.69 L599.38,447.69z"/></g></svg>`)
         favicon16.href = favicon
         favicon32.href = favicon
     }
 
     @Watch('customFavicons')
-    customFaviconsChanged(): void {
-        this.drawFavicon(this.print_percent)
-    }
+    customFaviconsChanged(): void { this.drawFavicon(this.print_percent) }
 
     @Watch('progressAsFavicon')
-    progressAsFaviconChanged(): void {
-        this.drawFavicon(this.print_percent)
-    }
+    progressAsFaviconChanged(): void { this.drawFavicon(this.print_percent) }
 
     @Watch('logoColor')
-    logoColorChanged(): void {
-        this.drawFavicon(this.print_percent)
-    }
+    logoColorChanged(): void { this.drawFavicon(this.print_percent) }
 
     @Watch('themeCss')
     themeCssChanged(newVal: string | null): void {
-        // remove linked CSS file if it exists
         const style = document.getElementById('theme-css')
         if (style) style.remove()
-
-        // if themeCss does not exist, stop here and load no CSS file
         if (newVal === null) return
-
-        // fetch the CSS file and append it to the head
         fetch(newVal)
             .then((response) => response.text())
             .then((css) => {
@@ -370,9 +314,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     }
 
     @Watch('printerIsPrinting')
-    printerIsPrintingChanged(): void {
-        this.drawFavicon(this.print_percent)
-    }
+    printerIsPrintingChanged(): void { this.drawFavicon(this.print_percent) }
 
     refreshSpoolman(): void {
         if (this.moonrakerComponents.includes('spoolman')) {
@@ -408,41 +350,41 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     --app-height: 100%;
 }
 
-#content {
-    background-attachment: fixed;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-/*noinspection CssUnusedSymbol*/
 .v-btn:not(.v-btn--outlined).primary {
-    /*noinspection CssUnresolvedCustomProperty*/
     color: var(--v-btn-text-primary);
 }
 
 /* ========================================= */
-/* TEMA RGB GLOBAL (CORRIGIDO)               */
+/* FUNDOS TRANSPARENTES PARA VER O DRAGÃO    */
+/* ========================================= */
+
+#app, 
+.v-application, 
+.theme--dark.v-application, 
+.v-application--wrap, 
+#content, 
+#page-container {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* ========================================= */
+/* TEMA RGB FESTA LOUCA CARD THEME           */
 /* ========================================= */
 
 @keyframes rgb-festa-louca {
-    0%   { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, inset 0 0 10px rgba(255,0,0,0.2); }
-    25%  { border-color: #00ff00; box-shadow: 0 0 20px #00ff00, inset 0 0 10px rgba(0,255,0,0.2); }
-    50%  { border-color: #00e5ff; box-shadow: 0 0 20px #00e5ff, inset 0 0 10px rgba(0,229,255,0.2); }
-    75%  { border-color: #d500f9; box-shadow: 0 0 20px #d500f9, inset 0 0 10px rgba(213,0,249,0.2); }
-    100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, inset 0 0 10px rgba(255,0,0,0.2); }
+    0%   { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+    25%  { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
+    50%  { border-color: #00e5ff; box-shadow: 0 0 20px #00e5ff; }
+    75%  { border-color: #d500f9; box-shadow: 0 0 20px #d500f9; }
+    100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
 }
 
-/* Aplica a todos os cartões escuros dentro da aplicação */
 #app .theme--dark.v-card {
     border-width: 2px !important;
     border-style: solid !important;
     animation: rgb-festa-louca 4s linear infinite !important;
-    background-color: #0a0b0e !important;
-    border-radius: 0px !important; /* Cantos super afiados */
-}
-
-/* Fundo da página para dar contraste ao brilho */
-.theme--dark.v-application {
-    background-color: #050507 !important;
+    background-color: rgba(10, 11, 14, 0.8) !important; 
+    border-radius: 0px !important;
 }
 </style>
