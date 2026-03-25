@@ -81,7 +81,7 @@
         "@types/semver": "^7.3.8",
         "@types/uuid": "^9.0.0",
         "@vitejs/plugin-vue2": "^2.3.4",
-        "@vue/eslint-config-typescript": "^14.0.0",
+        "@vue/eslint-config-typescript": "^14.7.0",
         "autoprefixer": "^10.4.2",
         "cypress": "^14.2.0",
         "eslint": "^10.0.0",

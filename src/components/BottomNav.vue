@@ -47,7 +47,7 @@
   </nav>
 </template>
 
-<script>
+<script lang="ts">
 import '@mdi/font/css/materialdesignicons.css'
 export default {
   name: 'BottomNavbar'

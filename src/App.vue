@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import BottomNavbar from '@/components/BottomNav.vue'  // ajusta o caminho
 export default {
   components: { BottomNav /* ... outros */ }
