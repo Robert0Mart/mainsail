@@ -3,7 +3,8 @@
         <cyber-dragon />
 
         <template v-if="socketIsConnected && guiIsReady">
-            <the-sidebar />
+            <the-sidebar class="kill-main-sidebar" />
+            
             <the-topbar />
             <v-main id="content" :style="mainStyle">
                 <v-container id="page-container" fluid :class="containerClasses">
@@ -355,7 +356,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 }
 
 /* ========================================= */
-/* FUNDOS TRANSPARENTES PARA VER O DRAGÃO    */
+/* TRANSPARENT BACKGROUNDS TO SEE THE DRAGON */
 /* ========================================= */
 
 #app, 
@@ -369,7 +370,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 }
 
 /* ========================================= */
-/* TEMA RGB FESTA LOUCA CARD THEME           */
+/* CRAZY RGB PARTY CARD THEME                */
 /* ========================================= */
 
 @keyframes rgb-festa-louca {
