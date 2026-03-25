@@ -35,6 +35,7 @@
         "@codemirror/view": "^6.0.3",
         "@jaames/iro": "^5.5.2",
         "@lezer/highlight": "^1.0.0",
+        "@mdi/font": "^7.4.47",
         "@sindarius/gcodeviewer": "^3.7.17",
         "@uiw/codemirror-theme-vscode": "^4.23.13",
         "axios": "^1.13.5",
