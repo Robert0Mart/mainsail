@@ -1,13 +1,13 @@
 <template>
   <nav class="bottom-navbar">
     <ul class="nav-list">
-      ><router-link to="/" class="nav-link"><v-icon>mdi-view-dashboard</v-icon></router-link></li>
-      ><router-link to="/console" class="nav-link"><v-icon>mdi-console-terminal</v-icon></router-link></li>
-      ><router-link to="/heightmap" class="nav-link"><v-icon>mdi-map</v-icon></router-link></li>
-      ><router-link to="/files" class="nav-link"><v-icon>mdi-file-document</v-icon></router-link></li>
-      ><router-link to="/viewer" class="nav-link"><v-icon>mdi-eye</v-icon></router-link></li>
-      ><router-link to="/history" class="nav-link"><v-icon>mdi-history</v-icon></router-link></li>
-      ><router-link to="/config" class="nav-link"><v-icon>mdi-cog</v-icon></router-link></li>
+      <router-link to="/" class="nav-link"><v-icon>mdi-view-dashboard</v-icon></router-link></li>
+      <router-link to="/console" class="nav-link"><v-icon>mdi-console</v-icon></router-link></li>
+      <router-link to="/heightmap" class="nav-link"><v-icon>mdi-map</v-icon></router-link></li>
+      <router-link to="/files" class="nav-link"><v-icon>mdi-file-document</v-icon></router-link></li>
+      <router-link to="/viewer" class="nav-link"><v-icon>mdi-eye</v-icon></router-link></li>
+      <router-link to="/history" class="nav-link"><v-icon>mdi-history</v-icon></router-link></li>
+      <router-link to="/config" class="nav-link"><v-icon>mdi-cog</v-icon></router-link></li>
     </ul>
   </nav>
 </template>
