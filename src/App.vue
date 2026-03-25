@@ -1,3 +1,10 @@
+<script>
+import BottomNavbar from '@/components/BottomNav.vue'  // ajusta o caminho
+export default {
+  components: { BottomNav /* ... outros */ }
+}
+</script>
+
 <template>
     <v-app :style="cssVars">
         <template v-if="socketIsConnected && guiIsReady">
@@ -8,6 +15,7 @@
                     <router-view />
                 </v-container>
             </v-main>
+            <BottomNav />
             <the-service-worker />
             <the-update-dialog />
             <the-editor />
