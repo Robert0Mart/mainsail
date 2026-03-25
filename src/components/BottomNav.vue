@@ -1,16 +1,24 @@
 <template>
   <nav class="bottom-navbar">
     <ul class="nav-list">
-      <li><router-link to="/" class="nav-link">Início</router-link></li>
-      <li><router-link to="/sobre" class="nav-link">Sobre</router-link></li>
-      <li><router-link to="/contactos" class="nav-link">Contactos</router-link></li>
+      ><router-link to="/" class="nav-link"><v-icon>mdi-view-dashboard</v-icon></router-link></li>
+      ><router-link to="/console" class="nav-link"><v-icon>mdi-console-terminal</v-icon></router-link></li>
+      ><router-link to="/heightmap" class="nav-link"><v-icon>mdi-map</v-icon></router-link></li>
+      ><router-link to="/files" class="nav-link"><v-icon>mdi-file-document</v-icon></router-link></li>
+      ><router-link to="/viewer" class="nav-link"><v-icon>mdi-eye</v-icon></router-link></li>
+      ><router-link to="/history" class="nav-link"><v-icon>mdi-history</v-icon></router-link></li>
+      ><router-link to="/config" class="nav-link"><v-icon>mdi-cog</v-icon></router-link></li>
     </ul>
   </nav>
 </template>
 
-<script setup>
-// Não precisa de lógica extra para este exemplo básico
-// Pode adicionar emits ou props conforme necessário
+<script>
+import '@mdi/font/css/materialdesignicons.css'
+
+export default {
+  name: 'BottomNavbar'
+}
+import '@mdi/font/css/materialdesignicons.css'
 </script>
 
 <style scoped>
@@ -19,12 +27,11 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(165deg, #667eea -25%, #000000 100%);
   border-radius: 50px;
-  padding: 12px 30px;
+  padding: 12px 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   z-index: 1000;
-  backdrop-filter: blur(10px);
 }
 
 .nav-list {
@@ -32,39 +39,28 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 30px;
+  gap: 12px;
   align-items: center;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 16px;
-  padding: 8px 16px;
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   transition: all 0.3s ease;
 }
 
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  transform: scale(1.1);
 }
 
-/* Responsivo para ecrãs pequenos */
-@media (max-width: 768px) {
-  .bottom-navbar {
-    bottom: 15px;
-    padding: 10px 20px;
-  }
-  
-  .nav-list {
-    gap: 20px;
-  }
-  
-  .nav-link {
-    font-size: 14px;
-    padding: 6px 12px;
-  }
+.v-icon {
+  font-size: 24px !important;
 }
 </style>
