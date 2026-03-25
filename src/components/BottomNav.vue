@@ -68,7 +68,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   /* Applies the custom purple-to-black gradient */
-  background: linear-gradient(165deg, #667eea -25%, #000000 100%);
+  background: linear-gradient(165deg, #696969 -25%, #000000 100%);
   border-radius: 50px;
   padding: 12px 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -85,7 +85,7 @@ export default {
 }
 
 .nav-link {
-  color: #8a8a9e;
+  color: #eeeeff;  /* Cor base mais branca (era #b8b8c8) - ícones herdam isso */
   text-decoration: none;
   display: flex;
   align-items: center;
