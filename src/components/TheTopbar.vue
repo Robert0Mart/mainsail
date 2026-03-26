@@ -16,6 +16,7 @@
                 :accept="gcodeInputFileAccept.join(', ')"
                 style="display: none"
                 @change="uploadAndStart" />
+            
             <v-btn
                 v-if="showSaveConfigButton"
                 tile
@@ -23,12 +24,14 @@
                 :text="$vuetify.breakpoint.mdAndUp"
                 color="primary"
                 class="button-min-width-auto px-3 d-none d-sm-flex save-config-button"
+                style="background: linear-gradient(145deg, #2b5c38 0%, #1a3822 100%) !important; border: 1px solid #367346 !important; color: white !important;"
                 :disabled="printerIsPrinting"
                 :loading="loadings.includes('topbarSaveConfig')"
                 @click="saveConfig">
-                <v-icon class="d-md-none">{{ mdiContentSave }}</v-icon>
+                <v-icon class="d-md-none" style="color: white !important;">{{ mdiContentSave }}</v-icon>
                 <span class="d-none d-md-inline">{{ $t('App.TopBar.SAVE_CONFIG') }}</span>
             </v-btn>
+            
             <v-btn
                 v-if="boolShowUploadAndPrint"
                 tile
@@ -41,6 +44,7 @@
                 <v-icon class="mr-md-2">{{ mdiFileUpload }}</v-icon>
                 <span class="d-none d-md-inline">{{ $t('App.TopBar.UploadPrint') }}</span>
             </v-btn>
+            
             <v-btn
                 v-if="klippyIsConnected"
                 tile
@@ -48,11 +52,13 @@
                 :text="$vuetify.breakpoint.mdAndUp"
                 color="error"
                 class="button-min-width-auto px-3 emergency-button"
+                style="background: linear-gradient(145deg, #7a2626 0%, #4a1717 100%) !important; border: 1px solid #993030 !important; color: white !important;"
                 :loading="loadings.includes('topbarEmergencyStop')"
                 @click="btnEmergencyStop">
-                <v-icon class="mr-md-2">{{ mdiAlertOctagonOutline }}</v-icon>
+                <v-icon class="mr-md-2" style="color: white !important;">{{ mdiAlertOctagonOutline }}</v-icon>
                 <span class="d-none d-md-inline">{{ $t('App.TopBar.EmergencyStop') }}</span>
             </v-btn>
+            
             <the-notification-menu />
             <the-settings-menu />
             <the-top-corner-menu />
