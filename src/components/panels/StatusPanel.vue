@@ -253,12 +253,13 @@ export default class StatusPanel extends Mixins(BaseMixin) {
         return this.$t('Panels.StatusPanel.Unknown')
     }
 
-    get toolbarButtons() {
+   get toolbarButtons() {
         return [
             {
                 text: this.$t('Panels.StatusPanel.PausePrint'),
                 icon: mdiPause,
-                iconStyle: 'color: #438f57 !important;', // INJEÇÃO DIRETA DE VERDE
+                // LARANJA quando está a imprimir (botão de pausa)
+                iconStyle: 'color: #fb8c00 !important;', 
                 loadingName: 'statusPrintPause',
                 status: () => ['printing'].includes(this.printer_state),
                 click: this.btnPauseJob,
@@ -266,7 +267,8 @@ export default class StatusPanel extends Mixins(BaseMixin) {
             {
                 text: this.$t('Panels.StatusPanel.ResumePrint'),
                 icon: mdiPlay,
-                iconStyle: 'color: #438f57 !important;', // INJEÇÃO DIRETA DE VERDE
+                // VERDE quando está pausado (botão de retomar)
+                iconStyle: 'color: #438f57 !important;', 
                 loadingName: 'statusPrintResume',
                 status: () => ['paused'].includes(this.printer_state),
                 click: this.btnResumeJob,
@@ -274,7 +276,8 @@ export default class StatusPanel extends Mixins(BaseMixin) {
             {
                 text: this.$t('Panels.StatusPanel.CancelPrint'),
                 icon: mdiStop,
-                iconStyle: 'color: #b83a3a !important;', // INJEÇÃO DIRETA DE VERMELHO
+                // VERMELHO para o cancelamento
+                iconStyle: 'color: #b83a3a !important;', 
                 loadingName: 'statusPrintCancel',
                 status: () => {
                     if (this.$store.state.gui.uiSettings.displayCancelPrint)
@@ -284,30 +287,7 @@ export default class StatusPanel extends Mixins(BaseMixin) {
                 },
                 click: this.btnCancelJob,
             },
-            {
-                text: this.$t('Panels.StatusPanel.ExcludeObject.ExcludeObject'),
-                icon: mdiSelectionRemove,
-                iconStyle: 'color: rgba(255, 255, 255, 0.8) !important;',
-                loadingName: 'excludeObjectButton',
-                status: () => {
-                    if (this.multiFunctionButton || this.printing_objects.length < 2) return false
-
-                    return ['paused', 'printing'].includes(this.printer_state)
-                },
-                click: this.btnExcludeObject,
-            },
-            {
-                text: this.$t('Panels.StatusPanel.PauseAtLayer.PauseAtLayer'),
-                icon: mdiLayersPlus,
-                iconStyle: 'color: rgba(255, 255, 255, 0.8) !important;',
-                loadingName: 'pauseAtLayer',
-                status: () => {
-                    if (this.multiFunctionButton || !this.displayPauseAtLayerButton) return false
-
-                    return ['paused', 'printing'].includes(this.printer_state)
-                },
-                click: this.btnPauseAtLayer,
-            },
+            // ... os restantes botões (Broom, Printer, etc.) mantêm o style default:
             {
                 text: this.$t('Panels.StatusPanel.ClearPrintStats'),
                 icon: mdiBroom,
