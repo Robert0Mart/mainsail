@@ -76,7 +76,7 @@ import PageDashboard from '@/pages/Dashboard.vue'
 import PageConsole from '@/pages/Console.vue'
 import PageHeightmap from '@/pages/Heightmap.vue'
 import PageFiles from '@/pages/Files.vue'
-import PageViewer from '@/pages/Viewer.vue' // Added Viewer import
+import PageViewer from '@/pages/Viewer.vue'
 import PageHistory from '@/pages/History.vue'
 import PageMachine from '@/pages/Machine.vue'
 
@@ -122,7 +122,11 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
     get mainStyle() {
         const style: any = {}
-        if (this.mainBgImage !== null) style.backgroundImage = 'url(' + this.mainBgImage + ')'
+        style.backgroundImage = "url('/img/mainsail-background.png')"
+        style.backgroundSize = 'cover'
+        style.backgroundPosition = 'center'
+        style.backgroundAttachment = 'fixed'
+        style.backgroundRepeat = 'no-repeat'
         return style
     }
 
@@ -202,7 +206,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
         this.drawFavicon(this.print_percent)
         this.appHeight()
         window.addEventListener('resize', this.appHeight)
-        window.addEventListener('orientationchange', this.appHeight)
+        window.addEventListener('orientationchange', this.appHeight())
         
         this.$store.dispatch('setNaviDrawer', false)
     }
@@ -219,7 +223,13 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
 :root { --app-height: 100%; }
 
-#content { background-attachment: fixed; background-size: cover; background-repeat: no-repeat; }
+#content { 
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+
 .v-btn:not(.v-btn--outlined).primary { color: var(--v-btn-text-primary); }
 .v-app-bar__nav-icon { display: none !important; }
 
