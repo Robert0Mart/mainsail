@@ -46,8 +46,7 @@
                 <v-btn
                     small
                     :disabled="['printing'].includes(printer_state)"
-                    :color="homedAxes !== '' ? 'primary' : 'warning'"
-                    class="ml-2"
+                    class="ml-2 btn-motor"
                     @click="doSend('M84')">
                     <v-icon>{{ mdiEngineOff }}</v-icon>
                 </v-btn>
@@ -67,9 +66,8 @@
                     </v-btn>
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        :color="homedAxes.includes('x') ? 'primary' : 'warning'"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-x"
                         :loading="loadings.includes('homeX')"
-                        class="font-weight-bold btnHomeAxis btnGroup"
                         @click="doHomeX">
                         X
                     </v-btn>
@@ -98,9 +96,8 @@
                     </v-btn>
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        :color="homedAxes.includes('y') ? 'primary' : 'warning'"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-y"
                         :loading="loadings.includes('homeY')"
-                        class="font-weight-bold btnHomeAxis btnGroup"
                         @click="doHomeY">
                         Y
                     </v-btn>
@@ -129,9 +126,8 @@
                     </v-btn>
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        :color="homedAxes.includes('z') ? 'primary' : 'warning'"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-z"
                         :loading="loadings.includes('homeZ')"
-                        class="font-weight-bold btnHomeAxis btnGroup"
                         @click="doHomeZ">
                         Z
                     </v-btn>
@@ -204,6 +200,40 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
     min-width: auto !important;
 }
 
+/* Gradiente laranja para botão do motor */
+.btn-motor {
+    background: linear-gradient(45deg, #ff7b00, #ff9500) !important;
+    color: white !important;
+}
+
+.btn-motor:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(255, 123, 0, 0.4) !important;
+}
+
+/* Gradientes para os botões dos eixos */
+.btn-axis-x {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b) !important;
+    color: white !important;
+}
+
+.btn-axis-y {
+    background: linear-gradient(45deg, #11998e, #38ef7d) !important;
+    color: white !important;
+}
+
+.btn-axis-z {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    color: white !important;
+}
+
+.btn-axis-x:hover,
+.btn-axis-y:hover,
+.btn-axis-z:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}
+
 ._btn-group {
     border-radius: 4px;
     display: inline-flex;
@@ -211,6 +241,8 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
     max-width: 100%;
     min-width: 100%;
     width: 100%;
+    /* Adiciona gap entre os botões */
+    gap: 5px;
 
     .v-btn {
         border-radius: 0;
@@ -221,6 +253,14 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
         height: 28px;
         opacity: 0.8;
         min-width: auto !important;
+        /* Remove border-left para criar separação visual */
+        border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .v-btn:last-child {
+        border-right: none !important;
+        border-top-right-radius: inherit;
+        border-bottom-right-radius: inherit;
     }
 
     .v-btn:first-child {
@@ -228,17 +268,17 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
         border-bottom-left-radius: inherit;
     }
 
-    .v-btn:last-child {
-        border-top-right-radius: inherit;
-        border-bottom-right-radius: inherit;
-    }
-
-    .v-btn:not(:first-child) {
-        border-left-width: 0;
+    .v-btn:not(:first-child):not(:last-child) {
+        border-left: none !important;
     }
 }
 
 html.theme--light ._btn-group .v-btn {
     border-color: rgba(0, 0, 0, 0.12);
+    border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+}
+
+html.theme--light ._btn-group .v-btn:last-child {
+    border-right: none !important;
 }
 </style>
