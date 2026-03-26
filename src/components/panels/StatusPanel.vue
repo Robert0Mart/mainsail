@@ -1,3 +1,7 @@
+StatusPanel.vue:
+
+
+
 <template>
     <div>
         <min-settings-panel />
@@ -22,14 +26,20 @@
                 <v-btn
                     v-for="button in filteredToolbarButtons"
                     :key="button.loadingName"
-                    :color="button.color"
+                    class="status-icon-action-btn"
                     :loading="loadings.includes(button.loadingName)"
                     icon
                     tile
                     @click="button.click">
                     <v-tooltip top>
                         <template #activator="{ on, attrs }">
-                            <v-icon v-bind="attrs" v-on="on">{{ button.icon }}</v-icon>
+                            <v-icon
+                                v-bind="attrs"
+                                v-on="on"
+                                :style="button.iconStyle"
+                            >
+                                {{ button.icon }}
+                            </v-icon>
                         </template>
                         <span>{{ button.text }}</span>
                     </v-tooltip>
@@ -37,7 +47,7 @@
                 <v-menu v-if="multiFunctionButton" left offset-y :close-on-content-click="false" class="pa-0">
                     <template #activator="{ on, attrs }">
                         <v-btn icon tile v-bind="attrs" v-on="on">
-                            <v-icon>{{ mdiDotsVertical }}</v-icon>
+                            <v-icon style="color: rgba(255, 255, 255, 0.8) !important;">{{ mdiDotsVertical }}</v-icon>
                         </v-btn>
                     </template>
                     <v-list dense>
@@ -247,28 +257,31 @@ export default class StatusPanel extends Mixins(BaseMixin) {
         return this.$t('Panels.StatusPanel.Unknown')
     }
 
-    get toolbarButtons() {
+   get toolbarButtons() {
         return [
             {
                 text: this.$t('Panels.StatusPanel.PausePrint'),
-                color: 'warning',
                 icon: mdiPause,
+                // LARANJA quando está a imprimir (botão de pausa)
+                iconStyle: 'color: #fb8c00 !important;', 
                 loadingName: 'statusPrintPause',
                 status: () => ['printing'].includes(this.printer_state),
                 click: this.btnPauseJob,
             },
             {
                 text: this.$t('Panels.StatusPanel.ResumePrint'),
-                color: 'success',
                 icon: mdiPlay,
+                // VERDE quando está pausado (botão de retomar)
+                iconStyle: 'color: #438f57 !important;', 
                 loadingName: 'statusPrintResume',
                 status: () => ['paused'].includes(this.printer_state),
                 click: this.btnResumeJob,
             },
             {
                 text: this.$t('Panels.StatusPanel.CancelPrint'),
-                color: 'error',
                 icon: mdiStop,
+                // VERMELHO para o cancelamento
+                iconStyle: 'color: #b83a3a !important;', 
                 loadingName: 'statusPrintCancel',
                 status: () => {
                     if (this.$store.state.gui.uiSettings.displayCancelPrint)
@@ -278,42 +291,19 @@ export default class StatusPanel extends Mixins(BaseMixin) {
                 },
                 click: this.btnCancelJob,
             },
-            {
-                text: this.$t('Panels.StatusPanel.ExcludeObject.ExcludeObject'),
-                color: 'warning',
-                icon: mdiSelectionRemove,
-                loadingName: 'excludeObjectButton',
-                status: () => {
-                    if (this.multiFunctionButton || this.printing_objects.length < 2) return false
-
-                    return ['paused', 'printing'].includes(this.printer_state)
-                },
-                click: this.btnExcludeObject,
-            },
-            {
-                text: this.$t('Panels.StatusPanel.PauseAtLayer.PauseAtLayer'),
-                color: 'warning',
-                icon: mdiLayersPlus,
-                loadingName: 'pauseAtLayer',
-                status: () => {
-                    if (this.multiFunctionButton || !this.displayPauseAtLayerButton) return false
-
-                    return ['paused', 'printing'].includes(this.printer_state)
-                },
-                click: this.btnPauseAtLayer,
-            },
+            // ... os restantes botões (Broom, Printer, etc.) mantêm o style default:
             {
                 text: this.$t('Panels.StatusPanel.ClearPrintStats'),
-                color: 'primary',
                 icon: mdiBroom,
+                iconStyle: 'color: rgba(255, 255, 255, 0.8) !important;',
                 loadingName: 'statusPrintClear',
                 status: () => ['error', 'complete', 'cancelled'].includes(this.printer_state),
                 click: this.btnClearJob,
             },
             {
                 text: this.$t('Panels.StatusPanel.ReprintJob'),
-                color: 'primary',
                 icon: mdiPrinter,
+                iconStyle: 'color: rgba(255, 255, 255, 0.8) !important;',
                 loadingName: 'statusPrintReprint',
                 status: () => ['error', 'complete', 'cancelled'].includes(this.printer_state),
                 click: this.btnReprintJob,
@@ -463,12 +453,17 @@ export default class StatusPanel extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
-._border-radius {
+::v-deep ._border-radius {
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
 }
 
-.theme--dark.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) > .v-badge > .v-icon {
+::v-deep .theme--dark.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) > .v-badge > .v-icon {
     color: rgba(255, 255, 255, 0.6);
+}
+
+/* MARGENS DOS BOTÕES */
+::v-deep .status-icon-action-btn {
+    margin-right: 8px;
 }
 </style>

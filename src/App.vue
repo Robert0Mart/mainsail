@@ -1,3 +1,7 @@
+App.vue:
+
+
+
 <template>
     <v-app :style="cssVars">
         <template v-if="socketIsConnected && guiIsReady">
@@ -7,49 +11,41 @@
                 <v-container id="page-container" fluid :class="containerClasses">
                     
                     <div class="horizontal-track">
-                        
                         <div id="section-dashboard" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageDashboard />
                             </div>
                         </div>
-                        
                         <div id="section-console" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageConsole />
                             </div>
                         </div>
-
                         <div id="section-heightmap" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageHeightmap />
                             </div>
                         </div>
-
                         <div id="section-files" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageFiles />
                             </div>
                         </div>
-
                         <div id="section-viewer" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageViewer />
                             </div>
                         </div>
-
                         <div id="section-history" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageHistory />
                             </div>
                         </div>
-
                         <div id="section-machine" class="scroll-section">
                             <div class="page-wrapper">
                                 <PageMachine />
                             </div>
                         </div>
-
                     </div>
 
                 </v-container>
@@ -76,7 +72,7 @@ import PageDashboard from '@/pages/Dashboard.vue'
 import PageConsole from '@/pages/Console.vue'
 import PageHeightmap from '@/pages/Heightmap.vue'
 import PageFiles from '@/pages/Files.vue'
-import PageViewer from '@/pages/Viewer.vue'
+import PageViewer from '@/pages/Viewer.vue' 
 import PageHistory from '@/pages/History.vue'
 import PageMachine from '@/pages/Machine.vue'
 
@@ -87,16 +83,17 @@ import BaseMixin from '@/components/mixins/base'
 import ThemeMixin from './components/mixins/theme'
 import TheTopbar from '@/components/TheTopbar.vue'
 import { Mixins, Watch } from 'vue-property-decorator'
+import { panelToolbarHeight, topbarHeight, navigationItemHeight } from '@/store/variables'
+
 import TheUpdateDialog from '@/components/TheUpdateDialog.vue'
 import TheConnectingDialog from '@/components/TheConnectingDialog.vue'
 import TheSelectPrinterDialog from '@/components/TheSelectPrinterDialog.vue'
 import TheEditor from '@/components/TheEditor.vue'
-import { panelToolbarHeight, topbarHeight, navigationItemHeight } from '@/store/variables'
+import { setAndLoadLocale } from './plugins/i18n'
 import TheTimelapseRenderingSnackbar from '@/components/TheTimelapseRenderingSnackbar.vue'
 import TheFullscreenUpload from '@/components/TheFullscreenUpload.vue'
 import TheUploadSnackbar from '@/components/TheUploadSnackbar.vue'
 import TheManualProbeDialog from '@/components/dialogs/TheManualProbeDialog.vue'
-import { setAndLoadLocale } from './plugins/i18n'
 import TheBedScrewsDialog from '@/components/dialogs/TheBedScrewsDialog.vue'
 import TheScrewsTiltAdjustDialog from '@/components/dialogs/TheScrewsTiltAdjustDialog.vue'
 import TheMacroPrompt from '@/components/dialogs/TheMacroPrompt.vue'
@@ -122,12 +119,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
     get mainStyle() {
         const style: any = {}
-        style.backgroundImage = "url('/img/mainsail-background.png')"
-        style.opacity = 0.80
-        style.backgroundSize = 'cover'
-        style.backgroundPosition = 'center'
-        style.backgroundAttachment = 'fixed'
-        style.backgroundRepeat = 'no-repeat'
+        if (this.mainBgImage !== null) style.backgroundImage = 'url(' + this.mainBgImage + ')'
         return style
     }
 
@@ -167,12 +159,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
     get print_percent(): number { return Math.floor(this.$store.getters['printer/getPrintPercent'] * 100) }
 
-    get containerClasses() {
-        return {
-            'px-0': true, 'py-0': true, 'mx-0': true,
-            fullscreen: false,
-        }
-    }
+    get containerClasses() { return { 'px-0': true, 'py-0': true, 'mx-0': true, fullscreen: false } }
 
     get progressAsFavicon() { return this.$store.state.gui.uiSettings.progressAsFavicon }
 
@@ -199,16 +186,13 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
         if (this.moonrakerComponents.includes('spoolman')) this.$store.dispatch('server/spoolman/refreshActiveSpool', null, { root: true })
     }
 
-    appHeight() {
-        this.$nextTick(() => { document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px') })
-    }
+    appHeight() { this.$nextTick(() => { document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px') }) }
 
     mounted(): void {
         this.drawFavicon(this.print_percent)
         this.appHeight()
         window.addEventListener('resize', this.appHeight)
-        window.addEventListener('orientationchange', this.appHeight())
-        
+        window.addEventListener('orientationchange', this.appHeight)
         this.$store.dispatch('setNaviDrawer', false)
     }
 }
@@ -224,13 +208,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
 :root { --app-height: 100%; }
 
-#content { 
-  background-size: cover !important;
-  background-position: center !important;
-  background-attachment: fixed !important;
-  background-repeat: no-repeat !important;
-}
-
 .v-btn:not(.v-btn--outlined).primary { color: var(--v-btn-text-primary); }
 .v-app-bar__nav-icon { display: none !important; }
 
@@ -238,7 +215,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
-    opacity: 0.85 !important;
 }
 
 .v-main {
@@ -247,17 +223,17 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     width: 100vw !important;
 }
 
-/* Horizontal flex track */
 .horizontal-track {
     display: flex;
+    background-image: url('public/img/mainsail-background.png');
     flex-direction: row;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
     overflow-y: hidden;
+    opacity: 0.80;
 }
 
-/* Individual page panels */
 .scroll-section {
     flex: 0 0 100%; 
     width: 100%;
@@ -266,11 +242,115 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     box-sizing: border-box;
 }
 
-/* Limits the width of the content internally */
 .page-wrapper {
     max-width: 1600px; 
     margin: 0 auto; 
     padding: 24px 24px 120px 24px; 
     box-sizing: border-box;
+}
+
+/* =========================================
+   STEALTH THEME OVERRIDES
+   ========================================= */
+
+/* Global app background */
+body .v-application, 
+#content,
+.v-main {
+    background: linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(3,3,3,1) 40%, rgba(0,0,0,1) 100%) !important;
+    background-image: linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(3,3,3,1) 40%, rgba(0,0,0,1) 100%) !important;
+}
+
+/* Topbar styling */
+body .v-application .v-app-bar.theme--dark {
+    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(3,3,3,1) 100%) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+}
+
+/* Inner panels glass effect */
+body .v-application .v-card,
+body .v-application .v-sheet,
+body .v-application .v-data-table,
+body .v-application .v-list,
+body .v-application .v-expansion-panel {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 10, 12, 1) 30%, rgba(0, 0, 0, 1) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+    opacity: 0.80 !important;
+}
+
+/* =========================================
+   SURGICAL BUTTON COLORS (CSS :has() SELECTOR)
+   Changes color based on the icon inside the button!
+   ========================================= */
+
+/* RED: Stop & Emergency Stop */
+body .v-application .v-btn.error,
+body .v-application .v-btn:has(.mdi-stop),
+body .v-application .v-btn:has(.mdi-alert-octagon),
+body .v-application .v-btn:has(.mdi-close-octagon) {
+    background: linear-gradient(145deg, #7a2626 0%, #4a1717 100%) !important;
+    background-color: #7a2626 !important;
+    border: 1px solid #993030 !important;
+    color: #ffffff !important;
+}
+
+/* Hover effect for red buttons */
+body .v-application .v-btn.error:hover,
+body .v-application .v-btn:has(.mdi-stop):hover,
+body .v-application .v-btn:has(.mdi-alert-octagon):hover {
+    background: linear-gradient(145deg, #993030 0%, #611e1e 100%) !important;
+}
+
+/* GREEN: Pause, Play, Save Config */
+body .v-application .v-btn.success,
+body .v-application .v-btn:has(.mdi-play),
+body .v-application .v-btn:has(.mdi-pause),
+body .v-application .v-btn:has(.mdi-content-save) {
+    background: linear-gradient(145deg, #2b5c38 0%, #1a3822 100%) !important;
+    background-color: #2b5c38 !important;
+    border: 1px solid #367346 !important;
+    color: #ffffff !important;
+}
+
+/* Hover effect for green buttons */
+body .v-application .v-btn.success:hover,
+body .v-application .v-btn:has(.mdi-play):hover,
+body .v-application .v-btn:has(.mdi-pause):hover,
+body .v-application .v-btn:has(.mdi-content-save):hover {
+    background: linear-gradient(145deg, #367346 0%, #234c2e 100%) !important;
+}
+
+/* Force icons inside targeted buttons to be pure white */
+body .v-application .v-btn:has(.mdi-stop) .v-icon,
+body .v-application .v-btn:has(.mdi-alert-octagon) .v-icon,
+body .v-application .v-btn:has(.mdi-play) .v-icon,
+body .v-application .v-btn:has(.mdi-pause) .v-icon,
+body .v-application .v-btn:has(.mdi-content-save) .v-icon {
+    color: #ffffff !important;
+}
+
+/* =========================================
+   DEFAULT BUTTONS & BARS
+   ========================================= */
+
+/* DEFAULT: Silver/Black */
+body .v-application .v-btn:not(.v-btn--outlined).primary:not(.v-app-bar .v-btn),
+body .v-application .v-btn--contained.primary:not(.v-app-bar .v-btn),
+body .v-application .v-btn.theme--dark:not(.v-btn--flat):not(:has(.mdi-stop)):not(:has(.mdi-play)):not(:has(.mdi-pause)):not(:has(.mdi-content-save)):not(:has(.mdi-alert-octagon)) {
+  background: linear-gradient(165deg, #696969 -25%, #000000 100%);
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* Progress bars */
+body .v-application .v-progress-linear__determinate,
+body .v-application .v-slider__track-fill {
+    background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.9) 100%) !important;
+    border-color: transparent !important;
+}
+
+body .v-application .primary--text {
+    color: rgba(255,255,255,0.8) !important;
 }
 </style>
