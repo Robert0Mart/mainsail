@@ -27,6 +27,53 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
     @Prop({ type: String, default: 'jobs' }) valueName!: HistoryStatsValueNames
     @Ref('historyAllPrintStatus') historyAllPrintStatus!: typeof VueECharts
 
+    get coloredData() {
+        return this.groupedPrintStatusArray.map((item: any) => {
+            const name = (item.name || '').toLowerCase()
+            
+            // Estrutura base de um gradiente no ECharts
+            let colorObj = {
+                type: 'linear',
+                x: 0, y: 0, x2: 1, y2: 1,
+                colorStops: [
+                    { offset: 0, color: '#7f8c8d' }, // Cinza padrão para "Others"
+                    { offset: 1, color: '#95a5a6' }
+                ]
+            }
+
+            if (name === 'completed') {
+                // GREEN
+                colorObj.colorStops = [
+                    { offset: 0, color: '#11998e' },
+                    { offset: 1, color: '#38ef7d' }
+                ]
+            } else if (name === 'cancelled') {
+                // BLUE
+                colorObj.colorStops = [
+                    { offset: 0, color: '#667eea' },
+                    { offset: 1, color: '#764ba2' }
+                ]
+            } else if (name === 'interrupted') {
+                // RED (Vermelho Vivo)
+                colorObj.colorStops = [
+                    { offset: 0, color: '#ff416c' },
+                    { offset: 1, color: '#ff4b2b' }
+                ]
+            } else if (name === 'klippy_shutdown') {
+                // DARK RED (Vermelho Escuro/Bordeaux para erro grave)
+                colorObj.colorStops = [
+                    { offset: 0, color: '#8b0000' },
+                    { offset: 1, color: '#4a0000' }
+                ]
+            }
+
+            return {
+                ...item,
+                itemStyle: { color: colorObj }
+            }
+        })
+    }
+
     get chartOptions(): ECBasicOption {
         return {
             animation: false,
@@ -42,7 +89,6 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
                 valueFormatter: (value: number) => {
                     if (this.valueName === 'filament') {
                         if (value > 1000) return Math.round(value / 1000).toString() + ' m'
-
                         return value.toString() + ' mm'
                     }
 
@@ -56,7 +102,7 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
             series: [
                 {
                     type: 'pie',
-                    data: this.groupedPrintStatusArray,
+                    data: this.coloredData,
                     avoidLabelOverlap: false,
                     minAngle: 5,
                     radius: ['35%', '60%'],
@@ -85,11 +131,11 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
     }
 
     @Watch('groupedPrintStatusArray')
-    groupedPrintStatusArrayChanged(newVal: any) {
+    groupedPrintStatusArrayChanged() {
         this.chart?.setOption(
             {
                 series: {
-                    data: newVal,
+                    data: this.coloredData,
                 },
             },
             false,

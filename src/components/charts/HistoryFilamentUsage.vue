@@ -18,9 +18,44 @@ import HistoryMixin from '@/components/mixins/history'
 import { ServerHistoryStateJob } from '@/store/server/history/types'
 
 @Component({})
-export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin, ThemeMixin) {
+export default class HistoryFilamentUsage extends Mixins(BaseMixin, HistoryMixin, ThemeMixin) {
     declare $refs: {
         historyFilamentUsage: any
+    }
+
+    // A MÁGICA DOS GRADIENTES NO FILAMENTO
+    get coloredFilamentUsageArray() {
+        return this.filamentUsageArray.map((item) => {
+            const value = item[1] // Quantidade de filamento gasta
+            
+            let colorStops = []
+
+            // Lógica de Cores: < 10m (Verde), 10m a 30m (Azul), > 30m (Vermelho)
+            if (value < 10) {
+                colorStops = [
+                    { offset: 0, color: '#11998e' }, { offset: 1, color: '#38ef7d' } // Green
+                ]
+            } else if (value <= 30) {
+                colorStops = [
+                    { offset: 0, color: '#667eea' }, { offset: 1, color: '#764ba2' } // Blue
+                ]
+            } else {
+                colorStops = [
+                    { offset: 0, color: '#ff416c' }, { offset: 1, color: '#ff4b2b' } // Red
+                ]
+            }
+
+            return {
+                value: item,
+                itemStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 1, x2: 0, y2: 0, // Gradiente de Baixo para Cima
+                        colorStops: colorStops
+                    }
+                }
+            }
+        })
     }
 
     get chartOptions(): any {
@@ -43,7 +78,7 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
                         const outputTime = datasets[0]['axisValueLabel']
                         const a = outputTime.split(/[^0-9]/)
                         const outputTimeDate = new Date(a[0], a[1] - 1, a[2])
-                        const outputValue = Math.round(datasets[0]['data'][1] * 10) / 10
+                        const outputValue = Math.round(datasets[0]['data'].value[1] * 10) / 10
 
                         output += outputTimeDate.toLocaleDateString() + ': ' + outputValue + 'm'
                     }
@@ -86,8 +121,6 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
                 axisLabel: {
                     color: this.fgColorLow,
                     formatter: '{value}',
-                    //rotate: 90,
-                    //showMaxLabel: false,
                     showMinLabel: true,
                     margin: 5,
                 },
@@ -98,11 +131,10 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
                     },
                 },
             },
-            color: ['#BDBDBD'],
             series: [
                 {
                     type: 'bar',
-                    data: this.filamentUsageArray,
+                    data: this.coloredFilamentUsageArray, // Usar array com cores
                     showSymbol: false,
                 },
             ],
@@ -159,11 +191,11 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
     }
 
     @Watch('filamentUsageArray')
-    filamentUsageArrayChanged(newVal: [number, number][]) {
+    filamentUsageArrayChanged() {
         this.chart?.setOption(
             {
                 series: {
-                    data: newVal,
+                    data: this.coloredFilamentUsageArray, // Usar array com cores
                 },
             },
             false,
