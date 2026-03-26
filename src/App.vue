@@ -123,6 +123,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     get mainStyle() {
         const style: any = {}
         style.backgroundImage = "url('/img/mainsail-background.png')"
+        style.opacity = 0.80
         style.backgroundSize = 'cover'
         style.backgroundPosition = 'center'
         style.backgroundAttachment = 'fixed'
@@ -237,6 +238,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
+    opacity: 0.85 !important;
 }
 
 .v-main {
