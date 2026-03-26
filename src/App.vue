@@ -1,3 +1,7 @@
+App.vue:
+
+
+
 <template>
     <v-app :style="cssVars">
         <template v-if="socketIsConnected && guiIsReady">
@@ -115,12 +119,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
     get mainStyle() {
         const style: any = {}
-        style.backgroundImage = "url('/img/mainsail-background.png')"
-        style.opacity = 0.80
-        style.backgroundSize = 'cover'
-        style.backgroundPosition = 'center'
-        style.backgroundAttachment = 'fixed'
-        style.backgroundRepeat = 'no-repeat'
+        if (this.mainBgImage !== null) style.backgroundImage = 'url(' + this.mainBgImage + ')'
         return style
     }
 
@@ -216,7 +215,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
-    opacity: 0.85 !important;
 }
 
 .v-main {
@@ -227,11 +225,13 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
 .horizontal-track {
     display: flex;
+    background-image: url('public/img/mainsail-background.png');
     flex-direction: row;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
     overflow-y: hidden;
+    opacity: 0.80;
 }
 
 .scroll-section {
@@ -276,6 +276,7 @@ body .v-application .v-expansion-panel {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 10, 12, 1) 30%, rgba(0, 0, 0, 1) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+    opacity: 0.80 !important;
 }
 
 /* =========================================
@@ -337,7 +338,7 @@ body .v-application .v-btn:has(.mdi-content-save) .v-icon {
 body .v-application .v-btn:not(.v-btn--outlined).primary:not(.v-app-bar .v-btn),
 body .v-application .v-btn--contained.primary:not(.v-app-bar .v-btn),
 body .v-application .v-btn.theme--dark:not(.v-btn--flat):not(:has(.mdi-stop)):not(:has(.mdi-play)):not(:has(.mdi-pause)):not(:has(.mdi-content-save)):not(:has(.mdi-alert-octagon)) {
-    background-image: linear-gradient(145deg, rgba(255,255,255,0.12) 0%, rgba(15,15,18,1) 100%) !important;
+  background: linear-gradient(165deg, #696969 -25%, #000000 100%);
     color: #ffffff !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
 }

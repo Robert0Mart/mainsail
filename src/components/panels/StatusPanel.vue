@@ -1,3 +1,7 @@
+StatusPanel.vue:
+
+
+
 <template>
     <div>
         <min-settings-panel />

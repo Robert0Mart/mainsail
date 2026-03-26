@@ -1,3 +1,8 @@
+TheTopbar.vue:
+
+
+
+
 <template>
     <div>
         <v-app-bar app elevate-on-scroll :height="topbarHeight" class="topbar pa-0" clipped-left>
