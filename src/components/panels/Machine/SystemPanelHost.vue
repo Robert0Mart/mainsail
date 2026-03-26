@@ -1,11 +1,22 @@
-<style scoped>
-.cursor--pointer {
-    cursor: pointer;
-}
-</style>
-
 <template v-if="hostStats">
     <div>
+        <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+            <defs>
+                <linearGradient id="electricBlue" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#00d2ff" />
+                    <stop offset="100%" stop-color="#3a7bd5" />
+                </linearGradient>
+                <linearGradient id="warningOrange" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#f5af19" />
+                    <stop offset="100%" stop-color="#f12711" />
+                </linearGradient>
+                <linearGradient id="dangerRed" x1="0%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#ff416c" />
+                    <stop offset="100%" stop-color="#ff4b2b" />
+                </linearGradient>
+            </defs>
+        </svg>
+
         <v-row class="py-0 pr-4">
             <v-col class="pl-6">
                 <strong style="cursor: pointer" @click="hostDetailsDialog = true">Host</strong>
@@ -121,23 +132,31 @@
                     </template>
                 </div>
             </v-col>
+            
             <v-col v-if="cpuUsage !== null" class="px-2 col-auto d-flex flex-column justify-center align-center">
-                <v-progress-circular :rotate="-90" :size="55" :width="7" :value="cpuUsage" :color="cpuUsageColor">
+                <v-progress-circular 
+                    :rotate="-90" 
+                    :size="55" 
+                    :width="7" 
+                    :value="cpuUsage" 
+                    :class="getGradientClass(cpuUsage)">
                     {{ cpuUsage }}
                 </v-progress-circular>
                 <span class="mt-2">{{ $t('Machine.SystemPanel.Cpu') }}</span>
             </v-col>
+            
             <v-col v-else class="px-2 col-auto d-flex flex-column justify-center align-center">
                 <v-progress-circular
                     :rotate="-90"
                     :size="55"
                     :width="7"
                     :value="hostStats.loadPercent"
-                    :color="hostStats.loadProgressColor">
+                    :class="getGradientClass(hostStats.loadPercent)">
                     {{ hostStats.loadPercent }}
                 </v-progress-circular>
                 <span class="mt-2">{{ $t('Machine.SystemPanel.Load') }}</span>
             </v-col>
+            
             <v-col
                 v-if="hostStats.memUsage !== null"
                 class="px-2 col-auto d-flex flex-column justify-center align-center">
@@ -146,12 +165,13 @@
                     :size="55"
                     :width="7"
                     :value="hostStats.memUsage"
-                    :color="hostStats.memUsageColor">
+                    :class="getGradientClass(hostStats.memUsage)">
                     {{ hostStats.memUsage }}
                 </v-progress-circular>
                 <span class="mt-2">{{ $t('Machine.SystemPanel.Memory') }}</span>
             </v-col>
         </v-row>
+        
         <v-dialog v-model="hostDetailsDialog" :max-width="600" :max-height="500" scrollable>
             <panel
                 :title="$t('Machine.SystemPanel.HostDetails')"
@@ -242,14 +262,6 @@ export default class SystemPanelHost extends Mixins(BaseMixin) {
         return this.$store.getters['server/getCpuUsage'] ?? null
     }
 
-    get cpuUsageColor() {
-        let color = 'primary'
-        if (this.cpuUsage > 95) color = 'error'
-        else if (this.cpuUsage > 80) color = 'warning'
-
-        return color
-    }
-
     get networkInterfaces() {
         return this.$store.getters['server/getNetworkInterfaces'] ?? null
     }
@@ -266,7 +278,6 @@ export default class SystemPanelHost extends Mixins(BaseMixin) {
 
     get cpuDesc() {
         const output = this.hostStats.cpuDesc
-
         return output
     }
 
@@ -279,5 +290,31 @@ export default class SystemPanelHost extends Mixins(BaseMixin) {
 
         return output
     }
+
+    // AVALIADOR DE CORES: Retorna a classe CSS dependendo da carga
+    getGradientClass(value: number) {
+        if (value >= 90) return 'progress-danger'
+        if (value >= 75) return 'progress-warning'
+        return 'progress-electric'
+    }
 }
 </script>
+
+<style scoped>
+.cursor--pointer {
+    cursor: pointer;
+}
+
+/* OVERRIDES PARA INJETAR O GRADIENTE NA LINHA DO PROGRESSO */
+::v-deep .progress-electric .v-progress-circular__overlay {
+    stroke: url(#electricBlue) !important;
+}
+
+::v-deep .progress-warning .v-progress-circular__overlay {
+    stroke: url(#warningOrange) !important;
+}
+
+::v-deep .progress-danger .v-progress-circular__overlay {
+    stroke: url(#dangerRed) !important;
+}
+</style>

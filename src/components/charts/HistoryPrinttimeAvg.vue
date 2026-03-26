@@ -24,6 +24,40 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
         historyPrinttimeAvg: any
     }
 
+    // A MÁGICA DOS GRADIENTES NO TEMPO MÉDIO
+    get coloredPrinttimeAvgArray() {
+        return this.printtimeAvgArray.map((value, index) => {
+            let colorStops = []
+
+            // As barras são: ['0-2h', '2-6h', '6-12h', '12-24h', '>24h']
+            // Index 0 e 1 (Verde), Index 2 e 3 (Azul), Index 4 (Vermelho)
+            if (index <= 1) {
+                colorStops = [
+                    { offset: 0, color: '#11998e' }, { offset: 1, color: '#38ef7d' } // Green
+                ]
+            } else if (index <= 3) {
+                colorStops = [
+                    { offset: 0, color: '#667eea' }, { offset: 1, color: '#764ba2' } // Blue
+                ]
+            } else {
+                colorStops = [
+                    { offset: 0, color: '#ff416c' }, { offset: 1, color: '#ff4b2b' } // Red
+                ]
+            }
+
+            return {
+                value: value,
+                itemStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 1, x2: 0, y2: 0, // Gradiente de Baixo para Cima
+                        colorStops: colorStops
+                    }
+                }
+            }
+        })
+    }
+
     get chartOptions(): any {
         return {
             animation: false,
@@ -70,8 +104,6 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
                 axisLabel: {
                     color: this.fgColorLow,
                     formatter: '{value}',
-                    //rotate: 90,
-                    //showMaxLabel: false,
                     showMinLabel: true,
                     margin: 5,
                 },
@@ -85,10 +117,7 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
             series: [
                 {
                     type: 'bar',
-                    data: this.printtimeAvgArray,
-                    itemStyle: {
-                        color: '#BDBDBD',
-                    },
+                    data: this.coloredPrinttimeAvgArray, // Usar array com cores
                 },
             ],
         }
@@ -139,11 +168,11 @@ export default class HistoryPrinttimeAvg extends Mixins(BaseMixin, HistoryMixin,
     }
 
     @Watch('printtimeAvgArray')
-    printtimeAvgArrayChanged(newVal: any) {
+    printtimeAvgArrayChanged() {
         this.chart?.setOption(
             {
                 series: {
-                    data: newVal,
+                    data: this.coloredPrinttimeAvgArray, // Usar array com cores
                 },
             },
             false,
