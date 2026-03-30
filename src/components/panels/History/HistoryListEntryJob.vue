@@ -62,10 +62,17 @@
                     <span v-html="item.note.replaceAll('\n', '<br />')" />
                 </v-tooltip>
             </template>
+            
             <v-tooltip top>
                 <template #activator="{ on, attrs }">
                     <span v-bind="attrs" v-on="on">
-                        <v-icon small :color="statusColor" :disabled="!item.exists">
+                        <img 
+    v-if="['error', 'canceled', 'interrupted', 'klippy_disconnect', 'klippy_shutdown', 'server_exit'].includes(item.status)"
+    src="src\assets\styles\icons\troubleshoot_orangesvg.svg" 
+    style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; filter: none !important; position: relative; left: 4px;" 
+    class="mr-1"
+/>
+                        <v-icon v-else small :color="statusColor" :disabled="!item.exists">
                             {{ statusIcon }}
                         </v-icon>
                     </span>
@@ -74,7 +81,7 @@
             </v-tooltip>
         </td>
         <td v-for="col in tableFields" :key="col.value" class="text-no-wrap" v-html="outputValue(col, item)" />
-        <!-- Context menu -->
+        
         <v-menu v-model="contextMenuBool" :position-x="contextMenuX" :position-y="contextMenuY" absolute offset-y>
             <v-list>
                 <v-list-item @click="detailsDialogBool = true">
@@ -110,6 +117,7 @@
                 </v-list-item>
             </v-list>
         </v-menu>
+        
         <history-list-panel-details-dialog v-model="detailsDialogBool" :job="item" />
         <history-list-panel-note-dialog v-model="noteDialogBool" :type="noteDialogType" :job="item" />
         <add-batch-to-queue-dialog v-model="addBatchToQueueDialogBool" :show-toast="true" :filename="item.filename" />
@@ -120,6 +128,7 @@
             :current-path="currentPath" />
     </tr>
 </template>
+
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import HistoryListPanelDetailsDialog from '@/components/dialogs/HistoryListPanelDetailsDialog.vue'
@@ -175,14 +184,11 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
     mdiPlaylistPlus = mdiPlaylistPlus
 
     detailsDialogBool = false
-
     contextMenuBool = false
     contextMenuX = 0
     contextMenuY = 0
-
     noteDialogBool = false
     noteDialogType: 'create' | 'edit' = 'create'
-
     addBatchToQueueDialogBool = false
     startPrintDialogBool = false
 
@@ -201,7 +207,6 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
 
     get smallThumbnail() {
         if ((this.item.metadata?.thumbnails?.length ?? 0) < 1) return false
-
         const thumbnail = this.item.metadata?.thumbnails?.find(
             (thumb) =>
                 thumb.width >= thumbnailSmallMin &&
@@ -209,15 +214,12 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
                 thumb.height >= thumbnailSmallMin &&
                 thumb.height <= thumbnailSmallMax
         )
-
         return thumbnail ? this.createThumbnailUrl(thumbnail) : false
     }
 
     get bigThumbnail() {
         if ((this.item.metadata?.thumbnails?.length ?? 0) < 1) return false
-
         const thumbnail = this.item.metadata?.thumbnails?.find((thumb) => thumb.width >= thumbnailBigMin)
-
         return thumbnail ? this.createThumbnailUrl(thumbnail) : false
     }
 
@@ -230,17 +232,13 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
     }
 
     get statusName() {
-        // check if translation exists
         if (!this.$t(`History.StatusValues.${this.item.status}`, 'en')) return this.item.status.replace(/_/g, ' ')
-
         return this.$t(`History.StatusValues.${this.item.status}`)
     }
 
     get cssClasses() {
         const output = ['file-list-cursor', 'user-select-none']
-
         if (!this.item.exists) output.push('text--disabled')
-
         return output
     }
 
@@ -255,10 +253,8 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
     showContextMenu(e: any) {
         e?.preventDefault()
         EventBus.$emit(CLOSE_CONTEXT_MENU)
-
         this.contextMenuX = e?.clientX || e?.pageX || window.screenX / 2
         this.contextMenuY = e?.clientY || e?.pageY || window.screenY / 2
-
         this.contextMenuBool = true
     }
 
@@ -299,29 +295,16 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
             if (field && !Array.isArray(field.value)) return `${Math.round(field.value * 1000) / 1000} ${field.units}`
         }
         if (value === null) return '--'
-
         if (col.value === 'slicer') value += '<br />' + item.metadata.slicer_version
-
         switch (col.outputType) {
-            case 'filesize':
-                return formatFilesize(value)
-
-            case 'date':
-                return this.formatDateTime(value * 1000)
-
-            case 'time':
-                return formatPrintTime(value, false)
-
-            case 'temp':
-                return value?.toFixed() + ' °C'
-
+            case 'filesize': return formatFilesize(value)
+            case 'date': return this.formatDateTime(value * 1000)
+            case 'time': return formatPrintTime(value, false)
+            case 'temp': return value?.toFixed() + ' °C'
             case 'length':
                 if (value > 1000) return (value / 1000).toFixed(2) + ' m'
-
                 return value?.toFixed(2) + ' mm'
-
-            default:
-                return value
+            default: return value
         }
     }
 
@@ -330,7 +313,6 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         if (this.item.filename.lastIndexOf('/') !== -1) {
             relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/') + 1)
         }
-
         return `${this.apiUrl}/server/files/gcodes/${escapePath(relative_url + thumbnail.relative_path)}?timestamp=${
             this.item.metadata.modified
         }`
