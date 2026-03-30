@@ -1,8 +1,8 @@
 <template>
-    <v-container>
+    <v-container class="pa-0">
         <tool-slider
             :label="$t('Panels.ExtruderControlPanel.ExtrusionFactor')"
-            :icon="mdiPrinter3dNozzleOutline"
+            :icon-image="'/img/icons/blocks_icons/extrudesvg.svg'"
             :target="extrudeFactor"
             :min="1"
             :max="200"
@@ -21,7 +21,10 @@ import { mdiPrinter3dNozzleOutline } from '@mdi/js'
 import ExtruderMixin from '@/components/mixins/extruder'
 
 @Component({})
-export default class PressureAdvanceSettings extends Mixins(BaseMixin, ExtruderMixin) {
+export default class ExtrusionFactorSettings extends Mixins(BaseMixin, ExtruderMixin) {
     mdiPrinter3dNozzleOutline = mdiPrinter3dNozzleOutline
 }
 </script>
+
+<style scoped>
+</style>    

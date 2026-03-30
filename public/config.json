@@ -6,5 +6,9 @@
     "port": null,
     "path": null,
     "instancesDB": "moonraker",
-    "instances": []
+    "instances": [],
+    "branding": {
+        "logo": "/img/icons/blocks_icons/logotipo_BLOCKSsvg.svg",
+        "compact_logo": "/img/icons/blocks_icons/logotipo_BLOCKSsvg.svg"
+    }
 }

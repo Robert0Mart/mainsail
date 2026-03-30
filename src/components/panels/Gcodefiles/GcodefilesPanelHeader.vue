@@ -42,13 +42,15 @@
                 class="d-none"
                 multiple
                 @change="uploadFile" />
+                
             <v-btn
                 :title="$t('Files.UploadNewGcode')"
-                class="primary--text px-2 minwidth-0 ml-3"
+                class="primary--text px-2 minwidth-0 ml-3 blocks-custom-btn"
                 :loading="loadings.includes('gcodeUpload')"
                 @click="clickUploadButton">
-                <v-icon>{{ mdiUpload }}</v-icon>
+                <v-icon class="blocks-upload-icon"></v-icon>
             </v-btn>
+            
             <v-btn
                 :title="$t('Files.CreateNewDirectory')"
                 class="px-2 minwidth-0 ml-3"
@@ -56,13 +58,19 @@
                 <v-icon>{{ mdiFolderPlus }}</v-icon>
             </v-btn>
             <gcodefiles-create-directory-dialog v-model="showCreateDirectoryDialog" />
-            <v-btn :title="$t('Files.RefreshCurrentDirectory')" class="px-2 minwidth-0 ml-3" @click="refreshFileList">
-                <v-icon>{{ mdiRefresh }}</v-icon>
+            
+            <v-btn 
+                :title="$t('Files.RefreshCurrentDirectory')" 
+                class="px-2 minwidth-0 ml-3 blocks-custom-btn" 
+                @click="refreshFileList">
+                <v-icon class="blocks-refresh-icon"></v-icon>
             </v-btn>
+            
             <gcodefiles-panel-header-settings />
         </v-col>
     </v-row>
 </template>
+
 <script lang="ts">
 import { Component, Mixins, Ref } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
@@ -91,7 +99,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
 
     get gcodeInputFileAccept() {
         if (this.isIOS) return []
-
         return validGcodeExtensions
     }
 
@@ -99,7 +106,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
         if (this.selectedFiles.length === 1) {
             return this.$t('Files.DeleteSingleFileQuestion', { name: this.selectedFiles[0].filename }).toString()
         }
-
         return this.$t('Files.DeleteSelectedQuestion', { count: this.selectedFiles.length }).toString()
     }
 
@@ -121,7 +127,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
 
                 if (file.isDirectory && file.childrens) {
                     addElementToItems(filePath, file.childrens)
-
                     continue
                 }
 
@@ -186,7 +191,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
                     { path: 'gcodes' + this.currentPath + '/' + item.filename, force: true },
                     { action: 'files/getDeleteDir' }
                 )
-
                 return
             }
 
@@ -205,5 +209,32 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
 <style scoped>
 .max-width-300 {
     max-width: 300px;
+}
+
+/* ESTILOS DOS ÍCONES DA BLOCKS */
+.blocks-custom-btn ::v-deep .blocks-upload-icon {
+    background-image: url('/img/icons/blocks_icons/upload_filesvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block !important;
+}
+
+.blocks-custom-btn ::v-deep .blocks-refresh-icon {
+    background-image: url('/img/icons/blocks_icons/refreshsvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block !important;
+}
+
+/* Esconder os desenhos originais apenas nos botões que têm a nossa classe */
+.blocks-custom-btn ::v-deep .v-icon svg,
+.blocks-custom-btn ::v-deep .v-icon::before {
+    display: none !important;
 }
 </style>

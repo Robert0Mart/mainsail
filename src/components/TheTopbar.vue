@@ -1,20 +1,19 @@
-TheTopbar.vue:
-
-
-
-
 <template>
     <div>
         <v-app-bar app elevate-on-scroll :height="topbarHeight" class="topbar pa-0" clipped-left>
             <v-app-bar-nav-icon tile @click.stop="naviDrawer = !naviDrawer" />
-            <router-link to="/">
-                <inline-svg v-if="sidebarLogo && isSvgLogo" :src="sidebarLogo" :class="logoClasses" />
-                <img v-else-if="sidebarLogo" :src="sidebarLogo" :class="logoClasses" alt="Logo" />
-                <mainsail-logo v-else :color="logoColor" :class="logoClasses" router to="/" :ripple="false" />
-            </router-link>
+            
+            <a href="/" class="d-flex align-center ml-2 mr-2 d-none d-sm-flex" style="cursor: pointer; text-decoration: none;" title="Ir para o Início">
+                <img 
+                    src="/img/icons/blocks_icons/quadrado_wsvg.svg" 
+                    style="height: 42px; width: auto;"
+                />
+            </a>
+
             <v-toolbar-title class="text-no-wrap ml-0 pl-2 mr-2">{{ printerName }}</v-toolbar-title>
             <printer-selector v-if="countPrinters" />
             <v-spacer />
+            
             <input
                 ref="fileUploadAndStart"
                 type="file"
@@ -66,6 +65,7 @@ TheTopbar.vue:
             <the-settings-menu />
             <the-top-corner-menu />
         </v-app-bar>
+
         <v-snackbar v-model="uploadSnackbar.status" :timeout="-1" fixed right bottom>
             <strong>{{ $t('App.TopBar.Uploading') }} {{ uploadSnackbar.filename }}</strong>
             <br />
@@ -93,12 +93,10 @@ import TheTopCornerMenu from '@/components/TheTopCornerMenu.vue'
 import TheSettingsMenu from '@/components/TheSettingsMenu.vue'
 import Panel from '@/components/ui/Panel.vue'
 import PrinterSelector from '@/components/ui/PrinterSelector.vue'
-import MainsailLogo from '@/components/ui/MainsailLogo.vue'
 import TheNotificationMenu from '@/components/notifications/TheNotificationMenu.vue'
 import { topbarHeight } from '@/store/variables'
 import { mdiAlertOctagonOutline, mdiContentSave, mdiFileUpload, mdiClose, mdiCloseThick } from '@mdi/js'
 import EmergencyStopDialog from '@/components/dialogs/EmergencyStopDialog.vue'
-import InlineSvg from 'vue-inline-svg'
 import ThemeMixin from '@/components/mixins/theme'
 
 type uploadSnackbar = {
@@ -113,12 +111,10 @@ type uploadSnackbar = {
 @Component({
     components: {
         EmergencyStopDialog,
-        InlineSvg,
         Panel,
         TheSettingsMenu,
         TheTopCornerMenu,
         PrinterSelector,
-        MainsailLogo,
         TheNotificationMenu,
     },
 })
@@ -130,9 +126,7 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
     mdiCloseThick = mdiCloseThick
 
     topbarHeight = topbarHeight
-
     showEmergencyStopDialog = false
-
     uploadSnackbar: uploadSnackbar = {
         status: false,
         filename: '',
@@ -148,67 +142,30 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
         fileUploadAndStart: HTMLFormElement
     }
 
-    get gcodeInputFileAccept() {
-        if (this.isIOS) return []
-
-        return validGcodeExtensions
-    }
-
-    get naviDrawer() {
-        return this.$store.state.naviDrawer
-    }
-
-    set naviDrawer(newVal) {
-        this.$store.dispatch('setNaviDrawer', newVal)
-    }
-
-    get currentPage() {
-        return this.$route.fullPath
-    }
-
-    get saveConfigPending() {
-        return this.$store.state.printer.configfile?.save_config_pending ?? false
-    }
-
-    get hideSaveConfigForBedMash() {
-        return this.$store.state.gui.uiSettings.hideSaveConfigForBedMash ?? false
-    }
+    get gcodeInputFileAccept() { return this.isIOS ? [] : validGcodeExtensions }
+    get naviDrawer() { return this.$store.state.naviDrawer }
+    set naviDrawer(newVal) { this.$store.dispatch('setNaviDrawer', newVal) }
+    get currentPage() { return this.$route.fullPath }
+    get saveConfigPending() { return this.$store.state.printer.configfile?.save_config_pending ?? false }
+    get hideSaveConfigForBedMash() { return this.$store.state.gui.uiSettings.hideSaveConfigForBedMash ?? false }
 
     get showSaveConfigButton() {
         if (!this.klipperReadyForGui) return false
         if (!this.hideSaveConfigForBedMash) return this.saveConfigPending
-
         let pendingKeys = Object.keys(this.$store.state.printer.configfile?.save_config_pending_items ?? {})
         pendingKeys = pendingKeys.filter((key: string) => !key.startsWith('bed_mesh '))
-
         return pendingKeys.length > 0
     }
 
     get printerName(): string {
-        if (this.$store.state.gui.general.printername.length) return this.$store.state.gui.general.printername
-
-        return this.$store.state.printer.hostname
+        return this.$store.state.gui.general.printername.length 
+            ? this.$store.state.gui.general.printername 
+            : this.$store.state.printer.hostname
     }
 
-    get countPrinters() {
-        return this.$store.getters['farm/countPrinters']
-    }
-
-    get boolHideUploadAndPrintButton() {
-        return this.$store.state.gui.uiSettings.boolHideUploadAndPrintButton ?? false
-    }
-
-    get isSvgLogo() {
-        return this.sidebarLogo.includes('.svg?timestamp=') || this.sidebarLogo.endsWith('.svg')
-    }
-
-    get logoColor(): string {
-        return this.$store.state.gui.uiSettings.logo
-    }
-
-    get logoClasses() {
-        return ['nav-logo', 'ml-2', 'mr-1', 'd-none', 'd-sm-flex']
-    }
+    get countPrinters() { return this.$store.getters['farm/countPrinters'] }
+    get boolHideUploadAndPrintButton() { return this.$store.state.gui.uiSettings.boolHideUploadAndPrintButton ?? false }
+    get logoColor(): string { return this.$store.state.gui.uiSettings.logo }
 
     get boolShowUploadAndPrint() {
         return (
@@ -228,23 +185,19 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
             case 'alwaysClosed':
                 this.naviDrawer = false
                 break
-
             case 'lastState':
                 this.naviDrawer = (localStorage.getItem('naviDrawer') ?? 'true') === 'true'
                 break
-
             default:
                 this.naviDrawer = this.$vuetify.breakpoint.lgAndUp
         }
     }
 
     btnEmergencyStop() {
-        const confirmOnEmergencyStop = this.$store.state.gui.uiSettings.confirmOnEmergencyStop
-        if (confirmOnEmergencyStop) {
+        if (this.$store.state.gui.uiSettings.confirmOnEmergencyStop) {
             this.showEmergencyStopDialog = true
             return
         }
-
         this.emergencyStop()
     }
 
@@ -258,9 +211,7 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
         this.$socket.emit('printer.gcode.script', { script: 'SAVE_CONFIG' }, { loading: 'topbarSaveConfig' })
     }
 
-    btnUploadAndStart() {
-        this.$refs.fileUploadAndStart.click()
-    }
+    btnUploadAndStart() { this.$refs.fileUploadAndStart.click() }
 
     async uploadAndStart() {
         if (this.$refs.fileUploadAndStart?.files.length) {
@@ -270,13 +221,11 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
                 const result = await this.doUploadAndStart(file)
                 successFiles.push(result)
             }
-
             await this.$store.dispatch('socket/removeLoading', { name: 'btnUploadAndStart' })
             for (const file of successFiles) {
                 const text = this.$t('App.TopBar.UploadOfFileSuccessful', { file: file }).toString()
                 this.$toast.success(text)
             }
-
             this.$refs.fileUploadAndStart.value = ''
             if (this.currentPage !== '/') await this.$router.push('/')
         }
@@ -285,37 +234,31 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
     doUploadAndStart(file: File) {
         const formData = new FormData()
         const filename = file.name
-
         this.uploadSnackbar.filename = filename
         this.uploadSnackbar.status = true
         this.uploadSnackbar.percent = 0
         this.uploadSnackbar.speed = 0
-
         formData.append('file', file, filename)
         formData.append('print', 'true')
-
         return new Promise((resolve) => {
             this.uploadSnackbar.cancelTokenSource = axios.CancelToken.source()
-            axios
-                .post(this.apiUrl + '/server/files/upload', formData, {
-                    cancelToken: this.uploadSnackbar.cancelTokenSource.token,
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                    onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-                        this.uploadSnackbar.percent = (progressEvent.progress ?? 0) * 100
-                        this.uploadSnackbar.speed = progressEvent.rate ?? 0
-                        this.uploadSnackbar.total = progressEvent.total ?? 0
-                    },
-                })
-                .then((result) => {
-                    this.uploadSnackbar.status = false
-                    resolve(result.data.result)
-                })
-                .catch(() => {
-                    this.uploadSnackbar.status = false
-                    this.$store.dispatch('socket/removeLoading', { name: 'btnUploadAndStart' })
-                    const text = this.$t('App.TopBar.CannotUploadTheFile').toString()
-                    this.$toast.error(text)
-                })
+            axios.post(this.apiUrl + '/server/files/upload', formData, {
+                cancelToken: this.uploadSnackbar.cancelTokenSource.token,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                    this.uploadSnackbar.percent = (progressEvent.progress ?? 0) * 100
+                    this.uploadSnackbar.speed = progressEvent.rate ?? 0
+                    this.uploadSnackbar.total = progressEvent.total ?? 0
+                },
+            }).then((result) => {
+                this.uploadSnackbar.status = false
+                resolve(result.data.result)
+            }).catch(() => {
+                this.uploadSnackbar.status = false
+                this.$store.dispatch('socket/removeLoading', { name: 'btnUploadAndStart' })
+                const text = this.$t('App.TopBar.CannotUploadTheFile').toString()
+                this.$toast.error(text)
+            })
         })
     }
 
@@ -331,25 +274,9 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
+.button-min-width-auto { min-width: auto !important; }
+.topbar .v-btn { height: 100% !important; max-height: none; }
 
-.button-min-width-auto {
-    min-width: auto !important;
-}
-
-.topbar .v-btn {
-    height: 100% !important;
-    max-height: none;
-}
-::v-deep .topbar .nav-logo {
-    width: auto;
-    height: 32px;
-}
-.topbar .v-btn.v-btn--icon {
-    width: var(--topbar-icon-btn-width) !important;
-}
-@media (min-width: 768px) {
-    header.topbar {
-        z-index: 8 !important;
-    }
-}
+.topbar .v-btn.v-btn--icon { width: var(--topbar-icon-btn-width) !important; }
+@media (min-width: 768px) { header.topbar { z-index: 8 !important; } }
 </style>

@@ -1,11 +1,14 @@
 <template>
     <panel
         v-if="klipperReadyForGui"
-        :icon="mdiGamepad"
         :title="$t('Panels.ToolheadControlPanel.Headline')"
         :collapsible="true"
         card-class="toolhead-control-panel">
-        <!-- PANEL-HEADER 3-DOT-MENU -->
+        
+        <template #icon>
+            <img src="/img/icons/blocks_icons/motionsvg.svg" style="width: 24px; height: 24px; margin-right: 8px;" />
+        </template>
+
         <template #buttons>
             <v-menu v-if="showButtons" left offset-y :close-on-content-click="false" class="pa-0">
                 <template #activator="{ on, attrs }">
@@ -16,7 +19,7 @@
                 <v-list dense>
                     <v-list-item v-if="controlStyle !== 'bars' && actionButton !== 'm84'">
                         <v-btn small style="width: 100%" @click="doSend('M84')">
-                            <v-icon left small>{{ mdiEngineOff }}</v-icon>
+                            <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" style="width: 18px; height: 18px; margin-right: 8px;" />
                             {{ $t('Settings.ControlTab.MotorsOff', { isDefault: '' }) }}
                         </v-btn>
                     </v-list-item>
@@ -26,7 +29,6 @@
                     <v-list-item v-if="controlStyle !== 'bars' && existsQGL && actionButton !== 'qgl'">
                         <v-btn small style="width: 100%" @click="doQGL">Quad Gantry Level</v-btn>
                     </v-list-item>
-                    <!-- SPECIAL BUTTONS ALWAYS INSIDE 3-DOT MENU -->
                     <v-list-item v-if="existsBedTilt">
                         <v-btn small style="width: 100%" @click="doSend('BED_TILT_CALIBRATE')">
                             BED TILT CALIBRATE
@@ -84,23 +86,23 @@
             </v-menu>
             <toolhead-panel-settings />
         </template>
-        <!-- MOVE TO CONTROL -->
+        
         <move-to-control />
-        <!-- AXIS CONTROL -->
+        
         <v-container v-if="axisControlVisible">
             <component :is="`${controlStyle}-control`" />
         </v-container>
-        <!-- Z-OFFSET CONTROL -->
+        
         <v-divider v-if="showZOffset" />
         <v-container v-if="showZOffset">
             <zoffset-control />
         </v-container>
-        <!-- SPEED FACTOR -->
+        
         <v-divider v-if="showSpeedFactor" />
         <v-container v-if="showSpeedFactor">
             <tool-slider
                 :label="$t('Panels.ToolheadControlPanel.SpeedFactor')"
-                :icon="mdiSpeedometer"
+                :icon-image="'/img/icons/blocks_icons/speedsvg.svg'" 
                 :target="speedFactor"
                 :min="1"
                 :max="200"
@@ -164,13 +166,11 @@ export default class ToolheadControlPanel extends Mixins(BaseMixin, ControlMixin
 
     get axisControlVisible() {
         if (!this.showControl) return false
-
         return !(this.isPrinting && (this.$store.state.gui.control.hideDuringPrint ?? false))
     }
 
     get showButtons() {
         if (this.controlStyle !== 'bars' && (this.existsZtilt || this.existsQGL)) return true
-
         return this.existsBedScrews || this.existsBedTilt || this.existsDeltaCalibrate || this.existsScrewsTilt
     }
 
