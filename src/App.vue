@@ -66,7 +66,9 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     }
 
     mounted() {
+        // Define a altura real do ecrã para evitar problemas em mobile
         document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
+        // Remove espaço da sidebar caso exista
         this.$vuetify.application.left = 0
     }
 }
@@ -76,10 +78,11 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 @import './assets/styles/fonts.css';
 @import './assets/styles/page.css';
 
+/* Remove ícones desnecessários da topbar */
 .v-app-bar__nav-icon { display: none !important; }
 .main-no-sidebar { padding-left: 0px !important; margin-left: 0px !important; }
 
-/* Container - Scroll restored */
+/* Contentor principal com Scroll Ativo */
 .full-width-container {
     max-width: 100vw !important;
     width: 100vw !important;
@@ -88,24 +91,22 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     overflow-y: auto !important; 
 }
 
-/* Page wrapper */
+/* Wrapper das páginas com margens ajustadas */
 .page-wrapper {
     max-width: 1600px;
     margin: 0 auto;
     padding: 10px 20px !important;
-    padding-bottom: 160px !important; /* Bottom safety space */
+    padding-bottom: 160px !important; 
     width: 100%;
 }
 
-/* --- COMPACT VIEWER WITH TITLE --- */
-/* Restore Title size but keep it tight */
+/* --- AJUSTE DO G-CODE VIEWER (COMPACTO) --- */
 .page-gcodeviewer .v-card__title {
     padding-top: 4px !important;
     padding-bottom: 4px !important;
     font-size: 0.9rem !important;
 }
 
-/* Force 3D canvas height to 32% of viewport */
 .page-gcodeviewer .v-card__text,
 .page-gcodeviewer .gcode-viewer-container,
 .page-gcodeviewer canvas {
@@ -114,19 +115,14 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
     min-height: 180px !important;
 }
 
-/* Remove gaps */
-.page-gcodeviewer .v-card {
-    margin-bottom: 4px !important;
-}
-
-/* Lightning transition */
+/* Transição de página instantânea */
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.01s linear !important;
 }
 .fade-enter, .fade-leave-to { opacity: 0 !important; }
 
-/* Background */
+/* CONFIGURAÇÃO DO FUNDO (BACKGROUND) */
 html, body, #app, .v-application, .v-application--wrap, .theme--dark.v-application {
     background-color: transparent !important;
     background-image: url('/img/icons/blocks_icons/Background.jpeg') !important;
@@ -134,5 +130,28 @@ html, body, #app, .v-application, .v-application--wrap, .theme--dark.v-applicati
     background-position: center center !important;
     background-attachment: fixed !important;
 }
-.v-main, .theme--dark.v-main, .page-wrapper { background: transparent !important; }
+
+/* Transparência dos componentes */
+.v-main, .theme--dark.v-main, .full-width-container, .page-wrapper { 
+    background: transparent !important; 
+}
+
+/* Forçar cor de texto branca em toda a app */
+.v-application, .text--primary, .v-card__text, .v-list-item__title, .v-label {
+    color: #ffffff !important;
+}
+
+/* --- REGRAS PARA ÍCONES --- */
+
+/* Força ícones normais do Blocks a ficarem brancos */
+.blocks-icon {
+    object-fit: contain !important;
+    filter: brightness(0) invert(1) !important; 
+}
+
+/* FIX NUCLEAR: Garante que o ícone de erro mantém a cor LARANJA original */
+.orange-fix {
+    filter: none !important; 
+    -webkit-filter: none !important;
+}
 </style>

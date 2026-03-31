@@ -67,11 +67,11 @@
                 <template #activator="{ on, attrs }">
                     <span v-bind="attrs" v-on="on">
                         <img 
-    v-if="['error', 'canceled', 'interrupted', 'klippy_disconnect', 'klippy_shutdown', 'server_exit'].includes(item.status)"
-    src="src\assets\styles\icons\troubleshoot_orangesvg.svg" 
-    style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; filter: none !important; position: relative; left: 4px;" 
-    class="mr-1"
-/>
+                            v-if="['error', 'canceled', 'interrupted', 'klippy_disconnect', 'klippy_shutdown', 'server_exit'].includes(item.status)"
+                            :src="iconOrange" 
+                            style="width: 18px; height: 18px; object-fit: contain; vertical-align: middle; position: relative; left: 4px;" 
+                            class="mr-1 orange-fix"
+                        />
                         <v-icon v-else small :color="statusColor" :disabled="!item.exists">
                             {{ statusIcon }}
                         </v-icon>
@@ -138,25 +138,18 @@ import StartPrintDialog from '@/components/dialogs/StartPrintDialog.vue'
 import { FileStateFileThumbnail, FileStateGcodefile } from '@/store/files/types'
 import { ServerHistoryStateJob } from '@/store/server/history/types'
 import { thumbnailBigMin, thumbnailSmallMax, thumbnailSmallMin } from '@/store/variables'
+
+// IMPORTANTE: Nome corrigido para o ficheiro LARANJA que encontraste
+import iconOrange from '@/assets/styles/icons/troubleshoot_orangesvg.svg'
+
 import {
-    mdiCloseThick,
-    mdiDelete,
-    mdiFile,
-    mdiFileCancel,
-    mdiNoteEditOutline,
-    mdiNotePlusOutline,
-    mdiNoteTextOutline,
-    mdiPlaylistPlus,
-    mdiPrinter,
-    mdiTextBoxSearch,
+    mdiCloseThick, mdiDelete, mdiFile, mdiFileCancel, mdiNoteEditOutline,
+    mdiNotePlusOutline, mdiNoteTextOutline, mdiPlaylistPlus, mdiPrinter, mdiTextBoxSearch,
 } from '@mdi/js'
 import { CLOSE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
 import {
-    convertPrintStatusIcon,
-    convertPrintStatusIconColor,
-    escapePath,
-    formatFilesize,
-    formatPrintTime,
+    convertPrintStatusIcon, convertPrintStatusIconColor, escapePath,
+    formatFilesize, formatPrintTime,
 } from '@/plugins/helpers'
 import { HistoryListPanelCol } from '@/store/server/history/types'
 import HistoryListPanelNoteDialog from '@/components/dialogs/HistoryListPanelNoteDialog.vue'
@@ -172,6 +165,8 @@ import AddBatchToQueueDialog from '@/components/dialogs/AddBatchToQueueDialog.vu
     },
 })
 export default class HistoryListPanel extends Mixins(BaseMixin) {
+    iconOrange = iconOrange // Disponibiliza o ícone para o template
+
     mdiCloseThick = mdiCloseThick
     mdiDelete = mdiDelete
     mdiFile = mdiFile
@@ -207,13 +202,7 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
 
     get smallThumbnail() {
         if ((this.item.metadata?.thumbnails?.length ?? 0) < 1) return false
-        const thumbnail = this.item.metadata?.thumbnails?.find(
-            (thumb) =>
-                thumb.width >= thumbnailSmallMin &&
-                thumb.width <= thumbnailSmallMax &&
-                thumb.height >= thumbnailSmallMin &&
-                thumb.height <= thumbnailSmallMax
-        )
+        const thumbnail = this.item.metadata?.thumbnails?.find((thumb) => thumb.width >= thumbnailSmallMin && thumb.width <= thumbnailSmallMax)
         return thumbnail ? this.createThumbnailUrl(thumbnail) : false
     }
 
@@ -223,13 +212,8 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         return thumbnail ? this.createThumbnailUrl(thumbnail) : false
     }
 
-    get statusIcon() {
-        return convertPrintStatusIcon(this.item.status)
-    }
-
-    get statusColor() {
-        return convertPrintStatusIconColor(this.item.status)
-    }
+    get statusIcon() { return convertPrintStatusIcon(this.item.status) }
+    get statusColor() { return convertPrintStatusIconColor(this.item.status) }
 
     get statusName() {
         if (!this.$t(`History.StatusValues.${this.item.status}`, 'en')) return this.item.status.replace(/_/g, ' ')
@@ -242,13 +226,9 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         return output
     }
 
-    get isJobQueueAvailable() {
-        return this.moonrakerComponents.includes('job_queue')
-    }
+    get isJobQueueAvailable() { return this.moonrakerComponents.includes('job_queue') }
 
-    select(newVal: boolean) {
-        this.$emit('select', newVal)
-    }
+    select(newVal: boolean) { this.$emit('select', newVal) }
 
     showContextMenu(e: any) {
         e?.preventDefault()
@@ -258,19 +238,9 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         this.contextMenuBool = true
     }
 
-    closeContextMenu() {
-        this.contextMenuBool = false
-    }
-
-    createNote() {
-        this.noteDialogType = 'create'
-        this.noteDialogBool = true
-    }
-
-    editNote() {
-        this.noteDialogType = 'edit'
-        this.noteDialogBool = true
-    }
+    closeContextMenu() { this.contextMenuBool = false }
+    createNote() { this.noteDialogType = 'create'; this.noteDialogBool = true; }
+    editNote() { this.noteDialogType = 'edit'; this.noteDialogBool = true; }
 
     addToQueue() {
         this.$store.dispatch('server/jobQueue/addToQueue', [this.item.filename])
@@ -278,11 +248,7 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
     }
 
     deleteJob() {
-        this.$socket.emit(
-            'server.history.delete_job',
-            { uid: this.item.job_id },
-            { action: 'server/history/getDeletedJobs' }
-        )
+        this.$socket.emit('server.history.delete_job', { uid: this.item.job_id }, { action: 'server/history/getDeletedJobs' })
     }
 
     outputValue(col: HistoryListPanelCol, item: ServerHistoryStateJob) {
@@ -313,17 +279,10 @@ export default class HistoryListPanel extends Mixins(BaseMixin) {
         if (this.item.filename.lastIndexOf('/') !== -1) {
             relative_url = this.item.filename.substring(0, this.item.filename.lastIndexOf('/') + 1)
         }
-        return `${this.apiUrl}/server/files/gcodes/${escapePath(relative_url + thumbnail.relative_path)}?timestamp=${
-            this.item.metadata.modified
-        }`
+        return `${this.apiUrl}/server/files/gcodes/${escapePath(relative_url + thumbnail.relative_path)}?timestamp=${this.item.metadata.modified}`
     }
 
-    mounted() {
-        EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu)
-    }
-
-    beforeDestroy() {
-        EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu)
-    }
+    mounted() { EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu) }
+    beforeDestroy() { EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu) }
 }
 </script>
