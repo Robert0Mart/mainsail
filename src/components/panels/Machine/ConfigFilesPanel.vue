@@ -1,189 +1,189 @@
 <template>
     <div>
         <panel
-    :title="$t('Machine.ConfigFilesPanel.ConfigFiles')"
-    card-class="machine-configfiles-panel"
-    :icon="mdiInfoSvg" 
-    :collapsible="true">
-    <v-card-text>
-        <v-row>
-            <v-col class="col-12 col-lg pr-lg-0">
-                <v-select
-                    v-model="root"
-                    class="machine-configfiles-panel__root-select"
-                    :items="registeredDirectoriesSelectItems"
-                    :label="$t('Machine.ConfigFilesPanel.Root')"
-                    outlined
-                    hide-details
-                    dense
-                    attach=".machine-configfiles-panel__root-select"
-                    @change="changeRoot"></v-select>
-            </v-col>
-            <v-col class="col col-lg-auto pl-lg-0 text-right">
-                <input ref="fileUpload" type="file" style="display: none" multiple @change="uploadFile" />
-                <v-btn
-                    v-for="button in filteredToolbarButtons"
-                    :key="button.loadingName"
-                    class="px-2 minwidth-0 ml-3"
-                    :color="button.color"
-                    :loading="button.loadingName !== null && loadings.includes(button.loadingName)"
-                    @click="button.click">
-                    <v-tooltip top>
-                        <template #activator="{ on, attrs }">
-                            <v-icon v-bind="attrs" v-on="on">{{ button.icon }}</v-icon>
-                        </template>
-                        <span>{{ button.text }}</span>
-                    </v-tooltip>
-                </v-btn>
-                <v-menu offset-y left :title="$t('Machine.ConfigFilesPanel.SetupCurrentList')">
-                    <template #activator="{ on, attrs }">
-                        <v-btn class="px-2 minwidth-0 ml-3" v-bind="attrs" v-on="on">
-                            <v-icon class="machine-configfiles-panel__settings-icon">{{ mdiCog }}</v-icon>
+            :title="$t('Machine.ConfigFilesPanel.ConfigFiles')"
+            card-class="machine-configfiles-panel"
+            :icon="mdiInformation"
+            :collapsible="true">
+            <v-card-text>
+                <v-row>
+                    <v-col class="col-12 col-lg pr-lg-0">
+                        <v-select
+                            v-model="root"
+                            class="machine-configfiles-panel__root-select"
+                            :items="registeredDirectoriesSelectItems"
+                            :label="$t('Machine.ConfigFilesPanel.Root')"
+                            outlined
+                            hide-details
+                            dense
+                            attach=".machine-configfiles-panel__root-select"
+                            @change="changeRoot"></v-select>
+                    </v-col>
+                    <v-col class="col col-lg-auto pl-lg-0 text-right">
+                        <input ref="fileUpload" type="file" style="display: none" multiple @change="uploadFile" />
+                        <v-btn
+                            v-for="button in filteredToolbarButtons"
+                            :key="button.loadingName"
+                            class="px-2 minwidth-0 ml-3"
+                            :color="button.color"
+                            :loading="button.loadingName !== null && loadings.includes(button.loadingName)"
+                            @click="button.click">
+                            <v-tooltip top>
+                                <template #activator="{ on, attrs }">
+                                    <v-icon v-bind="attrs" v-on="on">{{ button.icon }}</v-icon>
+                                </template>
+                                <span>{{ button.text }}</span>
+                            </v-tooltip>
                         </v-btn>
-                    </template>
-                    <v-list>
-                        <v-list-item class="minHeight36">
-                            <v-checkbox
-                                v-model="showHiddenFiles"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Machine.ConfigFilesPanel.HiddenFiles')"></v-checkbox>
-                        </v-list-item>
-                        <v-list-item class="minHeight36">
-                            <v-checkbox
-                                v-model="hideBackupFiles"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Machine.ConfigFilesPanel.HideBackupFiles')"></v-checkbox>
-                        </v-list-item>
-                    </v-list>
-                </v-menu>
-            </v-col>
-        </v-row>
-    </v-card-text>
-    <v-card-text>
-        <v-row>
-            <v-col class="col-12 py-2 d-flex align-center">
-                <span>
-                    <b class="mr-1">{{ $t('Machine.ConfigFilesPanel.CurrentPath') }}:</b>
-                    <path-navigation
-                        :path="currentPath"
-                        :base-directory-label="`/${root}`"
-                        :on-segment-click="clickPathNavGoToDirectory" />
-                </span>
-                <v-spacer></v-spacer>
-                <template v-if="disk_usage !== null && !showMissingConfigRootWarning">
-                    <v-tooltip top>
-                        <template #activator="{ on, attrs }">
-                            <span v-bind="attrs" v-on="on">
-                                <b>{{ $t('Machine.ConfigFilesPanel.FreeDisk') }}:</b>
-                                {{ formatFilesize(disk_usage.free) }}
-                            </span>
-                        </template>
+                        <v-menu offset-y left :title="$t('Machine.ConfigFilesPanel.SetupCurrentList')">
+                            <template #activator="{ on, attrs }">
+                                <v-btn class="px-2 minwidth-0 ml-3" v-bind="attrs" v-on="on">
+                                    <v-icon class="machine-configfiles-panel__settings-icon">{{ mdiCog }}</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-item class="minHeight36">
+                                    <v-checkbox
+                                        v-model="showHiddenFiles"
+                                        class="mt-0"
+                                        hide-details
+                                        :label="$t('Machine.ConfigFilesPanel.HiddenFiles')"></v-checkbox>
+                                </v-list-item>
+                                <v-list-item class="minHeight36">
+                                    <v-checkbox
+                                        v-model="hideBackupFiles"
+                                        class="mt-0"
+                                        hide-details
+                                        :label="$t('Machine.ConfigFilesPanel.HideBackupFiles')"></v-checkbox>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-text>
+                <v-row>
+                    <v-col class="col-12 py-2 d-flex align-center">
                         <span>
-                            {{ $t('Machine.ConfigFilesPanel.Used') }}: {{ formatFilesize(disk_usage.used) }}
-                            <br />
-                            {{ $t('Machine.ConfigFilesPanel.Free') }}: {{ formatFilesize(disk_usage.free) }}
-                            <br />
-                            {{ $t('Machine.ConfigFilesPanel.Total') }}:
-                            {{ formatFilesize(disk_usage.total) }}
+                            <b class="mr-1">{{ $t('Machine.ConfigFilesPanel.CurrentPath') }}:</b>
+                            <path-navigation
+                                :path="currentPath"
+                                :base-directory-label="`/${root}`"
+                                :on-segment-click="clickPathNavGoToDirectory" />
                         </span>
-                    </v-tooltip>
+                        <v-spacer></v-spacer>
+                        <template v-if="disk_usage !== null && !showMissingConfigRootWarning">
+                            <v-tooltip top>
+                                <template #activator="{ on, attrs }">
+                                    <span v-bind="attrs" v-on="on">
+                                        <b>{{ $t('Machine.ConfigFilesPanel.FreeDisk') }}:</b>
+                                        {{ formatFilesize(disk_usage.free) }}
+                                    </span>
+                                </template>
+                                <span>
+                                    {{ $t('Machine.ConfigFilesPanel.Used') }}: {{ formatFilesize(disk_usage.used) }}
+                                    <br />
+                                    {{ $t('Machine.ConfigFilesPanel.Free') }}: {{ formatFilesize(disk_usage.free) }}
+                                    <br />
+                                    {{ $t('Machine.ConfigFilesPanel.Total') }}:
+                                    {{ formatFilesize(disk_usage.total) }}
+                                </span>
+                            </v-tooltip>
+                        </template>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-data-table
+                v-if="!showMissingConfigRootWarning"
+                v-model="selectedFiles"
+                :items="files"
+                class="files-table"
+                :headers="headers"
+                :page.sync="currentPage"
+                :custom-sort="sortFiles"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :items-per-page.sync="countPerPage"
+                :footer-props="{
+                    itemsPerPageText: $t('Machine.ConfigFilesPanel.Files'),
+                    itemsPerPageAllText: $t('Machine.ConfigFilesPanel.AllFiles'),
+                    itemsPerPageOptions: [10, 25, 50, 100, -1],
+                }"
+                mobile-breakpoint="0"
+                item-key="filename"
+                show-select>
+                <template #no-data>
+                    <div class="text-center">{{ $t('Machine.ConfigFilesPanel.Empty') }}</div>
                 </template>
-            </v-col>
-        </v-row>
-    </v-card-text>
-    <v-divider></v-divider>
-    <v-data-table
-        v-if="!showMissingConfigRootWarning"
-        v-model="selectedFiles"
-        :items="files"
-        class="files-table"
-        :headers="headers"
-        :page.sync="currentPage"
-        :custom-sort="sortFiles"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :items-per-page.sync="countPerPage"
-        :footer-props="{
-            itemsPerPageText: $t('Machine.ConfigFilesPanel.Files'),
-            itemsPerPageAllText: $t('Machine.ConfigFilesPanel.AllFiles'),
-            itemsPerPageOptions: [10, 25, 50, 100, -1],
-        }"
-        mobile-breakpoint="0"
-        item-key="filename"
-        show-select>
-        <template #no-data>
-            <div class="text-center">{{ $t('Machine.ConfigFilesPanel.Empty') }}</div>
-        </template>
 
-        <template v-if="currentPath !== ''" slot="body.prepend">
-            <tr
-                class="file-list-cursor"
-                @click="clickRowGoBack"
-                @dragover="dragOverFilelist($event, { isDirectory: true, filename: '..' })"
-                @dragleave="dragLeaveFilelist"
-                @drop.prevent.stop="dragDropFilelist($event, { isDirectory: true, filename: '..' })">
-                <td class="file-list__select-td pr-0">
-                    <v-simple-checkbox v-ripple disabled class="pa-0 mr-0"></v-simple-checkbox>
-                </td>
-                <td class="px-0 text-center" style="width: 32px">
-                    <v-icon>{{ mdiFolderUpload }}</v-icon>
-                </td>
-                <td class=" " colspan="4">..</td>
-            </tr>
-        </template>
+                <template v-if="currentPath !== ''" slot="body.prepend">
+                    <tr
+                        class="file-list-cursor"
+                        @click="clickRowGoBack"
+                        @dragover="dragOverFilelist($event, { isDirectory: true, filename: '..' })"
+                        @dragleave="dragLeaveFilelist"
+                        @drop.prevent.stop="dragDropFilelist($event, { isDirectory: true, filename: '..' })">
+                        <td class="file-list__select-td pr-0">
+                            <v-simple-checkbox v-ripple disabled class="pa-0 mr-0"></v-simple-checkbox>
+                        </td>
+                        <td class="px-0 text-center" style="width: 32px">
+                            <v-icon>{{ mdiFolderUpload }}</v-icon>
+                        </td>
+                        <td class=" " colspan="4">..</td>
+                    </tr>
+                </template>
 
-        <template #item="{ index, item, isSelected, select }">
-            <tr
-                :key="`${index} ${item.filename}`"
-                v-longpress:600="(e) => showContextMenu(e, item)"
-                class="file-list-cursor user-select-none"
-                :data-name="item.filename"
-                draggable="true"
-                @contextmenu="showContextMenu($event, item)"
-                @click="clickRow(item)"
-                @drag="dragFile($event, item)"
-                @dragend="dragendFile($event)"
-                @dragover="dragOverFilelist($event, item)"
-                @dragleave="dragLeaveFilelist"
-                @drop.prevent.stop="dragDropFilelist($event, item)">
-                <td class="file-list__select-td pr-0">
-                    <v-simple-checkbox
-                        v-ripple
-                        :value="isSelected"
-                        class="pa-0 mr-0"
-                        @click.stop="select(!isSelected)"></v-simple-checkbox>
-                </td>
-                <td class="px-0 text-center" style="width: 32px">
-                    <v-icon v-if="item.isDirectory">{{ mdiFolder }}</v-icon>
-                    <v-icon v-if="!item.isDirectory">{{ mdiFile }}</v-icon>
-                </td>
-                <td class=" ">{{ item.filename }}</td>
-                <td class="text-no-wrap text-right">
-                    {{ item.isDirectory ? '--' : formatFilesize(item.size) }}
-                </td>
-                <td class="text-right">{{ formatDateTime(item.modified) }}</td>
-            </tr>
-        </template>
-    </v-data-table>
-    <v-card-text v-else>
-        <v-row>
-            <v-col class="col-12 col-lg pr-lg-0">
-                <v-alert
-                    dense
-                    text
-                    type="warning"
-                    elevation="2"
-                    class="mx-auto mt-6"
-                    max-width="500"
-                    :icon="mdiLockOutline">
-                    {{ $t('Machine.ConfigFilesPanel.ConfigRootDirectoryDoesntExists') }}
-                </v-alert>
-            </v-col>
-        </v-row>
-    </v-card-text>
-</panel>
+                <template #item="{ index, item, isSelected, select }">
+                    <tr
+                        :key="`${index} ${item.filename}`"
+                        v-longpress:600="(e) => showContextMenu(e, item)"
+                        class="file-list-cursor user-select-none"
+                        :data-name="item.filename"
+                        draggable="true"
+                        @contextmenu="showContextMenu($event, item)"
+                        @click="clickRow(item)"
+                        @drag="dragFile($event, item)"
+                        @dragend="dragendFile($event)"
+                        @dragover="dragOverFilelist($event, item)"
+                        @dragleave="dragLeaveFilelist"
+                        @drop.prevent.stop="dragDropFilelist($event, item)">
+                        <td class="file-list__select-td pr-0">
+                            <v-simple-checkbox
+                                v-ripple
+                                :value="isSelected"
+                                class="pa-0 mr-0"
+                                @click.stop="select(!isSelected)"></v-simple-checkbox>
+                        </td>
+                        <td class="px-0 text-center" style="width: 32px">
+                            <v-icon v-if="item.isDirectory">{{ mdiFolder }}</v-icon>
+                            <v-icon v-if="!item.isDirectory">{{ mdiFile }}</v-icon>
+                        </td>
+                        <td class=" ">{{ item.filename }}</td>
+                        <td class="text-no-wrap text-right">
+                            {{ item.isDirectory ? '--' : formatFilesize(item.size) }}
+                        </td>
+                        <td class="text-right">{{ formatDateTime(item.modified) }}</td>
+                    </tr>
+                </template>
+            </v-data-table>
+            <v-card-text v-else>
+                <v-row>
+                    <v-col class="col-12 col-lg pr-lg-0">
+                        <v-alert
+                            dense
+                            text
+                            type="warning"
+                            elevation="2"
+                            class="mx-auto mt-6"
+                            max-width="500"
+                            :icon="mdiLockOutline">
+                            {{ $t('Machine.ConfigFilesPanel.ConfigRootDirectoryDoesntExists') }}
+                        </v-alert>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </panel>
         <v-menu v-model="contextMenu.shown" :position-x="contextMenu.x" :position-y="contextMenu.y" absolute offset-y>
             <v-list>
                 <v-list-item v-if="!contextMenu.item.isDirectory" @click="clickRow(contextMenu.item, true)">
@@ -463,8 +463,6 @@
 </template>
 
 <script lang="ts">
-import mdiInfoSvg from '@/assets/styles/icons/infosvg.svg';
-
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import ThemeMixin from '@/components/mixins/theme'
@@ -556,7 +554,6 @@ export default class ConfigFilesPanel extends Mixins(BaseMixin, ThemeMixin) {
     mdiCloseThick = mdiCloseThick
     mdiLockOutline = mdiLockOutline
     mdiContentCopy = mdiContentCopy
-    public mdiInfoSvg = mdiInfoSvg; 
 
     sortFiles = sortFiles
     formatFilesize = formatFilesize
@@ -670,16 +667,6 @@ export default class ConfigFilesPanel extends Mixins(BaseMixin, ThemeMixin) {
     existsFilename(name: string) {
         return this.files.findIndex((file) => file.filename === name) >= 0
     }
-
-get mdiInfoSvg() {
-    return mdiInfoSvg;
-}
-
-get filteredToolbarButtons() {
-    return this.toolbarButtons.filter((button) => {
-        return (this.directoryPermissions.includes('w') && button.onlyWriteable) || !button.onlyWriteable
-    })
-}
 
     get blockFileUpload() {
         return this.$store.state.gui.view.blockFileUpload ?? false
