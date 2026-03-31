@@ -6,7 +6,7 @@
                 <br />
                 <template v-if="package_count">
                     <a class="info--text cursor--pointer" @click="boolShowPackageList = true">
-                        <v-icon small color="info" class="mr-1">{{ mdiInformation }}</v-icon>
+                        <img :src="infoIcon" class="custom-icon-14px icon-info-blue mr-1">
                         {{ $t('Machine.UpdatePanel.CountPackagesCanBeUpgraded', { count: package_count }) }}
                     </a>
                 </template>
@@ -31,14 +31,20 @@
 </template>
 
 <script lang="ts">
+// Import do teu ícone SVG
+import InfoIconFile from "@/assets/styles/icons/infosvg.svg?url";
+
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import { mdiCheck, mdiInformation, mdiProgressUpload } from '@mdi/js'
+
 @Component
 export default class UpdatePanelEntrySystem extends Mixins(BaseMixin) {
     mdiInformation = mdiInformation
+    
+    // Referência para o teu ícone no template
+    infoIcon = InfoIconFile;
 
-    // to display the dialog for packages
     boolShowPackageList = false
 
     get package_count() {
@@ -50,29 +56,22 @@ export default class UpdatePanelEntrySystem extends Mixins(BaseMixin) {
     }
 
     get btnDisabled() {
-        // disable button if the printer is printing
         if (['printing', 'paused'].includes(this.printer_state)) return true
-
-        // disable button if no package is available to update
         return this.package_count === 0
     }
 
     get btnIcon() {
         if (this.package_count) return mdiProgressUpload
-
         return mdiCheck
     }
 
     get btnColor() {
-        // set button to primary, if updates are available
         if (this.package_count) return 'primary'
-
         return 'green'
     }
 
     get btnText() {
         if (this.package_count) return this.$t('Machine.UpdatePanel.Upgrade')
-
         return this.$t('Machine.UpdatePanel.UpToDate')
     }
 
@@ -86,4 +85,20 @@ export default class UpdatePanelEntrySystem extends Mixins(BaseMixin) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Força o tamanho de 14px */
+.custom-icon-14px {
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    max-width: 14px !important;
+    object-fit: contain !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Aplica a cor azul info (#2196F3) */
+.icon-info-blue {
+    filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(185deg) brightness(101%) contrast(101%) !important;
+}
+</style>

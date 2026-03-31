@@ -1,17 +1,18 @@
 <template>
     <div>
-        <!-- HOME ALL / ACTION BUTTON -->
         <v-row no-gutters>
             <v-col class="col-12 pb-0 text-center">
+                
                 <v-btn
                     small
                     :disabled="['printing'].includes(printer_state)"
                     :loading="loadings.includes('homeAll')"
                     :color="homedAxes.includes('xyz') ? 'primary' : 'warning'"
                     @click="doHome">
-                    <v-icon class="mr-1">{{ mdiHome }}</v-icon>
+                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px; margin-right: 6px;" />
                     {{ $t('Panels.ToolheadControlPanel.ALL') }}
                 </v-btn>
+                
                 <v-btn
                     v-if="enableXYHoming"
                     :disabled="['printing'].includes(printer_state)"
@@ -20,9 +21,10 @@
                     small
                     class="ml-2"
                     @click="doHomeXY">
-                    <v-icon class="mr-1">{{ mdiHome }}</v-icon>
+                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px; margin-right: 6px;" />
                     XY
                 </v-btn>
+                
                 <v-btn
                     v-if="existsQGL"
                     :disabled="['printing'].includes(printer_state)"
@@ -33,6 +35,7 @@
                     @click="doQGL">
                     {{ $t('Panels.ToolheadControlPanel.QGL') }}
                 </v-btn>
+                
                 <v-btn
                     v-if="existsZtilt"
                     :disabled="['printing'].includes(printer_state)"
@@ -43,17 +46,19 @@
                     @click="doZtilt">
                     {{ $t('Panels.ToolheadControlPanel.ZTilt') }}
                 </v-btn>
+                
                 <v-btn
                     small
                     :disabled="['printing'].includes(printer_state)"
                     class="ml-2 btn-motor"
                     @click="doSend('M84')">
-                    <v-icon>{{ mdiEngineOff }}</v-icon>
+                    <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" style="width: 24px; height: 24px;" />
                 </v-btn>
+                
             </v-col>
         </v-row>
-        <!-- X MOVEMENT BUTTONGROUPS -->
-        <v-row dense>
+        
+        <v-row dense class="mt-2">
             <v-col class="text-center">
                 <v-item-group class="_btn-group row no-gutters">
                     <v-btn
@@ -64,13 +69,15 @@
                         @click="doSendMove('X-' + steps, feedrateXY)">
                         <span class="body-2">–{{ steps }}</span>
                     </v-btn>
+                    
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-x"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-x px-0"
                         :loading="loadings.includes('homeX')"
                         @click="doHomeX">
-                        X
+                        <img src="/img/icons/blocks_icons/home_xsvg.svg" style="width: 28px; height: 28px;" />
                     </v-btn>
+                    
                     <v-btn
                         v-for="steps of stepsXYsortedReverse"
                         :key="'x+' + steps"
@@ -82,8 +89,8 @@
                 </v-item-group>
             </v-col>
         </v-row>
-        <!-- Y MOVEMENT BUTTONGROUPS -->
-        <v-row dense>
+        
+        <v-row dense class="mt-2">
             <v-col class="text-center">
                 <v-item-group class="_btn-group row no-gutters">
                     <v-btn
@@ -94,13 +101,15 @@
                         @click="doSendMove('Y-' + steps, feedrateXY)">
                         <span class="body-2">–{{ steps }}</span>
                     </v-btn>
+                    
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-y"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-y px-0"
                         :loading="loadings.includes('homeY')"
                         @click="doHomeY">
-                        Y
+                        <img src="/img/icons/blocks_icons/home_ysvg.svg" style="width: 28px; height: 28px;" />
                     </v-btn>
+                    
                     <v-btn
                         v-for="steps of stepsXYsortedReverse"
                         :key="'y+' + steps"
@@ -112,8 +121,8 @@
                 </v-item-group>
             </v-col>
         </v-row>
-        <!-- Z MOVEMENT BUTTONGROUPS -->
-        <v-row dense>
+        
+        <v-row dense class="mt-2">
             <v-col class="text-center">
                 <v-item-group class="_btn-group row no-gutters">
                     <v-btn
@@ -124,13 +133,15 @@
                         @click="doSendMove('Z-' + steps, feedrateZ)">
                         <span class="body-2">–{{ steps }}</span>
                     </v-btn>
+                    
                     <v-btn
                         :disabled="['printing'].includes(printer_state)"
-                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-z"
+                        class="font-weight-bold btnHomeAxis btnGroup btn-axis-z px-0"
                         :loading="loadings.includes('homeZ')"
                         @click="doHomeZ">
-                        Z
+                        <img src="/img/icons/blocks_icons/home_zsvg.svg" style="width: 28px; height: 28px;" />
                     </v-btn>
+                    
                     <v-btn
                         v-for="steps of stepsZsortedReverse"
                         :key="'z+' + steps"
@@ -215,16 +226,25 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
 .btn-axis-x {
     background: linear-gradient(45deg, #ff416c, #ff4b2b) !important;
     color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-axis-y {
     background: linear-gradient(45deg, #11998e, #38ef7d) !important;
     color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-axis-z {
     background: linear-gradient(45deg, #667eea, #764ba2) !important;
     color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-axis-x:hover,
@@ -241,7 +261,6 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
     max-width: 100%;
     min-width: 100%;
     width: 100%;
-    /* Adiciona gap entre os botões */
     gap: 5px;
 
     .v-btn {
@@ -253,7 +272,6 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
         height: 28px;
         opacity: 0.8;
         min-width: auto !important;
-        /* Remove border-left para criar separação visual */
         border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
 

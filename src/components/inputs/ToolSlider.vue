@@ -2,9 +2,12 @@
     <v-row dense>
         <v-col class="pa-0">
             <v-subheader class="_tool-slider-subheader px-1">
-                <v-icon small class="mr-2">
+                
+                <img v-if="iconImage" :src="iconImage" style="width: 20px; height: 20px; margin-right: 8px;" />
+                <v-icon v-else small class="mr-2">
                     {{ icon }}
                 </v-icon>
+                
                 <span>{{ label }}</span>
                 <v-btn
                     v-if="value !== defaultValue && !hasInputField"
@@ -39,7 +42,6 @@
                 </form>
             </v-subheader>
             <transition name="fade">
-                <!-- display errors-->
                 <div v-show="errors().length > 0" class="_error-msg d-flex justify-end">
                     {{ errors()[0] }}
                 </div>
@@ -110,6 +112,10 @@ export default class ToolSlider extends Mixins(BaseMixin) {
     @Prop({ type: String, default: '' }) declare readonly attributeName: string
     @Prop({ default: '' }) declare readonly label: string | TranslateResult
     @Prop({ type: String, default: '' }) declare readonly icon: string
+    
+    // NOVA PROP ADICIONADA PARA ACEITAR IMAGENS SVG
+    @Prop({ type: String, default: '' }) declare readonly iconImage: string 
+
     @Prop({ type: String, default: '%' }) declare readonly unit: string
     @Prop({ type: Number, default: 1 }) declare readonly attributeScale: number
     @Prop({ type: Number, default: 0 }) declare readonly min: number

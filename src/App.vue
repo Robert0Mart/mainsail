@@ -1,56 +1,22 @@
-App.vue:
-
-
-
 <template>
-    <v-app :style="cssVars">
+    <v-app :style="cssVars" id="app">
         <template v-if="socketIsConnected && guiIsReady">
-            <the-sidebar />
             <the-topbar />
-            <v-main id="content" :style="mainStyle">
-                <v-container id="page-container" fluid :class="containerClasses">
+            
+            <v-main id="content" class="main-no-sidebar">
+                <v-container id="page-container" fluid class="pa-0 ma-0 full-width-container">
                     
-                    <div class="horizontal-track">
-                        <div id="section-dashboard" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageDashboard />
-                            </div>
+                    <transition name="fade" mode="out-in">
+                        <div class="page-wrapper" :key="$route.path">
+                            <router-view />
                         </div>
-                        <div id="section-console" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageConsole />
-                            </div>
-                        </div>
-                        <div id="section-heightmap" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageHeightmap />
-                            </div>
-                        </div>
-                        <div id="section-files" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageFiles />
-                            </div>
-                        </div>
-                        <div id="section-viewer" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageViewer />
-                            </div>
-                        </div>
-                        <div id="section-history" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageHistory />
-                            </div>
-                        </div>
-                        <div id="section-machine" class="scroll-section">
-                            <div class="page-wrapper">
-                                <PageMachine />
-                            </div>
-                        </div>
-                    </div>
+                    </transition>
 
                 </v-container>
             </v-main>
-            <BottomNav />
+
+            <BottomNav v-if="boolBottomNav" />
+            
             <the-service-worker />
             <the-update-dialog />
             <the-editor />
@@ -62,295 +28,130 @@ App.vue:
             <the-screws-tilt-adjust-dialog />
             <the-macro-prompt />
         </template>
+        
         <the-select-printer-dialog v-else-if="instancesDB !== 'moonraker'" />
         <the-connecting-dialog v-else />
     </v-app>
 </template>
 
 <script lang="ts">
-import PageDashboard from '@/pages/Dashboard.vue'
-import PageConsole from '@/pages/Console.vue'
-import PageHeightmap from '@/pages/Heightmap.vue'
-import PageFiles from '@/pages/Files.vue'
-import PageViewer from '@/pages/Viewer.vue' 
-import PageHistory from '@/pages/History.vue'
-import PageMachine from '@/pages/Machine.vue'
-
 import BottomNav from '@/components/BottomNav.vue'
 import Component from 'vue-class-component'
-import TheSidebar from '@/components/TheSidebar.vue'
 import BaseMixin from '@/components/mixins/base'
 import ThemeMixin from './components/mixins/theme'
 import TheTopbar from '@/components/TheTopbar.vue'
-import { Mixins, Watch } from 'vue-property-decorator'
-import { panelToolbarHeight, topbarHeight, navigationItemHeight } from '@/store/variables'
-
-import TheUpdateDialog from '@/components/TheUpdateDialog.vue'
-import TheConnectingDialog from '@/components/TheConnectingDialog.vue'
-import TheSelectPrinterDialog from '@/components/TheSelectPrinterDialog.vue'
-import TheEditor from '@/components/TheEditor.vue'
-import { setAndLoadLocale } from './plugins/i18n'
-import TheTimelapseRenderingSnackbar from '@/components/TheTimelapseRenderingSnackbar.vue'
-import TheFullscreenUpload from '@/components/TheFullscreenUpload.vue'
-import TheUploadSnackbar from '@/components/TheUploadSnackbar.vue'
-import TheManualProbeDialog from '@/components/dialogs/TheManualProbeDialog.vue'
-import TheBedScrewsDialog from '@/components/dialogs/TheBedScrewsDialog.vue'
-import TheScrewsTiltAdjustDialog from '@/components/dialogs/TheScrewsTiltAdjustDialog.vue'
-import TheMacroPrompt from '@/components/dialogs/TheMacroPrompt.vue'
+import { Mixins } from 'vue-property-decorator'
+import { panelToolbarHeight, topbarHeight } from '@/store/variables'
 
 @Component({
     components: {
-        PageDashboard, PageConsole, PageHeightmap, PageFiles, PageViewer, PageHistory, PageMachine,
-        BottomNav, TheMacroPrompt, TheTimelapseRenderingSnackbar, TheEditor,
-        TheSelectPrinterDialog, TheConnectingDialog, TheUpdateDialog,
-        TheTopbar, TheSidebar, TheFullscreenUpload, TheUploadSnackbar,
-        TheManualProbeDialog, TheBedScrewsDialog, TheScrewsTiltAdjustDialog,
+        BottomNav, 
+        TheTopbar,
     },
 })
 export default class App extends Mixins(BaseMixin, ThemeMixin) {
-    get title(): string {
-        let title = this.$store.getters['getTitle']
-        if (this.isPrinterPowerOff) title = this.$t('App.Titles.PrinterOff')
-        return title
-    }
+    get title() { return this.$store.getters['getTitle'] }
+    get primaryColor() { return this.$store.state.gui.uiSettings.primary }
+    get logoColor() { return this.$store.state.gui.uiSettings.logo }
+    get boolBottomNav() { return this.$store.state.gui.view.boolBottomNav ?? true }
 
-    get naviDrawer(): boolean { return this.$store.state.naviDrawer }
-    get navigationStyle() { return this.$store.state.gui.uiSettings.navigationStyle }
-
-    get mainStyle() {
-        const style: any = {}
-        if (this.mainBgImage !== null) style.backgroundImage = 'url(' + this.mainBgImage + ')'
-        return style
-    }
-
-    get customStylesheet() { return this.$store.getters['files/getCustomStylesheet'] }
-    get customFavicons(): string | null { return this.$store.getters['files/getCustomFavicons'] ?? null }
-    get language(): string { return this.$store.state.gui.general.language }
-    get current_file(): string { return this.$store.state.printer.print_stats?.filename ?? '' }
-    get mode(): string { return this.$store.state.gui.uiSettings.mode }
-    get logoColor(): string { return this.$store.state.gui.uiSettings.logo }
-    get primaryColor(): string { return this.$store.state.gui.uiSettings.primary }
-    get warningColor(): string { return this.$vuetify?.theme?.currentTheme?.warning?.toString() ?? '#ff8300' }
-
-    get primaryTextColor(): string {
-        const splits = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(this.primaryColor)
-        if (splits) {
-            const r = parseInt(splits[1], 16) * 0.2126
-            const g = parseInt(splits[2], 16) * 0.7152
-            const b = parseInt(splits[3], 16) * 0.0722
-            const perceivedLightness = (r + g + b) / 255
-            return perceivedLightness > 0.7 ? '#222' : '#fff'
-        }
-        return '#ffffff'
-    }
-
-    get cssVars(): { [key: string]: string } {
+    get cssVars() {
         return {
-            '--v-btn-text-primary': this.primaryTextColor,
+            '--v-btn-text-primary': '#ffffff',
             '--color-logo': this.logoColor,
             '--color-primary': this.primaryColor,
-            '--color-warning': this.warningColor,
             '--panel-toolbar-icon-btn-width': panelToolbarHeight + 'px',
-            '--panel-toolbar-text-btn-height': panelToolbarHeight + 'px',
             '--topbar-icon-btn-width': topbarHeight + 'px',
-            '--sidebar-menu-item-height': navigationItemHeight + 'px',
         }
     }
 
-    get print_percent(): number { return Math.floor(this.$store.getters['printer/getPrintPercent'] * 100) }
-
-    get containerClasses() { return { 'px-0': true, 'py-0': true, 'mx-0': true, fullscreen: false } }
-
-    get progressAsFavicon() { return this.$store.state.gui.uiSettings.progressAsFavicon }
-
-    @Watch('title', { immediate: true }) titleChanged(newVal: string): void { document.title = newVal }
-    @Watch('language') async languageChanged(newVal: string): Promise<void> { await setAndLoadLocale(newVal) }
-    @Watch('current_file') current_fileChanged(newVal: string): void { if (newVal) this.$socket.emit('server.files.metadata', { filename: newVal }, { action: 'files/getMetadataCurrentFile' }) }
-    @Watch('primaryColor') primaryColorChanged(newVal: string): void { this.$nextTick(() => { this.$vuetify.theme.currentTheme.primary = newVal }) }
-    
-    @Watch('mode') modeChanged(newVal: string): void {
-        const dark = newVal !== 'light'
-        this.$vuetify.theme.dark = dark
-        document.documentElement.className = dark ? 'theme--dark' : 'theme--light'
-    }
-
-    async drawFavicon(val: number): Promise<void> { /* ... */ }
-
-    @Watch('customFavicons') customFaviconsChanged(): void { this.drawFavicon(this.print_percent) }
-    @Watch('progressAsFavicon') progressAsFaviconChanged(): void { this.drawFavicon(this.print_percent) }
-    @Watch('logoColor') logoColorChanged(): void { this.drawFavicon(this.print_percent) }
-    @Watch('print_percent') print_percentChanged(newVal: number): void { this.drawFavicon(newVal); this.refreshSpoolman() }
-    @Watch('printerIsPrinting') printerIsPrintingChanged(): void { this.drawFavicon(this.print_percent) }
-
-    refreshSpoolman(): void {
-        if (this.moonrakerComponents.includes('spoolman')) this.$store.dispatch('server/spoolman/refreshActiveSpool', null, { root: true })
-    }
-
-    appHeight() { this.$nextTick(() => { document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px') }) }
-
-    mounted(): void {
-        this.drawFavicon(this.print_percent)
-        this.appHeight()
-        window.addEventListener('resize', this.appHeight)
-        window.addEventListener('orientationchange', this.appHeight)
-        this.$store.dispatch('setNaviDrawer', false)
+    mounted() {
+        // Define a altura real do ecrã para evitar problemas em mobile
+        document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
+        // Remove espaço da sidebar caso exista
+        this.$vuetify.application.left = 0
     }
 }
 </script>
 
 <style>
 @import './assets/styles/fonts.css';
-@import './assets/styles/toastr.css';
 @import './assets/styles/page.css';
-@import './assets/styles/sidebar.css';
-@import './assets/styles/utils.css';
-@import './assets/styles/updateManager.css';
 
-:root { --app-height: 100%; }
-
-.v-btn:not(.v-btn--outlined).primary { color: var(--v-btn-text-primary); }
+/* Remove ícones desnecessários da topbar */
 .v-app-bar__nav-icon { display: none !important; }
+.main-no-sidebar { padding-left: 0px !important; margin-left: 0px !important; }
 
-#page-container {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-}
-
-.v-main {
-    padding-left: 0 !important;
-    margin-left: 0 !important;
+/* Contentor principal com Scroll Ativo */
+.full-width-container {
+    max-width: 100vw !important;
     width: 100vw !important;
+    height: calc(var(--app-height) - 64px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important; 
 }
 
-.horizontal-track {
-    display: flex;
-    background-image: url('public/img/mainsail-background.png');
-    flex-direction: row;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    opacity: 0.80;
-}
-
-.scroll-section {
-    flex: 0 0 100%; 
-    width: 100%;
-    height: calc(var(--app-height) - 64px); 
-    overflow-y: auto; 
-    box-sizing: border-box;
-}
-
+/* Wrapper das páginas com margens ajustadas */
 .page-wrapper {
-    max-width: 1600px; 
-    margin: 0 auto; 
-    padding: 24px 24px 120px 24px; 
-    box-sizing: border-box;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 10px 20px !important;
+    padding-bottom: 160px !important; 
+    width: 100%;
 }
 
-/* =========================================
-   STEALTH THEME OVERRIDES
-   ========================================= */
-
-/* Global app background */
-body .v-application, 
-#content,
-.v-main {
-    background: linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(3,3,3,1) 40%, rgba(0,0,0,1) 100%) !important;
-    background-image: linear-gradient(135deg, rgba(20,20,24,1) 0%, rgba(3,3,3,1) 40%, rgba(0,0,0,1) 100%) !important;
+/* --- AJUSTE DO G-CODE VIEWER (COMPACTO) --- */
+.page-gcodeviewer .v-card__title {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 0.9rem !important;
 }
 
-/* Topbar styling */
-body .v-application .v-app-bar.theme--dark {
-    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(3,3,3,1) 100%) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+.page-gcodeviewer .v-card__text,
+.page-gcodeviewer .gcode-viewer-container,
+.page-gcodeviewer canvas {
+    height: 32vh !important; 
+    max-height: 32vh !important;
+    min-height: 180px !important;
 }
 
-/* Inner panels glass effect */
-body .v-application .v-card,
-body .v-application .v-sheet,
-body .v-application .v-data-table,
-body .v-application .v-list,
-body .v-application .v-expansion-panel {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 10, 12, 1) 30%, rgba(0, 0, 0, 1) 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
-    opacity: 0.80 !important;
+/* Transição de página instantânea */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.01s linear !important;
+}
+.fade-enter, .fade-leave-to { opacity: 0 !important; }
+
+/* CONFIGURAÇÃO DO FUNDO (BACKGROUND) */
+html, body, #app, .v-application, .v-application--wrap, .theme--dark.v-application {
+    background-color: transparent !important;
+    background-image: url('/img/icons/blocks_icons/Background.jpeg') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-attachment: fixed !important;
 }
 
-/* =========================================
-   SURGICAL BUTTON COLORS (CSS :has() SELECTOR)
-   Changes color based on the icon inside the button!
-   ========================================= */
+/* Transparência dos componentes */
+.v-main, .theme--dark.v-main, .full-width-container, .page-wrapper { 
+    background: transparent !important; 
+}
 
-/* RED: Stop & Emergency Stop */
-body .v-application .v-btn.error,
-body .v-application .v-btn:has(.mdi-stop),
-body .v-application .v-btn:has(.mdi-alert-octagon),
-body .v-application .v-btn:has(.mdi-close-octagon) {
-    background: linear-gradient(145deg, #7a2626 0%, #4a1717 100%) !important;
-    background-color: #7a2626 !important;
-    border: 1px solid #993030 !important;
+/* Forçar cor de texto branca em toda a app */
+.v-application, .text--primary, .v-card__text, .v-list-item__title, .v-label {
     color: #ffffff !important;
 }
 
-/* Hover effect for red buttons */
-body .v-application .v-btn.error:hover,
-body .v-application .v-btn:has(.mdi-stop):hover,
-body .v-application .v-btn:has(.mdi-alert-octagon):hover {
-    background: linear-gradient(145deg, #993030 0%, #611e1e 100%) !important;
+/* --- REGRAS PARA ÍCONES --- */
+
+/* Força ícones normais do Blocks a ficarem brancos */
+.blocks-icon {
+    object-fit: contain !important;
+    filter: brightness(0) invert(1) !important; 
 }
 
-/* GREEN: Pause, Play, Save Config */
-body .v-application .v-btn.success,
-body .v-application .v-btn:has(.mdi-play),
-body .v-application .v-btn:has(.mdi-pause),
-body .v-application .v-btn:has(.mdi-content-save) {
-    background: linear-gradient(145deg, #2b5c38 0%, #1a3822 100%) !important;
-    background-color: #2b5c38 !important;
-    border: 1px solid #367346 !important;
-    color: #ffffff !important;
-}
-
-/* Hover effect for green buttons */
-body .v-application .v-btn.success:hover,
-body .v-application .v-btn:has(.mdi-play):hover,
-body .v-application .v-btn:has(.mdi-pause):hover,
-body .v-application .v-btn:has(.mdi-content-save):hover {
-    background: linear-gradient(145deg, #367346 0%, #234c2e 100%) !important;
-}
-
-/* Force icons inside targeted buttons to be pure white */
-body .v-application .v-btn:has(.mdi-stop) .v-icon,
-body .v-application .v-btn:has(.mdi-alert-octagon) .v-icon,
-body .v-application .v-btn:has(.mdi-play) .v-icon,
-body .v-application .v-btn:has(.mdi-pause) .v-icon,
-body .v-application .v-btn:has(.mdi-content-save) .v-icon {
-    color: #ffffff !important;
-}
-
-/* =========================================
-   DEFAULT BUTTONS & BARS
-   ========================================= */
-
-/* DEFAULT: Silver/Black */
-body .v-application .v-btn:not(.v-btn--outlined).primary:not(.v-app-bar .v-btn),
-body .v-application .v-btn--contained.primary:not(.v-app-bar .v-btn),
-body .v-application .v-btn.theme--dark:not(.v-btn--flat):not(:has(.mdi-stop)):not(:has(.mdi-play)):not(:has(.mdi-pause)):not(:has(.mdi-content-save)):not(:has(.mdi-alert-octagon)) {
-  background: linear-gradient(165deg, #696969 -25%, #000000 100%);
-    color: #ffffff !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-}
-
-/* Progress bars */
-body .v-application .v-progress-linear__determinate,
-body .v-application .v-slider__track-fill {
-    background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.9) 100%) !important;
-    border-color: transparent !important;
-}
-
-body .v-application .primary--text {
-    color: rgba(255,255,255,0.8) !important;
+/* FIX NUCLEAR: Garante que o ícone de erro mantém a cor LARANJA original */
+.orange-fix {
+    filter: none !important; 
+    -webkit-filter: none !important;
 }
 </style>
