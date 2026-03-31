@@ -3,9 +3,20 @@
         <panel
             v-if="enableUpdateManager"
             :title="$t('Machine.UpdatePanel.UpdateManager')"
-            :icon="mdiUpdate"
             card-class="machine-update-panel"
             :collapsible="true">
+            
+            <template #icon>
+                <v-avatar size="24" tile color="transparent" class="mr-2">
+                    <img 
+                        :src="systemUpdateIcon" 
+                        width="22" 
+                        height="22" 
+                        style="object-fit: contain; filter: brightness(0) invert(1);"
+                    >
+                </v-avatar>
+            </template>
+
             <template #buttons>
                 <v-tooltip top>
                     <template #activator="{ on, attrs }">
@@ -55,6 +66,11 @@
 </template>
 
 <script lang="ts">
+// Teus imports de ícones com ?url para o Vite
+import SystemUpdateIcon from "@/assets/styles/icons/update_systemsvg.svg?url";
+import TroubleShootingIcon from "@/assets/styles/icons/troubleshoot_orangesvg.svg?url";
+import InfoIcon from "@/assets/styles/icons/infosvg.svg?url";
+
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '../../mixins/base'
 import Panel from '@/components/ui/Panel.vue'
@@ -73,6 +89,11 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
     mdiInformation = mdiInformation
     mdiCloseThick = mdiCloseThick
     mdiUpdate = mdiUpdate
+
+    // Alteração: Declaração das variáveis na classe para o Template as reconhecer
+    systemUpdateIcon = SystemUpdateIcon;
+    troubleShootingIcon = TroubleShootingIcon;
+    infoIcon = InfoIcon;
 
     get enableUpdateManager() {
         return this.$store.state.server.components.includes('update_manager')
@@ -102,13 +123,11 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
         let count = 0
 
         this.modules.forEach((module: ServerUpdateManagerStateGuiList) => {
-            // check git repos for updates
             if (module.type === 'git' && module.data?.commits_behind?.length) {
                 count++
                 return
             }
 
-            // check client web for updates
             if (
                 module.type === 'web' &&
                 semver.valid(module.data?.remote_version, { loose: true }) &&
@@ -120,7 +139,6 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
             }
         })
 
-        // check system packages for upgrades
         if (this.systemPackagesCount > 0) count++
 
         return count > 1
