@@ -1,39 +1,22 @@
 <template>
-    <v-app :style="cssVars">
+    <v-app :style="cssVars" id="app">
         <template v-if="socketIsConnected && guiIsReady">
             <the-topbar />
             
-            <v-main id="content" :style="mainStyle" class="main-no-sidebar">
+            <v-main id="content" class="main-no-sidebar">
                 <v-container id="page-container" fluid class="pa-0 ma-0 full-width-container">
                     
-                    <div class="horizontal-track">
-                        <div id="section-dashboard" class="scroll-section">
-                            <div class="page-wrapper"><PageDashboard /></div>
+                    <transition name="fade" mode="out-in">
+                        <div class="page-wrapper" :key="$route.path">
+                            <router-view />
                         </div>
-                        <div id="section-console" class="scroll-section">
-                            <div class="page-wrapper"><PageConsole /></div>
-                        </div>
-                        <div id="section-heightmap" class="scroll-section">
-                            <div class="page-wrapper"><PageHeightmap /></div>
-                        </div>
-                        <div id="section-files" class="scroll-section">
-                            <div class="page-wrapper"><PageFiles /></div>
-                        </div>
-                        <div id="section-viewer" class="scroll-section">
-                            <div class="page-wrapper"><PageViewer /></div>
-                        </div>
-                        <div id="section-history" class="scroll-section">
-                            <div class="page-wrapper"><PageHistory /></div>
-                        </div>
-                        <div id="section-machine" class="scroll-section">
-                            <div class="page-wrapper"><PageMachine /></div>
-                        </div>
-                    </div>
+                    </transition>
 
                 </v-container>
             </v-main>
 
             <BottomNav v-if="boolBottomNav" />
+            
             <the-service-worker />
             <the-update-dialog />
             <the-editor />
@@ -45,19 +28,13 @@
             <the-screws-tilt-adjust-dialog />
             <the-macro-prompt />
         </template>
+        
         <the-select-printer-dialog v-else-if="instancesDB !== 'moonraker'" />
         <the-connecting-dialog v-else />
     </v-app>
 </template>
 
 <script lang="ts">
-import PageDashboard from '@/pages/Dashboard.vue'
-import PageConsole from '@/pages/Console.vue'
-import PageHeightmap from '@/pages/Heightmap.vue'
-import PageFiles from '@/pages/Files.vue'
-import PageViewer from '@/pages/Viewer.vue' 
-import PageHistory from '@/pages/History.vue'
-import PageMachine from '@/pages/Machine.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import Component from 'vue-class-component'
 import BaseMixin from '@/components/mixins/base'
@@ -68,13 +45,12 @@ import { panelToolbarHeight, topbarHeight } from '@/store/variables'
 
 @Component({
     components: {
-        PageDashboard, PageConsole, PageHeightmap, PageFiles, PageViewer, PageHistory, PageMachine,
-        BottomNav, TheTopbar,
+        BottomNav, 
+        TheTopbar,
     },
 })
 export default class App extends Mixins(BaseMixin, ThemeMixin) {
     get title() { return this.$store.getters['getTitle'] }
-    get mainStyle() { return this.mainBgImage ? { backgroundImage: 'url(' + this.mainBgImage + ')' } : {} }
     get primaryColor() { return this.$store.state.gui.uiSettings.primary }
     get logoColor() { return this.$store.state.gui.uiSettings.logo }
     get boolBottomNav() { return this.$store.state.gui.view.boolBottomNav ?? true }
@@ -91,7 +67,6 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 
     mounted() {
         document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
-        // Força o Vuetify a ignorar a sidebar no cálculo de espaço
         this.$vuetify.application.left = 0
     }
 }
@@ -101,55 +76,63 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 @import './assets/styles/fonts.css';
 @import './assets/styles/page.css';
 
-/* 1. REMOVER OS TRÊS TRAÇOS (MENU HAMBÚRGUER) */
-.v-app-bar__nav-icon {
-    display: none !important;
-}
+.v-app-bar__nav-icon { display: none !important; }
+.main-no-sidebar { padding-left: 0px !important; margin-left: 0px !important; }
 
-/* 2. FORÇAR LARGURA TOTAL SEM SIDEBAR */
-.main-no-sidebar {
-    padding-left: 0px !important;
-    margin-left: 0px !important;
-}
-
+/* Container - Scroll restored */
 .full-width-container {
     max-width: 100vw !important;
     width: 100vw !important;
+    height: calc(var(--app-height) - 64px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important; 
 }
 
-/* 3. CONFIGURAÇÃO DO SLIDE HORIZONTAL SEM CORTES */
-.horizontal-track {
-    display: flex !important;
-    flex-direction: row !important;
-    width: 100%;
-    height: calc(var(--app-height) - 64px);
-    overflow-x: auto; /* Permite slide */
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-}
-
-.scroll-section {
-    flex: 0 0 100% !important; /* Cada página tem exatamente 100% da largura do ecrã */
-    width: 100vw !important;
-    height: 100%;
-    overflow-y: auto;
-    scroll-snap-align: start;
-}
-
+/* Page wrapper */
 .page-wrapper {
     max-width: 1600px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 10px 20px !important;
+    padding-bottom: 160px !important; /* Bottom safety space */
+    width: 100%;
 }
 
-/* ESTILO DOS ÍCONES E CORES */
-body .v-application { background: #000000 !important; }
-.v-application, .text--primary, .v-card__text, .v-list-item__title, .v-label {
-    color: #ffffff !important;
+/* --- COMPACT VIEWER WITH TITLE --- */
+/* Restore Title size but keep it tight */
+.page-gcodeviewer .v-card__title {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    font-size: 0.9rem !important;
 }
 
-.blocks-icon {
-    object-fit: contain;
-    filter: brightness(0) invert(1);
+/* Force 3D canvas height to 32% of viewport */
+.page-gcodeviewer .v-card__text,
+.page-gcodeviewer .gcode-viewer-container,
+.page-gcodeviewer canvas {
+    height: 32vh !important; 
+    max-height: 32vh !important;
+    min-height: 180px !important;
 }
+
+/* Remove gaps */
+.page-gcodeviewer .v-card {
+    margin-bottom: 4px !important;
+}
+
+/* Lightning transition */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.01s linear !important;
+}
+.fade-enter, .fade-leave-to { opacity: 0 !important; }
+
+/* Background */
+html, body, #app, .v-application, .v-application--wrap, .theme--dark.v-application {
+    background-color: transparent !important;
+    background-image: url('/img/icons/blocks_icons/Background.jpeg') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-attachment: fixed !important;
+}
+.v-main, .theme--dark.v-main, .page-wrapper { background: transparent !important; }
 </style>
