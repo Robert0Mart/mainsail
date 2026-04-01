@@ -18,10 +18,6 @@
                 <v-icon>{{ mdiFileDocumentOutline }}</v-icon>
             </v-btn>
             
-            <v-btn icon to="/viewer" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiEye }}</v-icon>
-            </v-btn>
-            
             <v-btn icon to="/history" class="nav-btn" active-class="active-btn">
                 <v-icon>{{ mdiHistory }}</v-icon>
             </v-btn>
@@ -41,7 +37,6 @@ import {
     mdiConsole,
     mdiGrid,
     mdiFileDocumentOutline,
-    mdiEye,
     mdiHistory,
     mdiWrench
 } from '@mdi/js'
@@ -53,7 +48,6 @@ export default class BottomNav extends Vue {
     mdiConsole = mdiConsole
     mdiGrid = mdiGrid
     mdiFileDocumentOutline = mdiFileDocumentOutline
-    mdiEye = mdiEye
     mdiHistory = mdiHistory
     mdiWrench = mdiWrench
 }
