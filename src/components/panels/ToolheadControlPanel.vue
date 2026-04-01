@@ -87,33 +87,13 @@
             <toolhead-panel-settings />
         </template>
         
-        <move-to-control />
+        <move-to-control v-if="showControl" />
         
-        <v-container v-if="axisControlVisible">
+        <v-container v-if="axisControlVisible" class="pa-0">
             <component :is="`${controlStyle}-control`" />
         </v-container>
-        
-        <v-divider v-if="showZOffset" />
-        <v-container v-if="showZOffset">
-            <zoffset-control />
-        </v-container>
-        
-        <v-divider v-if="showSpeedFactor" />
-        <v-container v-if="showSpeedFactor">
-            <tool-slider
-                :label="$t('Panels.ToolheadControlPanel.SpeedFactor')"
-                :icon-image="'/img/icons/blocks_icons/speedsvg.svg'" 
-                :target="speedFactor"
-                :min="1"
-                :max="200"
-                :multi="100"
-                :step="5"
-                :dynamic-range="true"
-                :has-input-field="true"
-                command="M220"
-                attribute-name="S" />
-        </v-container>
-    </panel>
+
+        </panel>
 </template>
 
 <script lang="ts">
@@ -156,10 +136,6 @@ export default class ToolheadControlPanel extends Mixins(BaseMixin, ControlMixin
         return this.$store.state.gui.control.actionButton ?? this.defaultActionButton
     }
 
-    get speedFactor(): number {
-        return this.$store.state.printer?.gcode_move?.speed_factor ?? 1
-    }
-
     get isPrinting() {
         return ['printing'].includes(this.printer_state)
     }
@@ -176,14 +152,6 @@ export default class ToolheadControlPanel extends Mixins(BaseMixin, ControlMixin
 
     get showControl(): boolean {
         return this.$store.state.gui.view.toolhead.showControl ?? true
-    }
-
-    get showZOffset(): boolean {
-        return this.$store.state.gui.view.toolhead.showZOffset ?? true
-    }
-
-    get showSpeedFactor(): boolean {
-        return this.$store.state.gui.view.toolhead.showSpeedFactor ?? true
     }
 }
 </script>
