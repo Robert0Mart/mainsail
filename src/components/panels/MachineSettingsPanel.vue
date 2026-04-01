@@ -120,74 +120,52 @@ import Responsive from '@/components/ui/Responsive.vue'
 export default class MachineSettingsPanel extends Mixins(BaseMixin) {
     mdiEngine = mdiEngine
 
-    get toolhead() {
-        return this.$store.state.printer?.toolhead ?? {}
-    }
-
-    get configPrinter() {
-        return this.$store.state.printer?.configfile?.settings?.printer ?? {}
-    }
-
-    get velocity(): number {
-        return Math.trunc(this.toolhead.max_velocity ?? 300)
-    }
-
-    get accel(): number {
-        return Math.trunc(this.toolhead.max_accel ?? 3000)
-    }
-
-    get accelToDecel(): number {
-        return Math.trunc(this.toolhead.max_accel_to_decel ?? this.accel / 2)
-    }
-
+    get toolhead() { return this.$store.state.printer?.toolhead ?? {} }
+    get configPrinter() { return this.$store.state.printer?.configfile?.settings?.printer ?? {} }
+    get velocity(): number { return Math.trunc(this.toolhead.max_velocity ?? 300) }
+    get accel(): number { return Math.trunc(this.toolhead.max_accel ?? 3000) }
+    get accelToDecel(): number { return Math.trunc(this.toolhead.max_accel_to_decel ?? this.accel / 2) }
     get minimumCruiseRatio(): number | null {
         const value = this.toolhead.minimum_cruise_ratio ?? null
-
-        if (value === null) return null
-
-        return Math.round(value * 100)
+        return value === null ? null : Math.round(value * 100)
     }
-
-    get squareCornerVelocity(): number {
-        return Math.floor((this.toolhead.square_corner_velocity ?? 8) * 10) / 10
-    }
-
-    get defaultVelocity(): number {
-        return Math.trunc(this.configPrinter.max_velocity ?? 300)
-    }
-
-    get defaultAccel(): number {
-        return Math.trunc(this.configPrinter.max_accel ?? 3000)
-    }
-
-    get defaultAccelToDecel(): number {
-        return Math.trunc(this.configPrinter.max_accel_to_decel ?? 1500)
-    }
-
-    get defaultMinimumCruiseRatio(): number {
-        const value = this.configPrinter.minimum_cruise_ratio ?? 0.5
-
-        return Math.round(value * 100)
-    }
-
-    get defaultSquareCornerVelocity(): number {
-        const value = this.configPrinter.square_corner_velocity ?? 8
-
-        return Math.floor(value * 10) / 10
-    }
+    get squareCornerVelocity(): number { return Math.floor((this.toolhead.square_corner_velocity ?? 8) * 10) / 10 }
+    get defaultVelocity(): number { return Math.trunc(this.configPrinter.max_velocity ?? 300) }
+    get defaultAccel(): number { return Math.trunc(this.configPrinter.max_accel ?? 3000) }
+    get defaultAccelToDecel(): number { return Math.trunc(this.configPrinter.max_accel_to_decel ?? 1500) }
+    get defaultMinimumCruiseRatio(): number { return Math.round((this.configPrinter.minimum_cruise_ratio ?? 0.5) * 100) }
+    get defaultSquareCornerVelocity(): number { return Math.floor((this.configPrinter.square_corner_velocity ?? 8) * 10) / 10 }
 
     sendCruiseRatioCmd(params: { name: string; value: number }): void {
         params.value = params.value / 100
-
         this.sendCmd(params)
     }
 
     @Debounce(500)
     sendCmd(params: { name: string; value: number }): void {
         const gcode = `SET_VELOCITY_LIMIT ${params.name}=${params.value}`
-
         this.$store.dispatch('server/addEvent', { message: gcode, type: 'command' })
         this.$socket.emit('printer.gcode.script', { script: gcode })
     }
 }
 </script>
+
+<style scoped>
+/* REFORÇADO PARA FILENAME SEM ESPAÇO: axis_maintenancesvg.svg */
+.machine-settings-panel ::v-deep .v-icon {
+    /* O caminho agora aponta para o nome correto, tudo junto */
+    background-image: url('/img/icons/blocks_icons/axis_maintenancesvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: inline-block !important;
+    opacity: 1 !important;
+}
+
+.machine-settings-panel ::v-deep .v-icon svg,
+.machine-settings-panel ::v-deep .v-icon::before {
+    display: none !important;
+}
+</style>

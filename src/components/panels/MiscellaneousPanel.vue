@@ -1,9 +1,7 @@
-<style scoped></style>
-
 <template>
     <panel
         v-if="showMiscellaneousPanel"
-        :icon="mdiDipSwitch"
+        :icon="'blocks-misc-icon'"
         :title="$t('Panels.MiscellaneousPanel.Headline')"
         :collapsible="true"
         card-class="miscellaneous-panel">
@@ -62,6 +60,7 @@ import MoonrakerSensor from '@/components/panels/Miscellaneous/MoonrakerSensor.v
 import Panel from '@/components/ui/Panel.vue'
 import { mdiDipSwitch } from '@mdi/js'
 import MiscellaneousMixin from '@/components/mixins/miscellaneous'
+
 @Component({
     components: {
         Panel,
@@ -98,3 +97,22 @@ export default class MiscellaneousPanel extends Mixins(BaseMixin, MiscellaneousM
     }
 }
 </script>
+
+<style scoped>
+/* INJEÇÃO DO ÍCONE BLOCKS NO TÍTULO DO PAINEL */
+::v-deep .v-icon.blocks-misc-icon {
+    background-image: url('/img/icons/blocks_icons/MENU_controlsvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    opacity: 1 !important;
+}
+
+/* Esconder o ícone original do sistema */
+::v-deep .v-icon.blocks-misc-icon svg,
+::v-deep .v-icon.blocks-misc-icon::before {
+    display: none !important;
+}
+</style>

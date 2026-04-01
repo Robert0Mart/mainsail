@@ -14,7 +14,7 @@
         outlined
         dense
         :prepend-icon="isTouchDevice ? mdiChevronDoubleRight : ''"
-        :append-icon="mdiSend"
+        :append-icon="'blocks-send-icon'"
         @keydown.enter.prevent.stop="doSend"
         @keydown.up="onKeyUp"
         @keydown.down="onKeyDown"
@@ -22,6 +22,7 @@
         @click:prepend="onAutocomplete"
         @click:append="doSend" />
 </template>
+
 <script lang="ts">
 import { Component, Mixins, Ref } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
@@ -91,7 +92,7 @@ export default class ConsoleTextarea extends Mixins(BaseMixin, ConsoleMixin) {
     }
 
     doSend(cmd: KeyboardEvent) {
-        if (cmd.shiftKey) {
+        if (cmd?.shiftKey) {
             this.gcode += '\n'
             return
         }
@@ -148,5 +149,25 @@ export default class ConsoleTextarea extends Mixins(BaseMixin, ConsoleMixin) {
 <style scoped>
 .gcode-command-field {
     font-family: 'Roboto Mono', monospace;
+}
+
+/* MAGIA PARA O BOTÃO DE ENVIAR (APPEND-ICON) */
+::v-deep .v-input__append-inner .v-icon.blocks-send-icon {
+    background-image: url('/img/icons/blocks_icons/playsvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+}
+
+/* Esconde o ícone original do Vuetify */
+::v-deep .v-icon.blocks-send-icon svg {
+    display: none !important;
+}
+::v-deep .v-icon.blocks-send-icon::before {
+    display: none !important;
 }
 </style>

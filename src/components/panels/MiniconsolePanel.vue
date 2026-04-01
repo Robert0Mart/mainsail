@@ -1,11 +1,12 @@
 <template>
     <panel
         v-if="socketIsConnected && klipperState !== 'disconnected'"
-        :icon="mdiConsoleLine"
+        :icon="'blocks-custom-console'"
         :title="$t('Panels.MiniconsolePanel.Headline')"
         :collapsible="true"
         card-class="miniconsole-panel"
         :hide-buttons-on-collapse="true">
+        
         <template #buttons>
             <v-btn icon tile @click="clearConsole">
                 <v-icon small>{{ mdiTrashCan }}</v-icon>
@@ -168,5 +169,23 @@ export default class MiniconsolePanel extends Mixins(BaseMixin, ConsoleMixin) {
 
 html.theme--light .consoleTable {
     border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* ESTILIZAÇÃO DO ÍCONE DA CONSOLA (developer_mode) */
+::v-deep .v-icon.blocks-custom-console {
+    background-image: url('/img/icons/blocks_icons/developer_modesvg.svg') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    opacity: 1 !important;
+}
+
+::v-deep .v-icon.blocks-custom-console svg {
+    display: none !important;
+}
+::v-deep .v-icon.blocks-custom-console::before {
+    display: none !important;
 }
 </style>
