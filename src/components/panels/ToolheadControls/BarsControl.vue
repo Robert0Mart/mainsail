@@ -9,8 +9,7 @@
                     :loading="loadings.includes('homeAll')"
                     :color="homedAxes.includes('xyz') ? 'primary' : 'warning'"
                     @click="doHome">
-                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px; margin-right: 6px;" />
-                    {{ $t('Panels.ToolheadControlPanel.ALL') }}
+                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px;" />
                 </v-btn>
                 
                 <v-btn
@@ -21,8 +20,7 @@
                     small
                     class="ml-2"
                     @click="doHomeXY">
-                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px; margin-right: 6px;" />
-                    XY
+                    <img src="/img/icons/blocks_icons/home_allsvg.svg" style="width: 24px; height: 24px;" />
                 </v-btn>
                 
                 <v-btn
