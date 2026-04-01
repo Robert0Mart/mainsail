@@ -31,45 +31,22 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
         return this.groupedPrintStatusArray.map((item: any) => {
             const name = (item.name || '').toLowerCase()
             
-            // Estrutura base de um gradiente no ECharts
-            let colorObj = {
-                type: 'linear',
-                x: 0, y: 0, x2: 1, y2: 1,
-                colorStops: [
-                    { offset: 0, color: '#7f8c8d' }, // Cinza padrão para "Others"
-                    { offset: 1, color: '#95a5a6' }
-                ]
-            }
+            // Cinza padrão para "Others" e estados desconhecidos
+            let colorHex = '#4a4a4a' 
 
             if (name === 'completed') {
-                // GREEN
-                colorObj.colorStops = [
-                    { offset: 0, color: '#11998e' },
-                    { offset: 1, color: '#38ef7d' }
-                ]
+                colorHex = '#2ecc71' 
             } else if (name === 'cancelled') {
-                // BLUE
-                colorObj.colorStops = [
-                    { offset: 0, color: '#667eea' },
-                    { offset: 1, color: '#764ba2' }
-                ]
+                colorHex = '#DC143C' // 
             } else if (name === 'interrupted') {
-                // RED (Vermelho Vivo)
-                colorObj.colorStops = [
-                    { offset: 0, color: '#ff416c' },
-                    { offset: 1, color: '#ff4b2b' }
-                ]
-            } else if (name === 'klippy_shutdown') {
-                // DARK RED (Vermelho Escuro/Bordeaux para erro grave)
-                colorObj.colorStops = [
-                    { offset: 0, color: '#8b0000' },
-                    { offset: 1, color: '#4a0000' }
-                ]
+                colorHex = '#ff9500' 
+            } else if (name === 'klippy_shutdown' || name === 'error') {
+                colorHex = '#8B0000' 
             }
 
             return {
                 ...item,
-                itemStyle: { color: colorObj }
+                itemStyle: { color: colorHex }
             }
         })
     }
@@ -86,6 +63,8 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
             tooltip: {
                 trigger: 'item',
                 borderWidth: 0,
+                backgroundColor: 'rgba(30, 30, 30, 0.9)', // Fundo do tooltip escuro e profissional
+                textStyle: { color: '#fff' },
                 valueFormatter: (value: number) => {
                     if (this.valueName === 'filament') {
                         if (value > 1000) return Math.round(value / 1000).toString() + ' m'
@@ -103,9 +82,13 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
                 {
                     type: 'pie',
                     data: this.coloredData,
-                    avoidLabelOverlap: false,
+                    avoidLabelOverlap: true, // Garante que as etiquetas não se sobrepõem
                     minAngle: 5,
-                    radius: ['35%', '60%'],
+                    radius: ['45%', '70%'], // Aumentei o anel do donut para ficar mais elegante
+                    itemStyle: {
+                        borderColor: '#1e1e1e', // Adiciona uma borda fina entre as fatias
+                        borderWidth: 2
+                    },
                     emphasis: {
                         itemStyle: {
                             shadowBlur: 10,
@@ -114,7 +97,8 @@ export default class HistoryAllPrintStatusChart extends Mixins(BaseMixin, ThemeM
                         },
                     },
                     label: {
-                        color: this.fgColorHi,
+                        color: '#cccccc', // Etiquetas em cinza claro para ler bem no fundo preto
+                        fontWeight: 500
                     },
                 },
             ],
