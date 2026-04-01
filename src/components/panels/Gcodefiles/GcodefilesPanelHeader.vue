@@ -45,10 +45,10 @@
                 
             <v-btn
                 :title="$t('Files.UploadNewGcode')"
-                class="primary--text px-2 minwidth-0 ml-3 blocks-custom-btn"
+                class="primary--text px-2 minwidth-0 ml-3"
                 :loading="loadings.includes('gcodeUpload')"
                 @click="clickUploadButton">
-                <v-icon class="blocks-upload-icon"></v-icon>
+                <v-icon>{{ mdiUpload }}</v-icon>
             </v-btn>
             
             <v-btn
@@ -211,17 +211,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
     max-width: 300px;
 }
 
-/* ESTILOS DOS ÍCONES DA BLOCKS */
-.blocks-custom-btn ::v-deep .blocks-upload-icon {
-    background-image: url('/img/icons/blocks_icons/upload_filesvg.svg') !important;
-    background-size: contain !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    width: 20px !important;
-    height: 20px !important;
-    display: inline-block !important;
-}
-
 .blocks-custom-btn ::v-deep .blocks-refresh-icon {
     background-image: url('/img/icons/blocks_icons/refreshsvg.svg') !important;
     background-size: contain !important;
@@ -232,7 +221,6 @@ export default class GcodefilesPanelHeader extends Mixins(BaseMixin, GcodefilesM
     display: inline-block !important;
 }
 
-/* Esconder os desenhos originais apenas nos botões que têm a nossa classe */
 .blocks-custom-btn ::v-deep .v-icon svg,
 .blocks-custom-btn ::v-deep .v-icon::before {
     display: none !important;
