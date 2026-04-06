@@ -1,8 +1,8 @@
 <template>
-    <panel :icon="mdiFileDocumentMultipleOutline" :title="$t('History.PrintHistory')" card-class="history-list-panel">
-        <v-card-text>
-            <v-row>
-                <v-col class="col-4 d-flex align-center">
+    <panel :icon="mdiFileDocumentMultipleOutline" :title="$t('History.PrintHistory')" card-class="history-list-panel mt-4">
+        <v-card-text class="pa-4">
+            <v-row class="mb-2" align="center">
+                <v-col cols="12" md="6" lg="4">
                     <v-text-field
                         v-model="search"
                         :append-icon="mdiMagnify"
@@ -11,26 +11,39 @@
                         outlined
                         clearable
                         hide-details
-                        dense />
+                        dense
+                        background-color="rgba(255, 255, 255, 0.02)"
+                        class="history-search-bar"
+                    ></v-text-field>
                 </v-col>
-                <v-col class="offset-4 col-4 d-flex align-center justify-end">
-                    <v-tooltip v-if="selectedJobsTable.length" top>
-                        <template #activator="{ on, attrs }">
-                            <v-btn
-                                color="error"
-                                class="px-2 minwidth-0 ml-3"
-                                v-bind="attrs"
-                                v-on="on"
-                                @click="deleteSelectedDialog = true">
-                                <v-icon>{{ mdiDelete }}</v-icon>
-                            </v-btn>
-                        </template>
-                        <span>{{ $t('Buttons.Delete') }}</span>
-                    </v-tooltip>
+                
+                <v-spacer></v-spacer>
+
+                <v-col cols="12" md="auto" class="d-flex align-center justify-end flex-wrap gap-2">
+                    <v-fade-transition>
+                        <v-tooltip v-if="selectedJobsTable.length" top>
+                            <template #activator="{ on, attrs }">
+                                <v-btn
+                                    color="error"
+                                    outlined
+                                    class="px-3"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="deleteSelectedDialog = true">
+                                    <v-icon left small>{{ mdiDelete }}</v-icon>
+                                    {{ $t('Buttons.Delete') }}
+                                </v-btn>
+                            </template>
+                            <span>{{ $t('Buttons.Delete') }}</span>
+                        </v-tooltip>
+                    </v-fade-transition>
+
                     <v-tooltip top>
                         <template #activator="{ on, attrs }">
                             <v-btn
-                                class="px-2 minwidth-0 ml-3"
+                                class="px-2 ml-2"
+                                outlined
+                                color="grey lighten-1"
                                 v-bind="attrs"
                                 v-on="on"
                                 @click="addMaintenanceDialog = true">
@@ -39,11 +52,14 @@
                         </template>
                         <span>{{ $t('History.AddMaintenance') }}</span>
                     </v-tooltip>
+
                     <v-tooltip v-if="!allLoaded" top>
                         <template #activator="{ on, attrs }">
                             <v-btn
                                 :loading="loadings.includes('historyLoadAll')"
-                                class="px-2 minwidth-0 ml-3"
+                                class="px-2 ml-2"
+                                outlined
+                                color="primary"
                                 v-bind="attrs"
                                 v-on="on"
                                 @click="refreshHistory">
@@ -52,63 +68,85 @@
                         </template>
                         <span>{{ $t('History.LoadCompleteHistory') }}</span>
                     </v-tooltip>
+
                     <v-tooltip top>
                         <template #activator="{ on, attrs }">
-                            <v-btn class="px-2 minwidth-0 ml-3" v-bind="attrs" v-on="on" @click="exportHistory">
+                            <v-btn 
+                                class="px-2 ml-2" 
+                                outlined
+                                color="grey lighten-1"
+                                v-bind="attrs" 
+                                v-on="on" 
+                                @click="exportHistory">
                                 <v-icon>{{ mdiDatabaseExportOutline }}</v-icon>
                             </v-btn>
                         </template>
                         <span>{{ $t('History.TitleExportHistory') }}</span>
                     </v-tooltip>
-                    <v-menu :offset-y="true" :close-on-content-click="false">
+
+                    <v-menu :offset-y="true" :close-on-content-click="false" content-class="elevation-3">
                         <template #activator="{ on, attrs }">
                             <v-tooltip top>
                                 <template #activator="{ on: onToolTip }">
-                                    <v-btn class="px-2 minwidth-0 ml-3" v-bind="attrs" v-on="{ ...on, ...onToolTip }">
-                                        <v-icon>{{ mdiCog }}</v-icon>
+                                    <v-btn 
+                                        class="px-2 ml-2" 
+                                        color="grey darken-3"
+                                        v-bind="attrs" 
+                                        v-on="{ ...on, ...onToolTip }">
+                                        <v-icon color="grey lighten-2">{{ mdiCog }}</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>{{ $t('History.Settings') }}</span>
                             </v-tooltip>
                         </template>
-                        <v-list>
+                        <v-list dense class="pa-2" style="background-color: #212121;">
+                            <v-subheader class="text-uppercase font-weight-bold grey--text text--lighten-1">Filtros Globais</v-subheader>
                             <v-list-item class="minHeight36">
                                 <v-checkbox
-                                    class="mt-0"
+                                    class="mt-0 pt-0"
                                     hide-details
                                     :input-value="showMaintenanceEntries"
                                     :label="$t('History.MaintenanceEntries')"
+                                    color="primary"
                                     @change="showMaintenanceEntries = !showMaintenanceEntries" />
                             </v-list-item>
-                            <v-list-item class="minHeight36">
+                            <v-list-item class="minHeight36 mb-2">
                                 <v-checkbox
-                                    class="mt-0"
+                                    class="mt-0 pt-0"
                                     hide-details
                                     :input-value="showPrintJobs"
                                     :label="$t('History.PrintJobs')"
+                                    color="primary"
                                     @change="showPrintJobs = !showPrintJobs" />
                             </v-list-item>
-                            <v-divider />
+                            
+                            <v-divider class="my-2"></v-divider>
+                            
                             <template v-if="printStatusArray.length">
+                                <v-subheader class="text-uppercase font-weight-bold grey--text text--lighten-1">Status</v-subheader>
                                 <v-list-item v-for="status of printStatusArray" :key="status.name" class="minHeight36">
                                     <v-checkbox
-                                        class="mt-0"
+                                        class="mt-0 pt-0"
                                         hide-details
                                         :input-value="status.showInTable"
                                         :label="`${status.displayName} (${status.value})`"
+                                        color="primary"
                                         @change="changeStatusVisible(status)" />
                                 </v-list-item>
-                                <v-divider />
+                                <v-divider class="my-2"></v-divider>
                             </template>
+                            
+                            <v-subheader class="text-uppercase font-weight-bold grey--text text--lighten-1">Colunas</v-subheader>
                             <v-list-item
                                 v-for="(header, index) of configHeaders"
                                 :key="'history-list-panel-header-option-' + index"
                                 class="minHeight36">
                                 <v-checkbox
                                     v-model="header.visible"
-                                    class="mt-0"
+                                    class="mt-0 pt-0"
                                     hide-details
                                     :label="header.text"
+                                    color="primary"
                                     @change="changeColumnVisible(header.value)" />
                             </v-list-item>
                         </v-list>
@@ -116,11 +154,11 @@
                 </v-col>
             </v-row>
         </v-card-text>
-        <v-divider class="mb-3" />
+        
         <v-data-table
             v-model="selectedJobsTable"
             :items="entries"
-            class="history-jobs-table"
+            class="history-jobs-table elevation-0 custom-data-table"
             :headers="filteredHeaders"
             :custom-sort="sortFiles"
             :sort-by.sync="sortBy"
@@ -137,7 +175,7 @@
             mobile-breakpoint="0"
             show-select>
             <template #no-data>
-                <div class="text-center">{{ $t('History.Empty') }}</div>
+                <div class="text-center pa-4 grey--text">{{ $t('History.Empty') }}</div>
             </template>
 
             <template #item="{ item, isSelected, select }">
@@ -737,9 +775,28 @@ export default class HistoryListPanel extends Mixins(BaseMixin, HistoryMixin, Hi
 <style scoped>
 .history-jobs-table ::v-deep th {
     white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .history-jobs-table ::v-deep th.text-start {
     padding-right: 0 !important;
+}
+
+/* Estilizar a barra de pesquisa para combinar com o tema */
+.history-search-bar ::v-deep .v-input__slot {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Remover o fundo predefinido da tabela para ficar mais flat */
+.custom-data-table {
+    background-color: transparent !important;
+}
+
+.custom-data-table ::v-deep tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
 }
 </style>

@@ -1,18 +1,19 @@
 <template>
-    <v-container fluid py-0 px-0>
+    <v-container fluid class="pa-4 pa-md-8">
         <v-row>
-            <v-col class="col-12 col-md-6 pb-0 pb-md-3">
-                <klippy-state-panel></klippy-state-panel>
+            <v-col cols="12" md="6">
+                <klippy-state-panel class="mb-6"></klippy-state-panel>
                 <system-panel></system-panel>
             </v-col>
             
-            <v-col class="col-12 col-md-6 pt-0 pt-md-3">
-                <update-panel></update-panel>
+            <v-col cols="12" md="6">
+                <update-panel class="mb-6"></update-panel>
+                
                 <v-row>
-                    <v-col v-if="klipperState === 'ready'" class="col-12 col-sm-6 pb-0 pb-md-3">
+                    <v-col v-if="klipperState === 'ready'" cols="12" sm="6">
                         <endstop-panel></endstop-panel>
                     </v-col>
-                    <v-col :class="klipperState !== 'ready' ? 'col-12' : 'col-12 col-sm-6 pt-0 pt-sm-3'">
+                    <v-col cols="12" :sm="klipperState === 'ready' ? 6 : 12">
                         <logfiles-panel></logfiles-panel>
                     </v-col>
                 </v-row>
