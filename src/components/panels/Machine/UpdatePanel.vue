@@ -3,7 +3,7 @@
         <panel
             v-if="enableUpdateManager"
             :title="$t('Machine.UpdatePanel.UpdateManager')"
-            card-class="machine-update-panel"
+            card-class="machine-update-panel custom-glass-panel"
             :collapsible="true">
             
             <template #icon>
@@ -36,18 +36,19 @@
                     <span>{{ $t('Machine.UpdatePanel.CheckForUpdates') }}</span>
                 </v-tooltip>
             </template>
+
             <v-card-text class="px-0 py-0 update-manager-list">
                 <template v-if="checkInitState">
                     <template v-for="(module, index) in modules">
-                        <v-divider v-if="index" :key="'divider_' + module.name" class="my-0" />
+                        <v-divider v-if="index" :key="'divider_' + module.name" class="custom-divider my-0" />
                         <update-panel-entry :key="module.name" :repo="module.data" />
                     </template>
                     <template v-if="existsSystemModul">
-                        <v-divider v-if="modules.length" class="my-0" />
+                        <v-divider v-if="modules.length" class="custom-divider my-0" />
                         <update-panel-entry-system />
                     </template>
                     <template v-if="showUpdateAll">
-                        <v-divider class="mb-0 mt-2 border-top-2" />
+                        <v-divider class="mb-0 mt-2 border-top-2 custom-divider" />
                         <update-panel-entry-all />
                     </template>
                 </template>
@@ -66,7 +67,6 @@
 </template>
 
 <script lang="ts">
-// Teus imports de ícones com ?url para o Vite
 import SystemUpdateIcon from "@/assets/styles/icons/update_systemsvg.svg?url";
 import TroubleShootingIcon from "@/assets/styles/icons/troubleshoot_orangesvg.svg?url";
 import InfoIcon from "@/assets/styles/icons/infosvg.svg?url";
@@ -90,7 +90,6 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
     mdiCloseThick = mdiCloseThick
     mdiUpdate = mdiUpdate
 
-    // Alteração: Declaração das variáveis na classe para o Template as reconhecer
     systemUpdateIcon = SystemUpdateIcon;
     troubleShootingIcon = TroubleShootingIcon;
     infoIcon = InfoIcon;
@@ -155,6 +154,15 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
+.custom-glass-panel {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.custom-divider {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 ::v-deep .update-manager-list > div:last-child > div.row {
     padding-bottom: 0 !important;
 }

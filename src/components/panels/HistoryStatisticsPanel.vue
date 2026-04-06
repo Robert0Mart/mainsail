@@ -1,78 +1,88 @@
 <template>
-    <v-card class="history-statistics-panel mb-4">
-        <v-card-title class="pa-2 d-flex align-center" style="min-height: 48px; background-color: rgba(255, 255, 255, 0.05);">
+    <v-card class="history-statistics-panel mb-6" flat style="background: transparent;">
+        <v-card-title class="pa-0 mb-4 d-flex align-center">
             <img 
                 :src="mdiChartAreaspline" 
-                style="width: 24px; height: 24px; margin-left: 8px; margin-right: 12px; filter: brightness(0) invert(1);" 
+                style="width: 24px; height: 24px; margin-right: 12px; filter: brightness(0) invert(1);" 
                 alt="Statistics Icon"
             />
-            
-            <span class="text-subtitle-1 font-weight-bold">{{ $t('History.Statistics') }}</span>
+            <span class="text-h6 font-weight-bold">{{ $t('History.Statistics') }}</span>
             <v-spacer></v-spacer>
-            
-            <v-btn icon small @click="collapsed = !collapsed">
+            <v-btn icon @click="collapsed = !collapsed">
                 <v-icon>{{ collapsed ? 'mdi-chevron-down' : 'mdi-chevron-up' }}</v-icon>
             </v-btn>
         </v-card-title>
 
         <v-expand-transition>
-            <v-card-text v-show="!collapsed" class="pa-0">
-                <v-row align="center">
-                    <v-col class="col-12 col-sm-6 col-md-4">
-                        <v-simple-table>
-                            <tbody>
-                                <tr v-for="total in totals" :key="total.title">
-                                    <td>{{ total.title }}</td>
-                                    <td class="text-right">{{ total.value }}</td>
-                                </tr>
-                            </tbody>
-                        </v-simple-table>
-                    </v-col>
-                    <v-col class="col-12 col-sm-6 col-md-4">
-                        <history-all-print-status-chart v-if="togglePrintStatus === 'chart'" :value-name="toggleValue" />
-                        <history-all-print-status-table v-else :value-name="toggleValue" />
-                        <div class="text-center mb-3">
-                            <v-btn-toggle v-model="togglePrintStatus" small mandatory>
-                                <v-btn small value="chart">{{ $t('History.Chart') }}</v-btn>
-                                <v-btn small value="table">{{ $t('History.Table') }}</v-btn>
-                            </v-btn-toggle>
-                            <v-tooltip v-if="!allLoaded" top>
-                                <template #activator="{ on, attrs }">
-                                    <v-btn
-                                        outlined
-                                        small
-                                        :loading="loadings.includes('historyLoadAll')"
-                                        class="ml-3 minwidth-0 px-2"
-                                        color="primary"
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        @click="refreshHistory">
-                                        <v-icon small>{{ mdiDatabaseArrowDownOutline }}</v-icon>
-                                    </v-btn>
-                                </template>
-                                <span>{{ $t('History.LoadCompleteHistory') }}</span>
-                            </v-tooltip>
-                        </div>
-                        <div class="text-center mb-3">
-                            <v-btn-toggle v-model="toggleValue" small mandatory>
-                                <v-btn v-for="option in toggleValueOptions" :key="option.value" small :value="option.value">
-                                    {{ option.text }}
-                                </v-btn>
-                            </v-btn-toggle>
-                        </div>
-                    </v-col>
-                    <v-col class="col-12 col-sm-12 col-md-4">
-                        <history-filament-usage v-if="toggleChart === 'filament_usage'" />
-                        <history-printtime-avg v-else-if="toggleChart === 'printtime_avg'" />
-                        <div class="text-center mt-3">
-                            <v-btn-toggle v-model="toggleChart" small mandatory>
-                                <v-btn small value="filament_usage">{{ $t('History.FilamentUsage') }}</v-btn>
-                                <v-btn small value="printtime_avg">{{ $t('History.PrinttimeAvg') }}</v-btn>
-                            </v-btn-toggle>
-                        </div>
+            <div v-show="!collapsed">
+                <v-row>
+                    <v-col v-for="total in totals" :key="total.title" cols="6" sm="4" md="auto" class="flex-grow-1">
+                        <v-card outlined class="pa-3 d-flex flex-column justify-center align-center text-center" style="height: 100%; border-color: rgba(255, 255, 255, 0.1); background-color: rgba(255, 255, 255, 0.02);">
+                            <span class="text-caption grey--text text--lighten-1 mb-1 text-uppercase font-weight-medium" style="letter-spacing: 0.5px;">{{ total.title }}</span>
+                            <span class="text-h5 font-weight-bold primary--text">{{ total.value }}</span>
+                        </v-card>
                     </v-col>
                 </v-row>
-            </v-card-text>
+
+                <v-row class="mt-4">
+                    <v-col cols="12" md="6">
+                        <v-card outlined class="pa-4 d-flex flex-column" style="height: 100%; border-color: rgba(255, 255, 255, 0.1); background-color: rgba(255, 255, 255, 0.02);">
+                            <div class="d-flex justify-space-between align-center mb-4">
+                                <v-btn-toggle v-model="toggleValue" small mandatory>
+                                    <v-btn v-for="option in toggleValueOptions" :key="option.value" small :value="option.value">
+                                        {{ option.text }}
+                                    </v-btn>
+                                </v-btn-toggle>
+                                
+                                <div class="d-flex align-center">
+                                    <v-btn-toggle v-model="togglePrintStatus" small mandatory class="mr-2">
+                                        <v-btn small value="chart">{{ $t('History.Chart') }}</v-btn>
+                                        <v-btn small value="table">{{ $t('History.Table') }}</v-btn>
+                                    </v-btn-toggle>
+
+                                    <v-tooltip v-if="!allLoaded" top>
+                                        <template #activator="{ on, attrs }">
+                                            <v-btn
+                                                outlined
+                                                small
+                                                :loading="loadings.includes('historyLoadAll')"
+                                                class="minwidth-0 px-2"
+                                                color="primary"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                                @click="refreshHistory">
+                                                <v-icon small>{{ mdiDatabaseArrowDownOutline }}</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>{{ $t('History.LoadCompleteHistory') }}</span>
+                                    </v-tooltip>
+                                </div>
+                            </div>
+                            
+                            <div class="flex-grow-1 d-flex align-center justify-center">
+                                <history-all-print-status-chart v-if="togglePrintStatus === 'chart'" :value-name="toggleValue" style="width: 100%;" />
+                                <history-all-print-status-table v-else :value-name="toggleValue" style="width: 100%;" />
+                            </div>
+                        </v-card>
+                    </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-card outlined class="pa-4 d-flex flex-column" style="height: 100%; border-color: rgba(255, 255, 255, 0.1); background-color: rgba(255, 255, 255, 0.02);">
+                            <div class="d-flex justify-center mb-4">
+                                <v-btn-toggle v-model="toggleChart" small mandatory>
+                                    <v-btn small value="filament_usage">{{ $t('History.FilamentUsage') }}</v-btn>
+                                    <v-btn small value="printtime_avg">{{ $t('History.PrinttimeAvg') }}</v-btn>
+                                </v-btn-toggle>
+                            </div>
+                            
+                            <div class="flex-grow-1 d-flex align-center justify-center">
+                                <history-filament-usage v-if="toggleChart === 'filament_usage'" style="width: 100%;" />
+                                <history-printtime-avg v-else-if="toggleChart === 'printtime_avg'" style="width: 100%;" />
+                            </div>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </div>
         </v-expand-transition>
     </v-card>
 </template>
@@ -89,7 +99,6 @@ import {
     ServerHistoryStateJobAuxiliaryTotal,
 } from '@/store/server/history/types'
 
-// IMPORT DA TUA IMAGEM SVG
 import statisticssvg from '@/assets/styles/icons/statisticssvg.svg'
 import { mdiDatabaseArrowDownOutline } from '@mdi/js'
 import { formatPrintTime } from '@/plugins/helpers'
@@ -104,10 +113,9 @@ export default class HistoryStatisticsPanel extends Mixins(BaseMixin, HistoryMix
     mdiDatabaseArrowDownOutline = mdiDatabaseArrowDownOutline
     formatPrintTime = formatPrintTime
 
-    collapsed = false // Controlo local do painel
+    collapsed = false
     toggleValue = 'jobs'
 
-    // O restante código lógico permanece exatamente o mesmo que tinhas
     get toggleValueOptions(): { text: TranslateResult; value: HistoryStatsValueNames }[] {
         return [
             { text: this.$t('History.Jobs'), value: 'jobs' },

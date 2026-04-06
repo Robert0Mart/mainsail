@@ -1,82 +1,76 @@
 <template>
-    <div class="d-flex flex-column">
-        <v-row :class="consoleDirection === 'table' ? 'order-0' : 'order-1 mt-3'">
-            <v-col>
-                <console-textarea ref="gcodeCommandField" />
-            </v-col>
+    <v-container fluid class="pa-4 pa-md-8">
+        <div class="d-flex flex-column">
+            <v-row :class="consoleDirection === 'table' ? 'order-0 mb-4' : 'order-1 mt-4'" no-gutters>
+                <v-col>
+                    <v-card outlined class="premium-console-toolbar pa-2 d-flex align-center">
+                        <div class="flex-grow-1 mr-2">
+                            <console-textarea ref="gcodeCommandField" />
+                        </div>
 
-            <v-col class="col-auto d-flex align-center">
-                <v-btn class="mr-3 px-2 minwidth-0" color="lightgray" @click="clearConsole">
-                    <v-icon>{{ mdiTrashCan }}</v-icon>
-                </v-btn>
-                <command-help-modal @onCommand="commandClick($event)" />
-                <v-menu
-                    offset-y
-                    :top="consoleDirection === 'shell'"
-                    :close-on-content-click="false"
-                    :title="$t('Console.SetupConsole')">
-                    <template #activator="{ on, attrs }">
-                        <v-btn class="ml-3 px-2 minwidth-0" color="lightgray" v-bind="attrs" v-on="on">
-                            <v-icon>{{ mdiCog }}</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-list>
-                        <v-list-item v-if="consoleDirection === 'shell'" class="minHeight36">
-                            <v-checkbox
-                                v-model="autoscroll"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Panels.MiniconsolePanel.Autoscroll')" />
-                        </v-list-item>
-                        <v-list-item class="minHeight36">
-                            <v-checkbox
-                                v-model="hideWaitTemperatures"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Console.HideTemperatures')" />
-                        </v-list-item>
-                        <v-list-item v-if="moonrakerComponents.includes('timelapse')" class="minHeight36">
-                            <v-checkbox
-                                v-model="hideTlCommands"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Console.HideTimelapse')" />
-                        </v-list-item>
-                        <v-list-item v-for="(filter, index) in customFilters" :key="index" class="minHeight36">
-                            <v-checkbox
-                                v-model="filter.bool"
-                                class="mt-0"
-                                hide-details
-                                :label="filter.name"
-                                @change="toggleFilter(index, filter)" />
-                        </v-list-item>
-                        <v-list-item class="minHeight36">
-                            <v-checkbox
-                                v-model="rawOutput"
-                                class="mt-0"
-                                hide-details
-                                :label="$t('Panels.MiniconsolePanel.RawOutput')" />
-                        </v-list-item>
-                    </v-list>
-                </v-menu>
-            </v-col>
-        </v-row>
-        <v-row :class="consoleDirection === 'table' ? 'order-1' : 'order-0 mt-0'">
-            <v-col :class="consoleDirection === 'table' ? 'col' : 'col pt-0'">
-                <v-card>
-                    <v-card-text class="pa-0">
-                        <overlay-scrollbars ref="consoleScroll" class="consoleScrollContainer d-flex flex-column">
-                            <console-table
-                                ref="console"
-                                :is-mini="false"
-                                :events="events"
-                                @command-click="commandClick" />
-                        </overlay-scrollbars>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
-    </div>
+                        <div class="d-flex align-center gap-2">
+                            <v-tooltip top>
+                                <template #activator="{ on, attrs }">
+                                    <v-btn outlined color="grey lighten-1" class="px-2 minwidth-0" v-bind="attrs" v-on="on" @click="clearConsole">
+                                        <v-icon small>{{ mdiTrashCan }}</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>{{ $t('Console.ClearConsole') }}</span>
+                            </v-tooltip>
+
+                            <command-help-modal @onCommand="commandClick($event)" />
+
+                            <v-menu
+                                offset-y
+                                :top="consoleDirection === 'shell'"
+                                :close-on-content-click="false"
+                                content-class="elevation-3">
+                                <template #activator="{ on, attrs }">
+                                    <v-btn outlined color="grey lighten-1" class="px-2 minwidth-0" v-bind="attrs" v-on="on">
+                                        <v-icon small>{{ mdiCog }}</v-icon>
+                                    </v-btn>
+                                </template>
+                                <v-list dense class="pa-2" style="background-color: #1e1e1e;">
+                                    <v-subheader class="text-uppercase font-weight-bold grey--text text--lighten-1" style="height: 30px; font-size: 0.7rem;">Configurações</v-subheader>
+                                    <v-list-item v-if="consoleDirection === 'shell'" class="minHeight36">
+                                        <v-checkbox v-model="autoscroll" class="mt-0 pt-0" hide-details :label="$t('Panels.MiniconsolePanel.Autoscroll')" color="primary" />
+                                    </v-list-item>
+                                    <v-list-item class="minHeight36">
+                                        <v-checkbox v-model="hideWaitTemperatures" class="mt-0 pt-0" hide-details :label="$t('Console.HideTemperatures')" color="primary" />
+                                    </v-list-item>
+                                    <v-list-item v-if="moonrakerComponents.includes('timelapse')" class="minHeight36">
+                                        <v-checkbox v-model="hideTlCommands" class="mt-0 pt-0" hide-details :label="$t('Console.HideTimelapse')" color="primary" />
+                                    </v-list-item>
+                                    <v-list-item v-for="(filter, index) in customFilters" :key="index" class="minHeight36">
+                                        <v-checkbox v-model="filter.bool" class="mt-0 pt-0" hide-details :label="filter.name" color="primary" @change="toggleFilter(index, filter)" />
+                                    </v-list-item>
+                                    <v-list-item class="minHeight36">
+                                        <v-checkbox v-model="rawOutput" class="mt-0 pt-0" hide-details :label="$t('Panels.MiniconsolePanel.RawOutput')" color="primary" />
+                                    </v-list-item>
+                                </v-list>
+                            </v-menu>
+                        </div>
+                    </v-card>
+                </v-col>
+            </v-row>
+
+            <v-row :class="consoleDirection === 'table' ? 'order-1' : 'order-0 mt-0'" no-gutters>
+                <v-col>
+                    <v-card outlined class="premium-console-card">
+                        <v-card-text class="pa-0">
+                            <overlay-scrollbars ref="consoleScroll" class="consoleScrollContainer d-flex flex-column">
+                                <console-table
+                                    ref="console"
+                                    :is-mini="false"
+                                    :events="events"
+                                    @command-click="commandClick" />
+                            </overlay-scrollbars>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </div>
+    </v-container>
 </template>
 
 <script lang="ts">
@@ -141,10 +135,27 @@ export default class PageConsole extends Mixins(BaseMixin, ConsoleMixin) {
 <style scoped>
 .consoleScrollContainer {
     min-height: 200px;
-    height: calc(var(--app-height) - 180px);
+    height: calc(var(--app-height) - 200px);
 }
 
-.gcode-command-field {
-    font-family: 'Roboto Mono', monospace;
+.premium-console-toolbar {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+}
+
+.premium-console-card {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+.gap-2 {
+    gap: 8px;
+}
+
+::v-deep .v-text-field--outlined > .v-input__control > .v-input__slot {
+    background: rgba(0, 0, 0, 0.2) !important;
 }
 </style>

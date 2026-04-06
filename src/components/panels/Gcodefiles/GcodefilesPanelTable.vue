@@ -2,7 +2,7 @@
     <v-data-table
         v-model="selectedFiles"
         :items="files"
-        class="files-table"
+        class="files-table elevation-0 custom-data-table"
         :headers="filteredHeaders"
         :custom-sort="sortFiles"
         :sort-by.sync="sortBy"
@@ -20,7 +20,7 @@
         show-select
         @current-items="refreshMetadata">
         <template #no-data>
-            <div class="text-center">{{ $t('Files.Empty') }}</div>
+            <div class="text-center pa-4 grey--text">{{ $t('Files.Empty') }}</div>
         </template>
 
         <template v-if="currentPath !== ''" #body.prepend>
@@ -43,6 +43,7 @@
         </template>
     </v-data-table>
 </template>
+
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
@@ -117,6 +118,23 @@ export default class GcodefilesPanelTable extends Mixins(BaseMixin, GcodefilesMi
 </script>
 
 <style scoped>
+.custom-data-table {
+    background-color: transparent !important;
+}
+
+.files-table ::v-deep th {
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.files-table ::v-deep tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 .files-table ::v-deep .v-data-table-header__icon {
     margin-left: 7px;
 }
