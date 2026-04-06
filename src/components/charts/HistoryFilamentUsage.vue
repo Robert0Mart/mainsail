@@ -23,36 +23,24 @@ export default class HistoryFilamentUsage extends Mixins(BaseMixin, HistoryMixin
         historyFilamentUsage: any
     }
 
-    // A MÁGICA DOS GRADIENTES NO FILAMENTO
     get coloredFilamentUsageArray() {
         return this.filamentUsageArray.map((item) => {
-            const value = item[1] // Quantidade de filamento gasta
+            const value = item[1] 
             
-            let colorStops = []
+            let colorHex = ''
 
-            // Lógica de Cores: < 10m (Verde), 10m a 30m (Azul), > 30m (Vermelho)
             if (value < 10) {
-                colorStops = [
-                    { offset: 0, color: '#11998e' }, { offset: 1, color: '#38ef7d' } // Green
-                ]
+                colorHex = '#2ecc71'
             } else if (value <= 30) {
-                colorStops = [
-                    { offset: 0, color: '#667eea' }, { offset: 1, color: '#764ba2' } // Blue
-                ]
+                colorHex = '#5c6bc0' 
             } else {
-                colorStops = [
-                    { offset: 0, color: '#ff416c' }, { offset: 1, color: '#ff4b2b' } // Red
-                ]
+                colorHex = '#ff9500' 
             }
 
             return {
                 value: item,
                 itemStyle: {
-                    color: {
-                        type: 'linear',
-                        x: 0, y: 1, x2: 0, y2: 0, // Gradiente de Baixo para Cima
-                        colorStops: colorStops
-                    }
+                    color: colorHex
                 }
             }
         })
@@ -70,6 +58,8 @@ export default class HistoryFilamentUsage extends Mixins(BaseMixin, HistoryMixin
             tooltip: {
                 trigger: 'axis',
                 borderWidth: 0,
+                backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                textStyle: { color: '#fff' },
                 formatter: (datasets: any) => {
                     let output = ''
 
@@ -134,7 +124,7 @@ export default class HistoryFilamentUsage extends Mixins(BaseMixin, HistoryMixin
             series: [
                 {
                     type: 'bar',
-                    data: this.coloredFilamentUsageArray, // Usar array com cores
+                    data: this.coloredFilamentUsageArray,
                     showSymbol: false,
                 },
             ],
@@ -195,7 +185,7 @@ export default class HistoryFilamentUsage extends Mixins(BaseMixin, HistoryMixin
         this.chart?.setOption(
             {
                 series: {
-                    data: this.coloredFilamentUsageArray, // Usar array com cores
+                    data: this.coloredFilamentUsageArray, 
                 },
             },
             false,

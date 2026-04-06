@@ -4,8 +4,8 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <title>Mainsail</title>
-        <meta name="description" content="Mainsail is the popular web interface for Klipper." />
+        <title>Blocks</title>
+        <meta name="description" content="Blocks interface for Klipper." />
 
         <link rel="icon" type="image/png" sizes="32x32" href="/img/icons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/img/icons/favicon-16x16.png" />
@@ -13,20 +13,69 @@
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-        <meta name="apple-mobile-web-app-title" content="Mainsail" />
+        <meta name="apple-mobile-web-app-title" content="Blocks" />
         <link rel="apple-touch-icon" sizes="180x180" href="/img/icons/apple-touch-icon-180x180.png" />
-        <link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#d51f26" />
+        <link rel="mask-icon" href="img/icons/safari-pinned-tab.svg" color="#ff7b00" />
         <meta name="msapplication-TileImage" content="/img/icons/mstile-150x150.png" />
-        <meta name="msapplication-TileColor" content="#d51f26" />
+        <meta name="msapplication-TileColor" content="#ff7b00" />
 
         <script type="module" src="/src/main.ts"></script>
+
+        <style>
+            body {
+                margin: 0;
+                background-color: #121212;
+            }
+            #blocks-splash {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                width: 100vw;
+                background-color: #121212;
+                font-family: sans-serif;
+            }
+            .blocks-logo {
+                width: 280px;
+                max-width: 80vw;
+                margin-bottom: 40px;
+            }
+            /* Animação do Quadrado a Rodar */
+            .loading-square {
+                width: 40px;
+                height: 40px;
+                background-color: #ffffff;
+                animation: flipSquare 1.2s infinite ease-in-out;
+            }
+
+            @keyframes flipSquare {
+                0% { 
+                    transform: perspective(120px) rotateX(0deg) rotateY(0deg); 
+                }
+                50% { 
+                    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); 
+                }
+                100% { 
+                    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); 
+                }
+            }
+        </style>
     </head>
-    <body style="background-color: #121212">
+    
+    <body>
         <noscript>
             <strong>
-                We're sorry but Mainsail doesn't work properly without JavaScript enabled. Please enable it to continue.
+                We're sorry but this interface doesn't work properly without JavaScript enabled. Please enable it to continue.
             </strong>
         </noscript>
-        <div id="app"></div>
+        
+        <div id="app">
+            <div id="blocks-splash">
+                <img src="/img/icons/blocks_icons/logotipo_BLOCKSsvg.svg" alt="Blocks Logo" class="blocks-logo" />
+                <div class="loading-square"></div>
+            </div>
+        </div>
+        
     </body>
 </html>

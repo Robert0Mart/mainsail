@@ -10,16 +10,8 @@
                 <v-icon>{{ mdiConsole }}</v-icon>
             </v-btn>
             
-            <v-btn icon to="/heightmap" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiGrid }}</v-icon>
-            </v-btn>
-            
             <v-btn icon to="/files" class="nav-btn" active-class="active-btn">
                 <v-icon>{{ mdiFileDocumentOutline }}</v-icon>
-            </v-btn>
-            
-            <v-btn icon to="/viewer" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiEye }}</v-icon>
             </v-btn>
             
             <v-btn icon to="/history" class="nav-btn" active-class="active-btn">
@@ -39,9 +31,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import {
     mdiViewDashboard,
     mdiConsole,
-    mdiGrid,
     mdiFileDocumentOutline,
-    mdiEye,
     mdiHistory,
     mdiWrench
 } from '@mdi/js'
@@ -51,9 +41,7 @@ export default class BottomNav extends Vue {
     // Icons
     mdiViewDashboard = mdiViewDashboard
     mdiConsole = mdiConsole
-    mdiGrid = mdiGrid
     mdiFileDocumentOutline = mdiFileDocumentOutline
-    mdiEye = mdiEye
     mdiHistory = mdiHistory
     mdiWrench = mdiWrench
 }
