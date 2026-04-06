@@ -44,7 +44,7 @@
                         <update-panel-entry :key="module.name" :repo="module.data" />
                     </template>
                     <template v-if="existsSystemModul">
-                        <v-divider v-if="modules.length" class="custom-divider my-0" />
+                        <v-divider v-if="modules.length" class="my-0" />
                         <update-panel-entry-system />
                     </template>
                     <template v-if="showUpdateAll">
@@ -70,7 +70,6 @@
 import SystemUpdateIcon from "@/assets/styles/icons/update_systemsvg.svg?url";
 import TroubleShootingIcon from "@/assets/styles/icons/troubleshoot_orangesvg.svg?url";
 import InfoIcon from "@/assets/styles/icons/infosvg.svg?url";
-
 import { Component, Mixins } from 'vue-property-decorator'
 import BaseMixin from '../../mixins/base'
 import Panel from '@/components/ui/Panel.vue'
@@ -89,7 +88,6 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
     mdiInformation = mdiInformation
     mdiCloseThick = mdiCloseThick
     mdiUpdate = mdiUpdate
-
     systemUpdateIcon = SystemUpdateIcon;
     troubleShootingIcon = TroubleShootingIcon;
     infoIcon = InfoIcon;
@@ -97,36 +95,28 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
     get enableUpdateManager() {
         return this.$store.state.server.components.includes('update_manager')
     }
-
     get modules() {
         return this.$store.getters['server/updateManager/getUpdateManagerList'] ?? []
     }
-
     get existsSystemModul() {
         return 'system' in this.$store.state.server.updateManager
     }
-
     get systemPackagesCount() {
         return this.$store.state.server.updateManager?.system?.package_count ?? 0
     }
-
     get checkInitState() {
         const initModules = this.modules.filter(
             (module: ServerUpdateManagerStateGuiList) => module.data.remote_version !== '?'
         )
-
         return initModules.length > 0
     }
-
     get showUpdateAll() {
         let count = 0
-
         this.modules.forEach((module: ServerUpdateManagerStateGuiList) => {
             if (module.type === 'git' && module.data?.commits_behind?.length) {
                 count++
                 return
             }
-
             if (
                 module.type === 'web' &&
                 semver.valid(module.data?.remote_version, { loose: true }) &&
@@ -137,12 +127,9 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
                 return
             }
         })
-
         if (this.systemPackagesCount > 0) count++
-
         return count > 1
     }
-
     btnSync() {
         this.$socket.emit(
             'machine.update.status',
@@ -158,11 +145,9 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
     background-color: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
-
 .custom-divider {
     border-color: rgba(255, 255, 255, 0.05) !important;
 }
-
 ::v-deep .update-manager-list > div:last-child > div.row {
     padding-bottom: 0 !important;
 }
