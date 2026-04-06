@@ -1,73 +1,25 @@
 <template>
     <tr v-longpress:600="(e) => openContextMenu(e)" @contextmenu.prevent="openContextMenu($event)">
-        <td class="icon">
-            <img v-if="isExtruder"
-                 src="/img/icons/blocks_icons/extrudesvg.svg"
-                 class="blocks-icon mr-2"
-                 :style="customIconStyle"
-                 @click="openEditDialog" />
-
-            <img v-else-if="isBed"
-                 src="/img/icons/blocks_icons/temperature_platesvg.svg"
-                 class="blocks-icon mr-2"
-                 :style="customIconStyle"
-                 @click="openEditDialog" />
-
-            <img v-else-if="isFan"
-                 src="/img/icons/blocks_icons/blowersvg.svg"
-                 class="blocks-icon mr-2"
-                 :style="customIconStyle"
-                 @click="openEditDialog" />
-
-            <img v-else-if="objectName.startsWith('heater_generic')"
-                 src="/img/icons/blocks_icons/hot_temperaturesvg.svg"
-                 class="blocks-icon mr-2"
-                 :style="customIconStyle"
-                 @click="openEditDialog" />
-
-            <img v-else
-                 src="/img/icons/blocks_icons/standart_temperaturesvg.svg"
-                 class="blocks-icon mr-2"
-                 :style="customIconStyle"
-                 @click="openEditDialog" />
+        <td class="icon text-center">
+            <img :src="iconSrc" class="blocks-icon" :style="customIconStyle" @click="openEditDialog" />
         </td>
 
         <td class="name">
-            <span class="cursor-pointer" @click="openEditDialog">{{ formatName }}</span>
+            <span class="cursor-pointer white--text font-weight-medium" @click="openEditDialog">{{ formatName }}</span>
         </td>
 
-        <td v-if="!isResponsiveMobile" class="state">
-            <v-tooltip v-if="state !== null" top>
-                <template #activator="{ on, attrs }">
-                    <div v-bind="attrs" v-on="on">{{ formatState }}</div>
-                </template>
-                <span>{{ $t('Panels.TemperaturePanel.Avg') }}: {{ avgState }} %</span>
-            </v-tooltip>
+        <td v-if="!isResponsiveMobile" class="state text-right">
+            <div v-if="state !== null" class="grey--text text--lighten-1">{{ formatState }}</div>
         </td>
 
-        <td class="current">
-            <v-tooltip top :disabled="!(measured_min_temp !== null || measured_max_temp !== null)">
-                <template #activator="{ on, attrs }">
-                    <span style="cursor: default" v-bind="attrs" v-on="on">
-                        {{ formatTemperature }}
-                    </span>
-                </template>
-                <span>
-                    {{ $t('Panels.TemperaturePanel.Max') }}: {{ measured_max_temp }}°C
-                    <br />
-                    {{ $t('Panels.TemperaturePanel.Min') }}: {{ measured_min_temp }}°C
-                </span>
-            </v-tooltip>
+        <td class="current text-right">
+            <span class="white--text font-weight-bold" style="font-size: 1.25rem;">{{ formatTemperature }}</span>
             <div v-if="rpm !== null">
                 <small :class="rpmClass">{{ rpm }} RPM</small>
             </div>
-            <temperature-panel-list-item-additional-sensor
-                v-if="additionalSensorName"
-                :object-name="objectName"
-                :additional-object-name="additionalSensorName" />
         </td>
 
-        <td class="target">
+        <td class="target ultra-clean-target text-right">
             <temperature-input
                 v-if="command !== null"
                 :name="name"
@@ -85,7 +37,6 @@
             :object-name="objectName"
             :name="name"
             :format-name="formatName"
-            :additional-sensor-name="additionalSensorName"
             :icon="mdiThermometer"
             :color="color" />
 
@@ -95,7 +46,6 @@
                     <img src="/img/icons/blocks_icons/cooldownsvg.svg" class="blocks-icon mr-2" style="width: 18px; height: 18px;" />
                     <v-list-item-title>{{ $t('Panels.TemperaturePanel.TurnHeaterOff') }}</v-list-item-title>
                 </v-list-item>
-
                 <v-list-item @click="openEditDialog">
                     <img src="/img/icons/blocks_icons/printer_settingsvg.svg" class="blocks-icon mr-2" style="width: 18px; height: 18px;" />
                     <v-list-item-title>{{ $t('Panels.TemperaturePanel.Settings') }}</v-list-item-title>
@@ -111,8 +61,7 @@ import { Mixins, Prop } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import { convertName } from '@/plugins/helpers'
 import { mdiThermometer } from '@mdi/js'
-import { additionalSensors, opacityHeaterActive, opacityHeaterInactive } from '@/store/variables'
-import { CLOSE_CONTEXT_MENU, EventBus } from '@/plugins/eventBus'
+import { EventBus, CLOSE_CONTEXT_MENU } from '@/plugins/eventBus'
 
 @Component
 export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
@@ -127,13 +76,23 @@ export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
     contextMenuX = 0
     contextMenuY = 0
 
+    get iconSrc() {
+        if (this.isExtruder) return '/img/icons/blocks_icons/extrudesvg.svg'
+        if (this.isBed) return '/img/icons/blocks_icons/temperature_platesvg.svg'
+        if (this.isFan) return '/img/icons/blocks_icons/blowersvg.svg'
+        return '/img/icons/blocks_icons/standart_temperaturesvg.svg'
+    }
+
     get customIconStyle() {
-        return {
-            width: '24px',
-            height: '24px',
-            cursor: 'pointer',
-            opacity: (this.target === null || this.target > 0) ? 1 : 0.4
-        }
+        let filter = 'none'
+        const name = this.objectName.toLowerCase()
+        if (this.isExtruder) filter = 'invert(20%) sepia(90%) saturate(3000%) hue-rotate(350deg)' 
+        else if (this.isBed) filter = 'invert(40%) sepia(80%) saturate(2000%) hue-rotate(200deg)'
+        else if (name.includes('chamber')) filter = 'invert(60%) sepia(90%) saturate(1000%) hue-rotate(140deg)'
+        else if (name.includes('board') || name.includes('controller')) filter = 'invert(30%) sepia(80%) saturate(2500%) hue-rotate(220deg)'
+        else if (name.includes('soc') || name.includes('host')) filter = 'invert(80%) sepia(80%) saturate(1000%) hue-rotate(10deg)'
+        else if (name.includes('scanner')) filter = 'invert(30%) sepia(80%) saturate(2500%) hue-rotate(270deg)'
+        return { width: '24px', height: '24px', cursor: 'pointer', filter: filter }
     }
 
     get isExtruder() { return this.objectName.startsWith('extruder') }
@@ -141,80 +100,35 @@ export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
     get isFan() { return this.objectName.startsWith('temperature_fan') || this.objectName.startsWith('fan') }
     get isHeater() { return (this.$store.state.printer.heaters?.available_heaters ?? []).includes(this.objectName) }
     get isHeaterActive() { return (this.target ?? 0) > 0 }
-
     get printerObject() { return this.$store.state.printer[this.objectName] ?? {} }
-    get printerObjectSettings() {
-        const lowerCaseObjectName = this.objectName.toLowerCase()
-        return this.$store.state.printer?.configfile?.settings[lowerCaseObjectName] ?? {}
-    }
-
-    get name() {
-        const splits = this.objectName.split(' ')
-        return splits.length === 1 ? this.objectName : splits[1]
-    }
-
+    get printerObjectSettings() { return this.$store.state.printer?.configfile?.settings[this.objectName.toLowerCase()] ?? {} }
+    get name() { const splits = this.objectName.split(' '); return splits.length === 1 ? this.objectName : splits[1] }
     get formatName() { return convertName(this.name) }
     get color() { return this.$store.getters['printer/tempHistory/getDatasetColor'](this.objectName) ?? '#FFFFFF' }
-    get iconColor() { return (this.target === null || this.target > 0) ? `${this.color}${opacityHeaterActive}` : `${this.color}${opacityHeaterInactive}` }
-
     get state(): number | null { return this.printerObject.power ?? this.printerObject.speed ?? null }
-    get formatState() {
-        if (this.state === null) return null
-        if (this.target === 0 && this.state === 0) return 'off'
-        return `${Math.round(this.state * 100)} %`
-    }
-
+    get formatState() { return this.state === null ? null : `${Math.round(this.state * 100)} %` }
     get temperature(): number | null { return this.printerObject?.temperature ?? null }
     get formatTemperature() { return `${this.temperature?.toFixed(1) ?? '--'}°C` }
     get min_temp() { return parseInt(this.printerObjectSettings.min_temp ?? 0) }
     get max_temp() { return parseInt(this.printerObjectSettings.max_temp ?? 0) }
-    get measured_min_temp() { return this.printerObject?.measured_min_temp?.toFixed(1) ?? null }
-    get measured_max_temp() { return this.printerObject?.measured_max_temp?.toFixed(1) ?? null }
     get target() { return this.printerObject?.target ?? null }
-
-    get additionalSensorName() {
-        if (this.objectName === 'z_thermal_adjust') return 'z_thermal_adjust'
-        const sensor = additionalSensors.find((s) => `${s} ${this.name}` in this.$store.state.printer)
-        return sensor ? `${sensor} ${this.name}` : null
-    }
-
-    get rpm() { return this.printerObject.rpm ? parseInt(this.printerObject.rpm) : null }
+    get rpm() { return this.printerObject.rpm ? parseInt(this.rpm) : null }
     get rpmClass() { return (this.rpm === 0 && (this.printerObject.speed ?? 0) > 0) ? 'red--text' : '' }
     get presets() { return this.$store.getters['gui/presets/getPresetsFromHeater']({ name: this.objectName }) ?? [] }
-
-    get command() {
-        if (this.objectName.startsWith('temperature_fan')) return 'SET_TEMPERATURE_FAN_TARGET'
-        if (this.isHeater || this.objectName.startsWith('heater_')) return 'SET_HEATER_TEMPERATURE'
-        return null
-    }
-
-    get commandAttributeName() {
-        if (this.command === 'SET_HEATER_TEMPERATURE') return 'HEATER'
-        if (this.command === 'SET_TEMPERATURE_FAN_TARGET') return 'TEMPERATURE_FAN'
-        return ''
-    }
-
+    get command() { if (this.objectName.startsWith('temperature_fan')) return 'SET_TEMPERATURE_FAN_TARGET'; if (this.isHeater || this.objectName.startsWith('heater_')) return 'SET_HEATER_TEMPERATURE'; return null }
+    get commandAttributeName() { if (this.command === 'SET_HEATER_TEMPERATURE') return 'HEATER'; if (this.command === 'SET_TEMPERATURE_FAN_TARGET') return 'TEMPERATURE_FAN'; return '' }
     mounted() { EventBus.$on(CLOSE_CONTEXT_MENU, this.closeContextMenu) }
     beforeDestroy() { EventBus.$off(CLOSE_CONTEXT_MENU, this.closeContextMenu) }
-
-    openContextMenu(event: MouseEvent) {
-        EventBus.$emit(CLOSE_CONTEXT_MENU)
-        this.showContextMenu = true
-        this.contextMenuX = event?.clientX || event?.pageX || window.screenX / 2
-        this.contextMenuY = event?.clientY || event?.pageY || window.screenY / 2
-    }
-
+    openContextMenu(event: MouseEvent) { EventBus.$emit(CLOSE_CONTEXT_MENU); this.showContextMenu = true; this.contextMenuX = event?.clientX || event?.pageX; this.contextMenuY = event?.clientY || event?.pageY }
     closeContextMenu() { this.showContextMenu = false }
     openEditDialog() { this.closeContextMenu(); this.showEditDialog = true }
-
-    turnOffHeater() {
-        const gcode = `SET_HEATER_TEMPERATURE HEATER=${this.name} TARGET=0`
-        this.$store.dispatch('server/addEvent', { message: gcode, type: 'command' })
-        this.$socket.emit('printer.gcode.script', { script: gcode })
-    }
+    turnOffHeater() { const gcode = `SET_HEATER_TEMPERATURE HEATER=${this.name} TARGET=0`; this.$socket.emit('printer.gcode.script', { script: gcode }) }
 }
 </script>
 
 <style scoped>
-::v-deep .cursor-pointer { cursor: pointer; }
+.ultra-clean-target ::v-deep .v-input__slot { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+.ultra-clean-target ::v-deep fieldset { display: none !important; }
+.ultra-clean-target ::v-deep input { text-align: right !important; color: #00E5FF !important; font-weight: bold !important; padding: 0 !important; font-size: 1.1rem !important; }
+.ultra-clean-target ::v-deep .v-text-field__suffix { color: rgba(255, 255, 255, 0.5) !important; }
 </style>
