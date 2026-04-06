@@ -3,9 +3,9 @@
         ref="gcodeCommandField"
         v-model="gcode"
         :items="items"
-        :label="$t('Panels.MiniconsolePanel.SendCode')"
-        solo
-        class="gcode-command-field"
+        :placeholder="$t('Panels.MiniconsolePanel.SendCode')"
+        flat
+        class="gcode-command-field custom-premium-input"
         autocomplete="off"
         no-resize
         auto-grow
@@ -13,13 +13,13 @@
         hide-details
         outlined
         dense
-        :prepend-icon="isTouchDevice ? mdiChevronDoubleRight : ''"
+        :prepend-inner-icon="isTouchDevice ? mdiChevronDoubleRight : ''"
         :append-icon="'blocks-send-icon'"
         @keydown.enter.prevent.stop="doSend"
         @keydown.up="onKeyUp"
         @keydown.down="onKeyDown"
         @keydown.tab="onAutocomplete"
-        @click:prepend="onAutocomplete"
+        @click:prepend-inner="onAutocomplete"
         @click:append="doSend" />
 </template>
 
@@ -151,22 +151,49 @@ export default class ConsoleTextarea extends Mixins(BaseMixin, ConsoleMixin) {
     font-family: 'Roboto Mono', monospace;
 }
 
-/* MAGIA PARA O BOTÃO DE ENVIAR (APPEND-ICON) */
+.custom-premium-input ::v-deep .v-input__slot {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+    min-height: 44px !important;
+    padding-top: 4px !important;
+}
+
+.custom-premium-input ::v-deep fieldset {
+    border: none !important;
+}
+
+.custom-premium-input ::v-deep label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.custom-premium-input ::v-deep textarea {
+    color: #e0e0e0 !important;
+    font-size: 0.95rem;
+    padding-top: 8px !important;
+}
+
+::v-deep .v-input__append-inner {
+    margin-top: 6px !important;
+}
+
 ::v-deep .v-input__append-inner .v-icon.blocks-send-icon {
     background-image: url('/img/icons/blocks_icons/playsvg.svg') !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
-    width: 22px !important;
-    height: 22px !important;
-    opacity: 1 !important;
-    cursor: pointer !important;
+    width: 20px !important;
+    height: 20px !important;
+    opacity: 0.8 !important;
+    transition: opacity 0.2s;
 }
 
-/* Esconde o ícone original do Vuetify */
-::v-deep .v-icon.blocks-send-icon svg {
-    display: none !important;
+::v-deep .v-input__append-inner .v-icon.blocks-send-icon:hover {
+    opacity: 1 !important;
 }
+
+::v-deep .v-icon.blocks-send-icon svg,
 ::v-deep .v-icon.blocks-send-icon::before {
     display: none !important;
 }
