@@ -65,7 +65,6 @@ const PWAConfig: Partial<VitePWAOptions> = {
         ],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
     },
-    /* enable sw on development */
     devOptions: {
         enabled: true,
         type: 'module',
@@ -73,7 +72,6 @@ const PWAConfig: Partial<VitePWAOptions> = {
     },
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
         VitePWA(PWAConfig),
@@ -88,7 +86,7 @@ export default defineConfig({
             },
         }),
         Components({
-            dts: true, // enabled by default if `typescript` is installed
+            dts: true,
             resolvers: [VuetifyResolver()],
         }),
     ],
@@ -110,17 +108,15 @@ export default defineConfig({
     },
 
     build: {
-        target: 'safari12',
+        target: 'es2020',
         rollupOptions: {
             output: {
                 manualChunks: (id: string) => {
                     if (id.includes('node_modules')) {
-                        // split codemirror into its own chunk
                         if (id.includes('/codemirror/') || id.includes('/@codemirror/')) {
                             return 'codemirror'
                         }
 
-                        // split these libs into their own chunks
                         const chunkedLibs = ['vuetify', 'echarts', 'overlayscrollbars']
                         for (const lib of chunkedLibs) {
                             if (id.includes(`/node_modules/${lib}/`)) {
@@ -146,7 +142,7 @@ export default defineConfig({
     },
 
     optimizeDeps: {
-        include: ['events'],
+        include: ['events', 'typed_janus_js'],
         esbuildOptions: {
             define: {
                 global: 'globalThis',
