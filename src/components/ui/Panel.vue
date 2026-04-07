@@ -125,7 +125,6 @@ export default class Panel extends Mixins(BaseMixin) {
     width: var(--panel-toolbar-icon-btn-width) !important;
 }
 
-/* NOVO: Alteração Global de Cores dos Painéis */
 
 /* 1. Corpo do Painel (Card) */
 .v-card.panel {
