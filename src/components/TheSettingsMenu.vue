@@ -81,6 +81,7 @@ import SettingsGCodeViewerTab from '@/components/settings/SettingsGCodeViewerTab
 import SettingsEditorTab from '@/components/settings/SettingsEditorTab.vue'
 import SettingsTimelapseTab from '@/components/settings/SettingsTimelapseTab.vue'
 import SettingsNavigationTab from '@/components/settings/SettingsNavigationTab.vue'
+import SettingsAdvancedTab from '@/components/settings/SettingsAdvancedTab.vue'
 
 import Panel from '@/components/ui/Panel.vue'
 import {
@@ -101,6 +102,7 @@ import {
     mdiDipSwitch,
     mdiMenu,
     mdiGrid,
+    mdiApplicationSettings,
 } from '@mdi/js'
 import SettingsMiscellaneousTab from '@/components/settings/SettingsMiscellaneousTab.vue'
 import SettingsHeightmapTab from '@/components/settings/SettingsHeightmapTab.vue'
@@ -123,6 +125,7 @@ import SettingsHeightmapTab from '@/components/settings/SettingsHeightmapTab.vue
         SettingsMiscellaneousTab,
         SettingsNavigationTab,
         SettingsHeightmapTab,
+        SettingsAdvancedTab,
     },
 })
 export default class TheSettingsMenu extends Mixins(BaseMixin) {
@@ -211,6 +214,16 @@ export default class TheSettingsMenu extends Mixins(BaseMixin) {
                 name: 'heightmap',
                 title: this.$t('Settings.HeightmapTab.Heightmap'),
             },
+            {
+                icon: mdiGrid,
+                name: 'heightmap',
+                title: this.$t('Settings.HeightmapTab.Heightmap'),
+            },
+            {
+            icon: mdiApplicationSettings,
+            name: 'advanced',
+            title: this.$t('Settings.AdvancedTab.Advanced'), // Certifica-te que esta chave existe no i18n
+        },
         ]
 
         if (this.moonrakerComponents.includes('timelapse')) {

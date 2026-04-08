@@ -9,7 +9,6 @@
                     <div class="global-row-container mb-4">
                         <v-btn small
                             :disabled="['printing'].includes(printer_state)"
-                            :color="homedAxes.includes('xyz') ? 'primary' : 'warning'"
                             class="btn-global"
                             @click="doHome">
                             <img src="/img/icons/blocks_icons/home_allsvg.svg"
@@ -20,7 +19,6 @@
                         <v-btn v-if="existsZtilt"
                             small
                             :disabled="['printing'].includes(printer_state)"
-                            :color="colorZTilt"
                             class="btn-global"
                             @click="doZtilt">
                             Z-TILT
@@ -123,8 +121,6 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
 </script>
 
 <style scoped lang="scss">
-@immport '@/styles/variables.scss';
-/* GERAL */
 .axis-col {
     padding: 0 !important;
 }
@@ -184,6 +180,7 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
     padding: 0 4px !important;
     font-size: 10px !important;
     border-radius: 4px !important;
+    background-color:  #2196f3 !important; color: white !important;
 }
 
 /* GRID DOS EIXOS X, Y, Z */
@@ -242,7 +239,6 @@ export default class BarsControl extends Mixins(BaseMixin, ControlMixin) {
 }
 
 .btn-motor {
-    background: linear-gradient(45deg, #ff7b00, #ff9500) !important;
     color: white !important;
     display: flex;
     justify-content: center;

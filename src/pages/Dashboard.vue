@@ -5,6 +5,7 @@
                 <status-panel />
                 <template v-for="component in mobileLayout">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-mobileLayout-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -16,6 +17,7 @@
                 <status-panel />
                 <template v-for="component in tabletLayout1">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-tabletLayout1-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -24,6 +26,7 @@
             <v-col class="col-6">
                 <template v-for="component in tabletLayout2">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-tabletLayout2-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -35,6 +38,7 @@
                 <status-panel />
                 <template v-for="component in desktopLayout1">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-desktopLayout1-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -43,6 +47,7 @@
             <v-col class="col-7">
                 <template v-for="component in desktopLayout2">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-desktopLayout2-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -54,6 +59,7 @@
                 <status-panel />
                 <template v-for="component in widescreenLayout1">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-desktopLayout1-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -62,6 +68,7 @@
             <v-col class="col-5">
                 <template v-for="component in widescreenLayout2">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-desktopLayout2-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -70,6 +77,7 @@
             <v-col class="col-4">
                 <template v-for="component in widescreenLayout3">
                     <component
+                        v-if="shouldShowPanel(component.name)"
                         :is="extractPanelName(component.name)"
                         :key="'dashboard-desktopLayout3-' + component.name"
                         :panel-id="extractPanelId(component.name)"></component>
@@ -121,6 +129,33 @@ import WebcamPanel from '@/components/panels/WebcamPanel.vue'
     },
 })
 export default class PageDashboard extends Mixins(DashboardMixin) {
+    // Estado do modo avançado
+    private isAdvanced = localStorage.getItem('advancedMode') === 'true'
+
+    // Lista de painéis considerados "Avançados" para serem escondidos
+    private advancedPanels = [
+        'miniconsole-panel',
+        'extruder-control-panel',
+    ]
+
+    mounted() {
+        // Ouve o evento emitido pelo menu de definições
+        this.$root.$on('advancedModeChanged', (val: boolean) => {
+            this.isAdvanced = val;
+        });
+    }
+
+    /**
+     * Determina se um painel deve ser exibido com base no modo avançado
+     */
+    shouldShowPanel(componentName: string) {
+        if (this.isAdvanced) return true; // Se estiver em modo avançado, mostra tudo
+
+        const panelName = this.extractPanelName(componentName);
+        // Se o painel está na lista de avançados e o modo avançado está OFF, esconde
+        return !this.advancedPanels.includes(panelName);
+    }
+
     get mobileLayout() {
         return this.$store.getters['gui/getPanels']('mobile', 0, true)
     }
