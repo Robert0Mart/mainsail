@@ -89,6 +89,7 @@ export default class Panel extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
+/* MANTIDO: Estilos originais do componente */
 .expanded header.v-toolbar {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -113,6 +114,7 @@ export default class Panel extends Mixins(BaseMixin) {
 </style>
 
 <style>
+/* MANTIDO: Regras originais do Mainsail */
 .v-card.panel .v-toolbar__content {
     padding-right: 0;
 }
@@ -121,5 +123,33 @@ export default class Panel extends Mixins(BaseMixin) {
 }
 .panel-toolbar .v-btn.v-btn--icon {
     width: var(--panel-toolbar-icon-btn-width) !important;
+}
+
+/* NOVO: Alteração Global de Cores dos Painéis */
+
+/* 1. Corpo do Painel (Card) */
+.v-card.panel {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
+    border-radius: 8px !important;        /* Cantos ligeiramente mais arredondados */
+    transition: all 0.3s ease;
+}
+
+/* 2. Barra Superior (Cabeçalho) */
+.panel-toolbar {
+    background-color: #2c3e50 !important; /* Cor da barra (ex: azul acinzentado) */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 3. Texto do Título e Ícones */
+.panel-toolbar .subheading, 
+.panel-toolbar .v-icon {
+    color: #ffffff !important;           /* Força o texto e ícones a branco */
+    font-weight: 500 !important;
+}
+
+/* 4. Efeito ao passar o rato (Opcional, dá um ar moderno) */
+.v-card.panel:hover {
+    border-color: var(--v-primary-base) !important; /* A borda brilha com a cor principal */
 }
 </style>
