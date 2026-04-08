@@ -1,27 +1,17 @@
 <template>
     <div class="bottom-nav-wrapper">
         <div class="bottom-nav-pill">
-            
-            <v-btn icon exact to="/" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiViewDashboard }}</v-icon>
+            <v-btn 
+                v-for="item in filteredNavItems" 
+                :key="item.to"
+                icon 
+                :exact="item.exact" 
+                :to="item.to" 
+                class="nav-btn" 
+                active-class="active-btn"
+            >
+                <v-icon>{{ item.icon }}</v-icon>
             </v-btn>
-            
-            <v-btn icon to="/console" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiConsole }}</v-icon>
-            </v-btn>
-            
-            <v-btn icon to="/files" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiFileDocumentOutline }}</v-icon>
-            </v-btn>
-            
-            <v-btn icon to="/history" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiHistory }}</v-icon>
-            </v-btn>
-            
-            <v-btn icon to="/config" class="nav-btn" active-class="active-btn">
-                <v-icon>{{ mdiWrench }}</v-icon>
-            </v-btn>
-
         </div>
     </div>
 </template>
@@ -38,17 +28,42 @@ import {
 
 @Component
 export default class BottomNav extends Vue {
-    // Icons
-    mdiViewDashboard = mdiViewDashboard
-    mdiConsole = mdiConsole
-    mdiFileDocumentOutline = mdiFileDocumentOutline
-    mdiHistory = mdiHistory
-    mdiWrench = mdiWrench
+    // 1. Estado inicial lido do localStorage
+    private isAdvanced = localStorage.getItem('advancedMode') === 'true'
+
+    mounted() {
+        // 2. Escuta a mudança global do evento que criámos no SettingsAdvancedTab
+        this.$root.$on('advancedModeChanged', (val: boolean) => {
+            this.isAdvanced = val;
+        });
+    }
+
+    // 3. Definição da lista de itens
+    get navItems() {
+        return [
+            { to: '/', icon: mdiViewDashboard, exact: true, advanced: false },
+            { to: '/console', icon: mdiConsole, exact: false, advanced: true }, // Marcado como avançado
+            { to: '/files', icon: mdiFileDocumentOutline, exact: false, advanced: false },
+            { to: '/history', icon: mdiHistory, exact: false, advanced: false },
+            { to: '/config', icon: mdiWrench, exact: false, advanced: false },
+        ]
+    }
+
+    // 4. Filtro que decide o que mostrar
+    get filteredNavItems() {
+        return this.navItems.filter(item => {
+            // Se o modo avançado estiver desativado e o item for avançado, esconde-o
+            if (!this.isAdvanced && item.advanced) {
+                return false;
+            }
+            return true;
+        });
+    }
 }
 </script>
 
 <style scoped>
-/* Wrapper */
+/* O teu CSS mantém-se igual */
 .bottom-nav-wrapper {
     position: fixed;
     bottom: 20px;
@@ -60,7 +75,6 @@ export default class BottomNav extends Vue {
     pointer-events: none; 
 }
 
-/* Pill */
 .bottom-nav-pill {
     background-color: #1e1e1e;
     border-radius: 40px;
@@ -71,7 +85,6 @@ export default class BottomNav extends Vue {
     pointer-events: auto; 
 }
 
-/* Buttons */
 .nav-btn {
     color: rgba(255, 255, 255, 0.6) !important;
     transition: all 0.3s ease;
@@ -79,9 +92,8 @@ export default class BottomNav extends Vue {
     height: 45px !important;
 }
 
-/* Active */
 .active-btn {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+    background-color: #2196f3 !important;
     color: #ffffff !important;
 }
 
