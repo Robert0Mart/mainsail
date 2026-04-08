@@ -26,7 +26,7 @@
                     <v-tabs v-model="activeTab" :center-active="true" :show-arrows="true">
                         <v-tab
                             v-for="(tab, index) of tabTitles"
-                            :key="index"
+                            :key="'mobile-' + index"
                             :href="'#' + tab.name"
                             class="justify-start">
                             <v-icon left v-html="tab.icon"></v-icon>
@@ -40,7 +40,7 @@
                             <v-tabs v-model="activeTab" :vertical="true">
                                 <v-tab
                                     v-for="(tab, index) of tabTitles"
-                                    :key="index"
+                                    :key="'desktop-' + index"
                                     :href="'#' + tab.name"
                                     class="justify-start"
                                     style="width: 200px">
@@ -77,11 +77,11 @@ import SettingsPresetsTab from '@/components/settings/SettingsPresetsTab.vue'
 import SettingsRemotePrintersTab from '@/components/settings/SettingsRemotePrintersTab.vue'
 import SettingsUiSettingsTab from '@/components/settings/SettingsUiSettingsTab.vue'
 import SettingsDashboardTab from '@/components/settings/SettingsDashboardTab.vue'
-import SettingsGCodeViewerTab from '@/components/settings/SettingsGCodeViewerTab.vue'
 import SettingsEditorTab from '@/components/settings/SettingsEditorTab.vue'
 import SettingsTimelapseTab from '@/components/settings/SettingsTimelapseTab.vue'
 import SettingsNavigationTab from '@/components/settings/SettingsNavigationTab.vue'
 import SettingsAdvancedTab from '@/components/settings/SettingsAdvancedTab.vue'
+import SettingsMiscellaneousTab from '@/components/settings/SettingsMiscellaneousTab.vue'
 
 import Panel from '@/components/ui/Panel.vue'
 import {
@@ -97,15 +97,11 @@ import {
     mdiPrinter3d,
     mdiTimelapse,
     mdiTune,
-    mdiVideo3d,
     mdiWebcam,
     mdiDipSwitch,
     mdiMenu,
-    mdiGrid,
     mdiApplicationSettings,
 } from '@mdi/js'
-import SettingsMiscellaneousTab from '@/components/settings/SettingsMiscellaneousTab.vue'
-import SettingsHeightmapTab from '@/components/settings/SettingsHeightmapTab.vue'
 
 @Component({
     components: {
@@ -119,22 +115,19 @@ import SettingsHeightmapTab from '@/components/settings/SettingsHeightmapTab.vue
         SettingsWebcamsTab,
         SettingsGeneralTab,
         SettingsDashboardTab,
-        SettingsGCodeViewerTab,
         SettingsEditorTab,
         SettingsTimelapseTab,
         SettingsMiscellaneousTab,
         SettingsNavigationTab,
-        SettingsHeightmapTab,
         SettingsAdvancedTab,
     },
 })
 export default class TheSettingsMenu extends Mixins(BaseMixin) {
     private showSettings = false
     private activeTab = 'general'
+    // 1. Variável reativa para o modo avançado
+    private isAdvanced = localStorage.getItem('advancedMode') === 'true'
 
-    /**
-     * Icons
-     */
     mdiCloseThick = mdiCloseThick
     mdiCogs = mdiCogs
 
@@ -142,88 +135,30 @@ export default class TheSettingsMenu extends Mixins(BaseMixin) {
         settingsScroll: any
     }
 
+    mounted() {
+        // 2. Escutar mudanças no modo avançado para atualizar o menu em tempo real
+        this.$root.$on('advancedModeChanged', (val: boolean) => {
+            this.isAdvanced = val;
+        });
+    }
+
     get tabTitles() {
+        // G-Code Viewer e Heightmap continuam removidos permanentemente como pediste
         const tabs = [
-            {
-                icon: mdiCog,
-                name: 'general',
-                title: this.$t('Settings.GeneralTab.General'),
-            },
-            {
-                icon: mdiPalette,
-                name: 'ui-settings',
-                title: this.$t('Settings.UiSettingsTab.UiSettings'),
-            },
-            {
-                icon: mdiMonitorDashboard,
-                name: 'dashboard',
-                title: this.$t('Settings.DashboardTab.Dashboard'),
-            },
-            {
-                icon: mdiWebcam,
-                name: 'webcams',
-                title: this.$t('Settings.WebcamsTab.Webcams'),
-            },
-            {
-                icon: mdiCodeTags,
-                name: 'macros',
-                title: this.$t('Settings.MacrosTab.Macros'),
-            },
-            {
-                icon: mdiTune,
-                name: 'control',
-                title: this.$t('Settings.ControlTab.Control'),
-            },
-            {
-                icon: mdiConsoleLine,
-                name: 'console',
-                title: this.$t('Settings.ConsoleTab.Console'),
-            },
-            {
-                icon: mdiFire,
-                name: 'presets',
-                title: this.$t('Settings.PresetsTab.PreheatPresets'),
-            },
-            {
-                icon: mdiPrinter3d,
-                name: 'remote-printers',
-                title: this.$t('Settings.RemotePrintersTab.RemotePrinters'),
-            },
-            {
-                icon: mdiVideo3d,
-                name: 'g-code-viewer',
-                title: this.$t('Settings.GCodeViewerTab.GCodeViewer'),
-            },
-            {
-                icon: mdiFileDocumentEditOutline,
-                name: 'editor',
-                title: this.$t('Settings.EditorTab.Editor'),
-            },
-            {
-                icon: mdiDipSwitch,
-                name: 'miscellaneous',
-                title: this.$t('Settings.MiscellaneousTab.Miscellaneous'),
-            },
-            {
-                icon: mdiMenu,
-                name: 'navigation',
-                title: this.$t('Settings.NavigationTab.Navigation'),
-            },
-            {
-                icon: mdiGrid,
-                name: 'heightmap',
-                title: this.$t('Settings.HeightmapTab.Heightmap'),
-            },
-            {
-                icon: mdiGrid,
-                name: 'heightmap',
-                title: this.$t('Settings.HeightmapTab.Heightmap'),
-            },
-            {
-            icon: mdiApplicationSettings,
-            name: 'advanced',
-            title: this.$t('Settings.AdvancedTab.Advanced'), // Certifica-te que esta chave existe no i18n
-        },
+            { icon: mdiCog, name: 'general', title: this.$t('Settings.GeneralTab.General') },
+            { icon: mdiPalette, name: 'ui-settings', title: this.$t('Settings.UiSettingsTab.UiSettings') },
+            { icon: mdiMonitorDashboard, name: 'dashboard', title: this.$t('Settings.DashboardTab.Dashboard') },
+            { icon: mdiWebcam, name: 'webcams', title: this.$t('Settings.WebcamsTab.Webcams') },
+            { icon: mdiCodeTags, name: 'macros', title: this.$t('Settings.MacrosTab.Macros') },
+            { icon: mdiTune, name: 'control', title: this.$t('Settings.ControlTab.Control') },
+            // Marcamos a consola para ser filtrada
+            { icon: mdiConsoleLine, name: 'console', title: this.$t('Settings.ConsoleTab.Console'), advanced: true },
+            { icon: mdiFire, name: 'presets', title: this.$t('Settings.PresetsTab.PreheatPresets') },
+            { icon: mdiPrinter3d, name: 'remote-printers', title: this.$t('Settings.RemotePrintersTab.RemotePrinters') },
+            { icon: mdiFileDocumentEditOutline, name: 'editor', title: this.$t('Settings.EditorTab.Editor') },
+            { icon: mdiDipSwitch, name: 'miscellaneous', title: this.$t('Settings.MiscellaneousTab.Miscellaneous') },
+            { icon: mdiMenu, name: 'navigation', title: this.$t('Settings.NavigationTab.Navigation') },
+            { icon: mdiApplicationSettings, name: 'advanced', title: this.$t('Settings.AdvancedTab.Advanced') },
         ]
 
         if (this.moonrakerComponents.includes('timelapse')) {
@@ -234,17 +169,25 @@ export default class TheSettingsMenu extends Mixins(BaseMixin) {
             })
         }
 
-        return tabs.sort((a, b) => {
+        // 3. Filtrar apenas se advancedMode for false
+        const filtered = tabs.filter(tab => {
+            if (!this.isAdvanced && tab.name === 'console') {
+                return false;
+            }
+            return true;
+        });
+
+        // 4. Se a tab ativa for a consola e for escondida, mudar para general
+        if (!this.isAdvanced && this.activeTab === 'console') {
+            this.activeTab = 'general';
+        }
+
+        return filtered.sort((a, b) => {
             if (a.name === 'general') return -1
             if (b.name === 'general') return 1
-
             const stringA = a.title.toString().toLowerCase()
             const stringB = b.title.toString().toLowerCase()
-
-            if (stringA < stringB) return -1
-            if (stringA > stringB) return 1
-
-            return 0
+            return stringA.localeCompare(stringB)
         })
     }
 
@@ -267,24 +210,12 @@ export default class TheSettingsMenu extends Mixins(BaseMixin) {
     min-height: 100%;
     height: calc(var(--app-height) - 96px);
 }
-
 .settings-tabs-bar {
     border-right: 1px solid rgba(255, 255, 255, 0.12);
     height: 100%;
 }
-
-html.theme--light .settings-tabs-bar {
-    border-right: 1px solid rgba(0, 0, 0, 0.12);
-}
-
 .settings-tabs.height500 {
     height: 500px;
     max-height: calc(var(--app-height) - 111px);
-}
-</style>
-
-<style>
-.settings-tabs .v-select__selections input {
-    width: 100px;
 }
 </style>
