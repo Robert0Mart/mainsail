@@ -13,17 +13,25 @@
                 </thead>
                 <tbody>
                     <temperature-panel-list-item
-                        v-for="name in heaterObjects"
+                        v-for="name in filteredHeaterObjects"
                         :key="'h-' + name"
                         :object-name="name"
                         :input-digits="3"
                         :is-responsive-mobile="el.is.mobile ?? false" />
 
                     <temperature-panel-list-item
-                        v-for="name in sensorObjects"
+                        v-for="name in filteredSensorObjects"
                         :key="'s-' + name"
                         :object-name="name"
                         :is-responsive-mobile="el.is.mobile ?? false" />
+
+                    <tr>
+                        <td :colspan="el.is.mobile ? 4 : 5" class="text-center py-3 cursor-pointer" @click="isAdvancedMode = !isAdvancedMode">
+                            <span class="white--text" style="opacity: 0.5; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                                {{ isAdvancedMode ? 'Show Less' : 'Show All' }}
+                            </span>
+                        </td>
+                    </tr>
                 </tbody>
             </v-simple-table>
         </template>
@@ -40,6 +48,8 @@ import TemperaturePanelListItem from './TemperaturePanelListItem.vue'
     components: { TemperaturePanelListItem }
 })
 export default class TemperaturePanelList extends Mixins(BaseMixin) {
+    isAdvancedMode = false
+
     get heaterObjects() {
         const printer = this.$store.state.printer
         const heaters = [...(printer?.heaters?.available_heaters ?? [])]
@@ -65,6 +75,17 @@ export default class TemperaturePanelList extends Mixins(BaseMixin) {
                    !key.startsWith('_')
         }).sort()
     }
+
+    get filteredHeaterObjects() {
+        if (this.isAdvancedMode) return this.heaterObjects
+        return this.heaterObjects.slice(0, 3)
+    }
+
+    get filteredSensorObjects() {
+        if (this.isAdvancedMode) return this.sensorObjects
+        const remainingSlots = Math.max(0, 3 - this.heaterObjects.length)
+        return this.sensorObjects.slice(0, remainingSlots)
+    }
 }
 </script>
 
@@ -72,4 +93,6 @@ export default class TemperaturePanelList extends Mixins(BaseMixin) {
 .custom-glass-table { background: transparent !important; }
 .temperature-panel-table ::v-deep tr { border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
 .temperature-panel-table th { border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; color: rgba(255, 255, 255, 0.4) !important; text-transform: uppercase; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px; }
+.cursor-pointer { cursor: pointer; transition: opacity 0.2s; }
+.cursor-pointer:hover { opacity: 0.8; }
 </style>
