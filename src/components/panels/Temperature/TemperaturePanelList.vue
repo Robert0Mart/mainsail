@@ -26,7 +26,7 @@
                         :is-responsive-mobile="el.is.mobile ?? false" />
 
                     <tr>
-                        <td :colspan="el.is.mobile ? 4 : 5" class="text-center py-3 cursor-pointer" @click="isAdvancedMode = !isAdvancedMode">
+                        <td :colspan="el.is.mobile ? 4 : 5" class="text-center py-3 cursor-pointer" @click="toggleAdvancedMode">
                             <span class="white--text" style="opacity: 0.5; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
                                 {{ isAdvancedMode ? 'Show Less' : 'Show All' }}
                             </span>
@@ -49,6 +49,10 @@ import TemperaturePanelListItem from './TemperaturePanelListItem.vue'
 })
 export default class TemperaturePanelList extends Mixins(BaseMixin) {
     isAdvancedMode = false
+
+    toggleAdvancedMode() {
+        this.isAdvancedMode = !this.isAdvancedMode
+    }
 
     get heaterObjects() {
         const printer = this.$store.state.printer
