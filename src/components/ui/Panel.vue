@@ -130,7 +130,7 @@ export default class Panel extends Mixins(BaseMixin) {
 .v-card.panel {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
-    border-radius: 23px !important;        /* Cantos ligeiramente mais arredondados */
+    border-radius: 15px !important;        /* Cantos ligeiramente mais arredondados */
     overflow: hidden;    /* Isto vai "podar" os cantos dos elementos filhos */
     transition: all 0.3s ease;
 }
