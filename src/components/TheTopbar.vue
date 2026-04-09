@@ -272,7 +272,7 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
 <style scoped>
 ::v-deep .topbar .v-toolbar__content {
     padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding-bottom: 0 !important; 
 }
 .button-min-width-auto { min-width: auto !important; }
 .topbar .v-btn { height: 100% !important; max-height: none; }

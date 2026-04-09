@@ -66,37 +66,3 @@ export default class MachineSettingsPanel extends Mixins(BaseMixin) {
     }
 }
 </script>
-
-<style scoped>
-.custom-glass-panel {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-
-.premium-input-box {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 6px;
-    min-width: 80px;
-    justify-content: center;
-}
-
-.custom-slider ::v-deep .v-slider__thumb {
-    width: 12px !important;
-    height: 12px !important;
-    background-color: #2196f3 !important;
-}
-
-.custom-slider ::v-deep .v-slider__track-fill {
-    background-color: #2196f3 !important;
-}
-
-/* REMOVIDO: Toda a parte que forçava uma imagem (background-image) no ícone, 
-   pois isso estava a substituir o desenho original do ícone Speed.
-*/
-.machine-settings-panel ::v-deep .v-icon {
-    /* Garante que o ícone em si fique branco */
-    color: white !important;
-}
-</style>
