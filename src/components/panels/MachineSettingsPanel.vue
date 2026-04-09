@@ -9,7 +9,7 @@
             <div class="speed-factor-section">
                 <div class="d-flex align-center justify-space-between mb-2">
                     <div class="d-flex align-center">
-                        <v-icon small class="mr-2 primary--text">{{ mdiSpeedometer }}</v-icon>
+                        <v-icon small class="mr-2 white--text">{{ mdiSpeedometer }}</v-icon>
                         <span class="text-subtitle-2 white--text font-weight-bold">{{ $t('Panels.ToolheadControlPanel.SpeedFactor') }}</span>
                     </div>
                     <div class="d-flex align-center premium-input-box">
@@ -85,25 +85,18 @@ export default class MachineSettingsPanel extends Mixins(BaseMixin) {
 .custom-slider ::v-deep .v-slider__thumb {
     width: 12px !important;
     height: 12px !important;
-    background-color: #00E5FF !important;
+    background-color: #2196f3 !important;
 }
 
 .custom-slider ::v-deep .v-slider__track-fill {
-    background-color: #00E5FF !important;
+    background-color: #2196f3 !important;
 }
 
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer {
-    background-image: url('/img/icons/blocks_icons/axis_maintenancesvg.svg') !important;
-    background-size: contain !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: inline-block !important;
-}
-
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer svg,
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer::before {
-    display: none !important;
+/* REMOVIDO: Toda a parte que forçava uma imagem (background-image) no ícone, 
+   pois isso estava a substituir o desenho original do ícone Speed.
+*/
+.machine-settings-panel ::v-deep .v-icon {
+    /* Garante que o ícone em si fique branco */
+    color: white !important;
 }
 </style>
