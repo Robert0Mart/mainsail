@@ -1,26 +1,32 @@
 <template>
     <div v-if="current_filename" ref="wrapper" class="statusPanel-printstatus-thumbnail">
-        <v-img
-            v-if="boolBigThumbnail"
-            ref="bigThumbnail"
-            :src="thumbnailBig"
-            tabindex="-1"
-            class="d-flex align-end statusPanel-big-thumbnail"
-            height="200"
-            :style="thumbnailStyle"
-            @focus="focus = true"
-            @blur="focus = false">
-            <v-card-title class="white--text py-2 px-2" :style="styleThumbnailOverlay">
-                <v-row>
-                    <v-col>
-                        <span class="subtitle-2 text-truncate px-0 text--disabled d-block">
-                            <v-icon small class="mr-2">{{ mdiFileOutline }}</v-icon>
-                            {{ current_filename }}
-                        </span>
-                    </v-col>
-                </v-row>
-            </v-card-title>
-        </v-img>
+        <v-container v-if="boolBigThumbnail" class="pa-0">
+            <v-row no-gutters align="center" class="flex-nowrap">
+                
+                <v-col cols="4" sm="3" md="2" class="flex-shrink-0 pr-4">
+                    <v-img
+                        ref="bigThumbnail"
+                        :src="thumbnailBig"
+                        tabindex="-1"
+                        class="statusPanel-big-thumbnail rounded"
+                        contain
+                        aspect-ratio="1.33"
+                        style="max-width: 100%; height: auto;"
+                        :style="thumbnailStyle"
+                        @focus="focus = true"
+                        @blur="focus = false" />
+                </v-col>
+
+                <v-col class="text-truncate">
+                    <span class="subtitle-2 text-truncate px-0 text--disabled d-block">
+                        <v-icon small class="mr-2">{{ mdiFileOutline }}</v-icon>
+                        {{ current_filename }}
+                    </span>
+                </v-col>
+
+            </v-row>
+        </v-container>
+
         <template v-else>
             <v-container>
                 <v-row>
@@ -101,56 +107,38 @@ export default class StatusPanelPrintstatusThumbnail extends Mixins(BaseMixin) {
     @Ref() readonly wrapper!: HTMLDivElement
     @Ref() readonly bigThumbnail!: Vue
 
-    get current_filename() {
-        return this.$store.state.printer.print_stats?.filename ?? ''
-    }
-
-    get current_file() {
-        return this.$store.state.printer.current_file ?? {}
-    }
+    get current_filename() { return this.$store.state.printer.print_stats?.filename ?? '' }
+    get current_file() { return this.$store.state.printer.current_file ?? {} }
 
     get thumbnailBig() {
         if ('thumbnails' in this.current_file && this.current_file.thumbnails.length) {
             const thumbnail = this.current_file.thumbnails.find((thumb: any) => thumb.width >= thumbnailBigMin)
-
             if (thumbnail && 'relative_path' in thumbnail) {
                 let relative_url = ''
                 if (this.current_file.filename.lastIndexOf('/') !== -1) {
                     relative_url = this.current_file.filename.substr(0, this.current_file.filename.lastIndexOf('/') + 1)
                 }
-
-                if (thumbnail && 'relative_path' in thumbnail) {
-                    return `${this.apiUrl}/server/files/gcodes/${escapePath(
-                        relative_url + thumbnail.relative_path
-                    )}?timestamp=${this.current_file.modified}`
-                }
+                return `${this.apiUrl}/server/files/gcodes/${escapePath(
+                    relative_url + thumbnail.relative_path
+                )}?timestamp=${this.current_file.modified}`
             }
         }
-
         return ''
     }
 
     get thumbnailBigHeight() {
         if ('thumbnails' in this.current_file && this.current_file.thumbnails.length) {
             const thumbnail = this.current_file.thumbnails.find((thumb: any) => thumb.width >= thumbnailBigMin)
-
-            if (thumbnail && 'height' in thumbnail) {
-                return thumbnail.height
-            }
+            if (thumbnail && 'height' in thumbnail) return thumbnail.height
         }
-
         return 200
     }
 
     get thumbnailBigWidth() {
         if ('thumbnails' in this.current_file && this.current_file.thumbnails.length) {
             const thumbnail = this.current_file.thumbnails.find((thumb: any) => thumb.width >= thumbnailBigMin)
-
-            if (thumbnail && 'width' in thumbnail) {
-                return thumbnail.width
-            }
+            if (thumbnail && 'width' in thumbnail) return thumbnail.width
         }
-
         return 300
     }
 
@@ -163,27 +151,21 @@ export default class StatusPanelPrintstatusThumbnail extends Mixins(BaseMixin) {
                     thumb.height >= thumbnailSmallMin &&
                     thumb.height <= thumbnailSmallMax
             )
-
             if (thumbnail && 'relative_path' in thumbnail) {
                 let relative_url = ''
                 if (this.current_file.filename.lastIndexOf('/') !== -1) {
                     relative_url = this.current_file.filename.substr(0, this.current_file.filename.lastIndexOf('/') + 1)
                 }
-
-                if (thumbnail && 'relative_path' in thumbnail) {
-                    return `${this.apiUrl}/server/files/gcodes/${escapePath(
-                        relative_url + thumbnail.relative_path
-                    )}?timestamp=${this.current_file.modified}`
-                }
+                return `${this.apiUrl}/server/files/gcodes/${escapePath(
+                    relative_url + thumbnail.relative_path
+                )}?timestamp=${this.current_file.modified}`
             }
         }
-
         return ''
     }
 
     get boolBigThumbnail() {
         const setting = this.$store.state.gui.uiSettings.boolBigThumbnail ?? true
-
         return this.current_filename && setting && this.thumbnailBig
     }
 
@@ -192,77 +174,36 @@ export default class StatusPanelPrintstatusThumbnail extends Mixins(BaseMixin) {
     }
 
     get thumbnailStyle() {
-        const output: { height: string; backgroundColor?: string } = {
-            height: '200px',
-        }
-
-        if (!this.printstatusThumbnailZoom) {
-            output.height = '100%'
-        } else if (this.focus && this.thumbnailBlurHeight > 0) {
-            output.height = `${this.thumbnailBlurHeight}px`
-        }
-
+        const output: { backgroundColor?: string } = {}
         if (defaultBigThumbnailBackground.toLowerCase() !== this.bigThumbnailBackground.toLowerCase()) {
             output.backgroundColor = this.bigThumbnailBackground
-
-            return output
         }
-
         return output
-    }
-
-    get styleThumbnailOverlay() {
-        const style = {
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            backdropFilter: 'blur(3px)',
-        }
-
-        if (!this.$vuetify.theme.dark) {
-            style.backgroundColor = 'rgba(255, 255, 255, 0.3)'
-        }
-
-        return style
-    }
-
-    get thumbnailBlurHeight() {
-        if (this.thumbnailFactor === 0) return 0
-
-        return (this.thumbnailBigHeight * this.thumbnailFactor).toFixed()
     }
 
     get printstatusThumbnailZoom() {
         return this.$store.state.gui.uiSettings.printstatusThumbnailZoom ?? true
     }
 
-    mounted() {
-        this.setupResizeObserver()
-    }
-
-    beforeDestroy() {
-        this.resizeObserver?.disconnect()
-    }
+    mounted() { this.setupResizeObserver() }
+    beforeDestroy() { this.resizeObserver?.disconnect() }
 
     calcThumbnailFactor() {
         const thumbnailClientWidth = this.bigThumbnail?.$el.clientWidth ?? 0
         if (!thumbnailClientWidth || !this.thumbnailBigWidth) this.thumbnailFactor = 0
-
         return (this.thumbnailFactor = thumbnailClientWidth / this.thumbnailBigWidth)
     }
 
     setupResizeObserver() {
         this.resizeObserver?.disconnect()
-
         if (!this.wrapper) return
-
         this.resizeObserver = new ResizeObserver(() => this.handleResize())
         this.resizeObserver.observe(this.wrapper)
     }
 
     @Debounce(200)
     handleResize() {
-        this.$nextTick(() => {
-            this.calcThumbnailFactor()
-        })
+        this.$nextTick(() => { this.calcThumbnailFactor() })
     }
 
     @Watch('current_filename')
@@ -274,15 +215,11 @@ export default class StatusPanelPrintstatusThumbnail extends Mixins(BaseMixin) {
 
 <style scoped>
 .statusPanel-big-thumbnail {
-    transition: height 0.25s ease-out;
+    transition: all 0.25s ease-out;
+    border-radius: 6px;
 }
 
 .statusPanel-printstatus-thumbnail {
     position: relative;
-}
-
-.statusPanel-thumbnail-overlay {
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(3px);
 }
 </style>

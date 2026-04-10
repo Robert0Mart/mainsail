@@ -1,81 +1,112 @@
 <template>
     <div>
-        <v-row v-if="isMobile">
-            <v-col>
-                <status-panel />
-                <template v-for="component in mobileLayout">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-mobileLayout-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-        </v-row>
-        <v-row v-else-if="isTablet">
-            <v-col class="col-6">
-                <status-panel />
-                <template v-for="component in tabletLayout1">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-tabletLayout1-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-            <v-col class="col-6">
-                <template v-for="component in tabletLayout2">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-tabletLayout2-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-        </v-row>
-        <v-row v-else-if="isDesktop">
-            <v-col class="col-5">
-                <status-panel />
-                <template v-for="component in desktopLayout1">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-desktopLayout1-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-            <v-col class="col-7">
-                <template v-for="component in desktopLayout2">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-desktopLayout2-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-        </v-row>
-        <v-row v-else-if="isWidescreen">
-            <v-col class="col-3">
-                <status-panel />
-                <template v-for="component in widescreenLayout1">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-desktopLayout1-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-            <v-col class="col-5">
-                <template v-for="component in widescreenLayout2">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-desktopLayout2-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-            <v-col class="col-4">
-                <template v-for="component in widescreenLayout3">
-                    <component
-                        :is="extractPanelName(component.name)"
-                        :key="'dashboard-desktopLayout3-' + component.name"
-                        :panel-id="extractPanelId(component.name)"></component>
-                </template>
-            </v-col>
-        </v-row>
+        <template v-if="redesignMode">
+            <v-row justify="center" class="mt-4">
+                <v-col cols="12" xl="10">
+                    <v-card class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
+                        
+                        <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
+                            <status-panel class="transparent-bg" />
+                        </div>
+
+                        <v-divider vertical class="hidden-sm-and-down clean-divider"></v-divider>
+                        <v-divider class="hidden-md-and-up clean-divider"></v-divider>
+
+                        <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
+                            <temperature-panel class="transparent-bg" />
+                        </div>
+
+                    </v-card>
+                </v-col>
+            </v-row>
+        </template>
+
+        <template v-else>
+            <v-row v-if="isMobile">
+                <v-col>
+                    <status-panel />
+                    <template v-for="component in mobileLayout">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-mobileLayout-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+            </v-row>
+            <v-row v-else-if="isTablet">
+                <v-col class="col-6">
+                    <status-panel />
+                    <template v-for="component in tabletLayout1">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-tabletLayout1-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+                <v-col class="col-6">
+                    <template v-for="component in tabletLayout2">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-tabletLayout2-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+            </v-row>
+            <v-row v-else-if="isDesktop">
+                <v-col class="col-5">
+                    <status-panel />
+                    <template v-for="component in desktopLayout1">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-desktopLayout1-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+                <v-col class="col-7">
+                    <template v-for="component in desktopLayout2">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-desktopLayout2-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+            </v-row>
+            <v-row v-else-if="isWidescreen">
+                <v-col class="col-3">
+                    <status-panel />
+                    <template v-for="component in widescreenLayout1">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-desktopLayout1-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+                <v-col class="col-5">
+                    <template v-for="component in widescreenLayout2">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-desktopLayout2-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+                <v-col class="col-4">
+                    <template v-for="component in widescreenLayout3">
+                        <component
+                            v-if="shouldShowPanel(component.name)"
+                            :is="extractPanelName(component.name)"
+                            :key="'dashboard-desktopLayout3-' + component.name"
+                            :panel-id="extractPanelId(component.name)"></component>
+                    </template>
+                </v-col>
+            </v-row>
+        </template>
     </div>
 </template>
 
@@ -121,44 +152,67 @@ import WebcamPanel from '@/components/panels/WebcamPanel.vue'
     },
 })
 export default class PageDashboard extends Mixins(DashboardMixin) {
-    get mobileLayout() {
-        return this.$store.getters['gui/getPanels']('mobile', 0, true)
+    readonly redesignMode = true
+
+    private isAdvanced = localStorage.getItem('advancedMode') === 'true'
+
+    private advancedPanels = [
+        'miniconsole-panel',
+        'extruder-control-panel',
+    ]
+
+    mounted() {
+        this.$root.$on('advancedModeChanged', (val: boolean) => {
+            this.isAdvanced = val
+        })
     }
 
-    get tabletLayout1() {
-        return this.$store.getters['gui/getPanels']('tablet', 1, true)
+    shouldShowPanel(componentName: string) {
+        if (this.isAdvanced) return true
+        const panelName = this.extractPanelName(componentName)
+        return !this.advancedPanels.includes(panelName)
     }
 
-    get tabletLayout2() {
-        return this.$store.getters['gui/getPanels']('tablet', 2, true)
-    }
+    get mobileLayout() { return this.$store.getters['gui/getPanels']('mobile', 0, true) }
+    get tabletLayout1() { return this.$store.getters['gui/getPanels']('tablet', 1, true) }
+    get tabletLayout2() { return this.$store.getters['gui/getPanels']('tablet', 2, true) }
+    get desktopLayout1() { return this.$store.getters['gui/getPanels']('desktop', 1, true) }
+    get desktopLayout2() { return this.$store.getters['gui/getPanels']('desktop', 2, true) }
+    get widescreenLayout1() { return this.$store.getters['gui/getPanels']('widescreen', 1, true) }
+    get widescreenLayout2() { return this.$store.getters['gui/getPanels']('widescreen', 2, true) }
+    get widescreenLayout3() { return this.$store.getters['gui/getPanels']('widescreen', 3, true) }
 
-    get desktopLayout1() {
-        return this.$store.getters['gui/getPanels']('desktop', 1, true)
-    }
-
-    get desktopLayout2() {
-        return this.$store.getters['gui/getPanels']('desktop', 2, true)
-    }
-
-    get widescreenLayout1() {
-        return this.$store.getters['gui/getPanels']('widescreen', 1, true)
-    }
-
-    get widescreenLayout2() {
-        return this.$store.getters['gui/getPanels']('widescreen', 2, true)
-    }
-
-    get widescreenLayout3() {
-        return this.$store.getters['gui/getPanels']('widescreen', 3, true)
-    }
-
-    extractPanelName(name: string) {
-        return name.split('_')[0] + '-panel'
-    }
-
-    extractPanelId(name: string) {
-        return name.split('_')[1] ?? null
-    }
+    extractPanelName(name: string) { return name.split('_')[0] + '-panel' }
+    extractPanelId(name: string) { return name.split('_')[1] ?? null }
 }
 </script>
+
+<style scoped>
+/* Modern main container */
+.clean-dashboard-card {
+    background-color: #1a1a1f !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Subtle divider styling */
+.clean-divider {
+    border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Strip inner components styles */
+::v-deep .transparent-bg,
+::v-deep .transparent-bg .v-card,
+::v-deep .transparent-bg .v-sheet {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* Remove default Vuetify card headers backgrounds if they exist */
+::v-deep .transparent-bg .v-card__title {
+    background: transparent !important;
+}
+</style>

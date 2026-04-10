@@ -128,15 +128,16 @@ export default class Panel extends Mixins(BaseMixin) {
 
 /* 1. Corpo do Painel (Card) */
 .v-card.panel {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.6);
     border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
-    border-radius: 8px !important;        /* Cantos ligeiramente mais arredondados */
+    border-radius: 15px !important;        /* Cantos ligeiramente mais arredondados */
+    overflow: hidden;    /* Isto vai "podar" os cantos dos elementos filhos */
     transition: all 0.3s ease;
 }
 
 /* 2. Barra Superior (Cabeçalho) */
 .panel-toolbar {
-    background-color: #2c3e50 !important; /* Cor da barra (ex: azul acinzentado) */
+    background-color: #000000 !important; /* Cor da barra (ex: azul acinzentado) */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 

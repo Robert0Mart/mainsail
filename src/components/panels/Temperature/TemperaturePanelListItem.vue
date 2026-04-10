@@ -107,6 +107,6 @@ export default class TemperaturePanelListItem extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
-.ultra-clean-target ::v-deep input { text-align: right !important; color: #00E5FF !important; font-weight: bold !important; font-size: 1.1rem !important; padding: 0 !important; }
+.ultra-clean-target ::v-deep input { text-align: right !important; color: #2196f3 !important; font-weight: bold !important; font-size: 1.1rem !important; padding: 0 !important; }
 .ultra-clean-target ::v-deep .v-text-field__slot { margin-right: 4px !important; }
 </style>

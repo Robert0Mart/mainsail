@@ -9,7 +9,7 @@
             <div class="speed-factor-section">
                 <div class="d-flex align-center justify-space-between mb-2">
                     <div class="d-flex align-center">
-                        <v-icon small class="mr-2 primary--text">{{ mdiSpeedometer }}</v-icon>
+                        <v-icon small class="mr-2 white--text">{{ mdiSpeedometer }}</v-icon>
                         <span class="text-subtitle-2 white--text font-weight-bold">{{ $t('Panels.ToolheadControlPanel.SpeedFactor') }}</span>
                     </div>
                     <div class="d-flex align-center premium-input-box">
@@ -66,44 +66,3 @@ export default class MachineSettingsPanel extends Mixins(BaseMixin) {
     }
 }
 </script>
-
-<style scoped>
-.custom-glass-panel {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-
-.premium-input-box {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 6px;
-    min-width: 80px;
-    justify-content: center;
-}
-
-.custom-slider ::v-deep .v-slider__thumb {
-    width: 12px !important;
-    height: 12px !important;
-    background-color: #00E5FF !important;
-}
-
-.custom-slider ::v-deep .v-slider__track-fill {
-    background-color: #00E5FF !important;
-}
-
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer {
-    background-image: url('/img/icons/blocks_icons/axis_maintenancesvg.svg') !important;
-    background-size: contain !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: inline-block !important;
-}
-
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer svg,
-.machine-settings-panel ::v-deep .v-icon.mdi-speedometer::before {
-    display: none !important;
-}
-</style>

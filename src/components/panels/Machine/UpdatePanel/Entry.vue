@@ -7,13 +7,13 @@
                 <template v-if="type === 'git_repo' && commitsBehind.length">
                     <a class="info--text cursor--pointer" @click="boolShowCommitList = true">
                         <v-icon small color="info" class="mr-1">{{ mdiUpdate }}</v-icon>
-                        <span class="text-caption font-weight-bold" style="color: #00E5FF !important; opacity: 0.9;">{{ versionOutput }}</span>
+                        <span class="text-caption font-weight-bold" style="color: #2196f3 !important; opacity: 0.9;">{{ versionOutput }}</span>
                     </a>
                 </template>
                 <template v-else-if="type === 'web' && semverUpdatable">
                     <a class="info--text text-decoration-none" :href="webLinkRelease" target="_blank">
                         <v-icon small color="info" class="mr-1">{{ mdiUpdate }}</v-icon>
-                        <span class="text-caption font-weight-bold" style="color: #00E5FF !important; opacity: 0.9;">{{ versionOutput }}</span>
+                        <span class="text-caption font-weight-bold" style="color: #2196f3 !important; opacity: 0.9;">{{ versionOutput }}</span>
                     </a>
                 </template>
                 <span v-else class="text-caption grey--text text--lighten-1">{{ versionOutput }}</span>
