@@ -125,13 +125,11 @@ export default class Panel extends Mixins(BaseMixin) {
     width: var(--panel-toolbar-icon-btn-width) !important;
 }
 
-/* NOVO: Alteração Global de Cores dos Painéis */
-
-/* 1. Corpo do Painel (Card) */
 .v-card.panel {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.6);
     border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
-    border-radius: 8px !important;        /* Cantos ligeiramente mais arredondados */
+    border-radius: 15px !important;        /* Cantos ligeiramente mais arredondados */
+    overflow: hidden;
     transition: all 0.3s ease;
 }
 

@@ -3,7 +3,7 @@
         v-if="klipperReadyForGui"
         :title="$t('Panels.TemperaturePanel.Headline')"
         :collapsible="true"
-        card-class="temperature-panel">
+        card-class="temperature-panel custom-glass-panel">
         
         <template #icon>
             <img src="/img/icons/blocks_icons/temperaturesvg.svg" 
@@ -18,9 +18,7 @@
         
         <v-card-text class="pa-0">
             <temperature-panel-list />
-            <v-divider v-if="boolTempchart" class="my-0" />
-            <temp-chart v-if="boolTempchart" />
-        </v-card-text>
+            </v-card-text>
     </panel>
 </template>
 
@@ -29,16 +27,26 @@ import Component from 'vue-class-component'
 import { Mixins } from 'vue-property-decorator'
 import BaseMixin from '@/components/mixins/base'
 import ControlMixin from '@/components/mixins/control'
-import TempChart from '@/components/charts/TempChart.vue'
 import Panel from '@/components/ui/Panel.vue'
 import TemperaturePanelPresets from '@/components/panels/Temperature/TemperaturePanelPresets.vue'
 import TemperaturePanelSettings from '@/components/panels/Temperature/TemperaturePanelSettings.vue'
 import TemperaturePanelList from '@/components/panels/Temperature/TemperaturePanelList.vue'
 
 @Component({
-    components: { Panel, TempChart, TemperaturePanelPresets, TemperaturePanelSettings, TemperaturePanelList },
+    components: { Panel, TemperaturePanelPresets, TemperaturePanelSettings, TemperaturePanelList },
 })
-export default class TemperaturePanel extends Mixins(BaseMixin, ControlMixin) {
-    get boolTempchart() { return this.$store.state.gui.view.tempchart.boolTempchart ?? false }
-}
+export default class TemperaturePanel extends Mixins(BaseMixin, ControlMixin) {}
 </script>
+
+<style scoped>
+.custom-glass-panel {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(10px);
+}
+
+
+::v-deep .v-card__text {
+    padding-bottom: 8px !important;
+}
+</style>
