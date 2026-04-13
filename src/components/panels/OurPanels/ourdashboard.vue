@@ -210,7 +210,7 @@
   right: 12px;
   width: 100px; 
   height: 100px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   border-radius: 12px;
   display: flex;
