@@ -6,25 +6,23 @@
     :margin-bottom="true"
     center-title
   >
-    <div class="pa-8 pt-16 fill-height"> 
+    <div class="pa-4 pa-md-8 pt-md-16 fill-height"> 
       <v-row no-gutters class="fill-height">
         
-        <v-col cols="6" class="pr-6 d-flex flex-column justify-center">
+        <v-col cols="12" md="6" class="pr-md-6 d-flex flex-column justify-center mb-6 mb-md-0">
           <div class="media-container w-full">
-            <div v-if="isLive" class="webcam-fixed-wrapper">
+            <div v-if="isLive" class="webcam-fixed-wrapper shadow-xl">
               <webcam-wrapper 
                 :webcam="currentCam" 
                 page="dashboard"
-                class="rounded-lg shadow-xl overflow-hidden"
+                class="rounded-lg overflow-hidden h-100"
               />
             </div>
 
             <v-img
               v-else
               :src="thumbnailUrl"
-              aspect-ratio="1"
-              class="rounded-lg border-thumbnail shadow-xl"
-              max-height="450" 
+              class="rounded-lg border-thumbnail shadow-xl responsive-thumbnail"
               contain
             >
               <template v-slot:placeholder>
@@ -49,7 +47,7 @@
             </div>
           </div>
 
-          <v-row dense class="flex-shrink-0 mt-6 px-16">
+          <v-row dense class="flex-shrink-0 mt-6 px-4 px-md-16">
             <v-col cols="4">
               <v-btn block color="success" class="buttons font-weight-black" depressed @click="() => {}">
                 <v-icon small left>mdi-play</v-icon> START
@@ -74,7 +72,7 @@
           </v-row>
         </v-col>
 
-        <v-col cols="3" class="px-4 border-sides d-flex flex-column justify-center">
+        <v-col cols="12" md="3" class="px-md-4 border-sides d-flex flex-column justify-center mb-6 mb-md-0">
           <div class="stats-wrapper px-2 d-flex flex-column" style="gap: 25px;">
             <div v-for="(stat, index) in mainStats" :key="stat.label">
               <div class="d-flex justify-space-between align-center py-2"> 
@@ -91,7 +89,7 @@
           </div>
         </v-col>
 
-        <v-col cols="3" class="pl-6 d-flex flex-column justify-center">
+        <v-col cols="12" md="3" class="pl-md-6 d-flex flex-column justify-center">
           <div class="d-flex flex-column" style="gap: 10px;"> 
             <div class="temp-card nozzle-glow d-flex align-center px-3"> 
               <v-icon x-small color="red lighten-1" class="mr-2">mdi-printer-3d-nozzle</v-icon>
@@ -142,15 +140,26 @@
 </template>
 
 <style scoped>
-.our-dashboard-panel { height: 75vh; }
+/* Altura responsiva (não fixa) para os botões não sumirem no portátil */
+.our-dashboard-panel { height: 100%; min-height: 60vh; }
 .fill-height { height: 100%; }
 
+/* Wrapper da câmara agora ajusta-se automaticamente (aspect-ratio) */
 .webcam-fixed-wrapper {
   width: 100%;
-  height: 450px;
+  aspect-ratio: 16 / 9;
+  max-height: 400px; 
   background: black;
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
+}
+.h-100 { height: 100% !important; }
+
+.responsive-thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 400px;
 }
 
 .square-svg {
@@ -265,7 +274,6 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   get currentCam() {
     const cams = this.webcams;
     if (cams && cams.length > 0) return cams[0];
-    // Fallback for initialization
     return { service: 'mjpeg', stream_url: '' };
   }
 
@@ -273,10 +281,14 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     return this.$store.getters['files/getFileThumbnail'] || ''
   }
 
+  get printer() { return this.$store.state.printer }
+
   get displayProgress() {
-    if (!this.klipperReadyForGui) return 0
-    const prog = this.$store.getters['printer/getPrintPercent'] || 0
-    return Math.floor(prog * 100)
+    if (!this.klipperReadyForGui) return 0;
+    const realPhysicalProgress = this.printer.display_status?.progress || 0;
+    const fileReadProgress = this.printer.virtual_sdcard?.progress || 0;
+    const actualProgress = realPhysicalProgress > 0 ? realPhysicalProgress : fileReadProgress;
+    return Math.floor(actualProgress * 100);
   }
 
   get edgeStyle() {
@@ -297,9 +309,20 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     ]
   }
 
-  get current_layer() { return this.$store.getters['printer/getPrintCurrentLayer'] || 0 }
-  get max_layers() { return this.$store.getters['printer/getPrintMaxLayers'] || 0 }
-  get printer() { return this.$store.state.printer }
+  // --- ARRANJO DAS LAYERS --- //
+  get current_layer() { 
+    // Procura em todos os cantos possíveis da base de dados
+    const storeLayer = this.$store.getters['printer/getPrintCurrentLayer'] || this.$store.getters['printer/getCurrentLayer'];
+    const objectLayer = this.printer.print_stats?.info?.current_layer;
+    return storeLayer || objectLayer || 0;
+  }
+  
+  get max_layers() { 
+    // Procura em todos os cantos possíveis da base de dados
+    const storeTotal = this.$store.getters['printer/getPrintMaxLayers'] || this.$store.getters['printer/getTotalLayers'];
+    const objectTotal = this.printer.print_stats?.info?.total_layer;
+    return storeTotal || objectTotal || 0;
+  }
 
   get realSpeed() {
     const live = this.printer.motion_report?.live_velocity
