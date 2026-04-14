@@ -196,16 +196,24 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 </script>
 
 <style scoped>
+/* =========================================================================
+   HOOK INTO THE GLOBAL DESIGN SYSTEM
+   Instead of hardcoding colors, we tell the redesign wrapper to use the 
+   variables we defined in Panel.vue's :root!
+   ========================================================================= */
 .clean-dashboard-card {
-    background-color: #1a1a1f !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background-color: var(--panel-bg, #1a1a1f) !important;
+    border-radius: var(--panel-radius, 12px) !important;
+    border: var(--panel-border, 1px solid rgba(255, 255, 255, 0.05)) !important;
 }
 
 .clean-divider {
     border-color: rgba(255, 255, 255, 0.03) !important;
 }
 
+/* Since .clean-dashboard-card is now acting as our "Main Panel", 
+  we keep making the inner Vue components transparent so they don't double-stack backgrounds. 
+*/
 ::v-deep .transparent-bg,
 ::v-deep .transparent-bg .v-card,
 ::v-deep .transparent-bg .v-sheet {

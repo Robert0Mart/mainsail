@@ -14,14 +14,14 @@
               <webcam-wrapper 
                 :webcam="currentCam" 
                 page="dashboard"
-                class="rounded-lg h-100"
+                class="inner-rounded h-100"
               />
             </div>
 
             <v-img
               v-else-if="showThumbnailView"
               :src="thumbnailUrl"
-              class="rounded-lg responsive-thumbnail shadow-xl"
+              class="inner-rounded responsive-thumbnail shadow-xl"
               contain
             >
               <template v-slot:placeholder>
@@ -126,108 +126,8 @@
   </panel>
 </template>
 
-<style scoped>
-::v-deep .blocks-main-panel { 
-  background: linear-gradient(145deg, #1c1c22, #141419) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
-}
-
-.webcam-fixed-wrapper {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 400px; 
-  background: #000;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
-
-.h-100 { height: 100% !important; }
-
-.responsive-thumbnail {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 400px;
-  border-radius: 12px;
-}
-
-.square-svg {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.border-ghost { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 6; }
-.border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
-
-.overlay-progress-wrapper {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 90px; 
-  height: 90px;
-  background: rgba(15, 15, 20, 0.7);
-  backdrop-filter: blur(12px); 
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 10;
-}
-
-.internal-toggle-wrapper { position: absolute; bottom: 15px; left: 15px; z-index: 11; }
-
-.internal-orange-btn {
-  height: 40px !important;
-  border-radius: 10px !important;
-  letter-spacing: 1px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px 8px;
-  text-align: center;
-}
-
-.temp-card {
-  width: 100%;
-  padding: 10px 16px; 
-  min-height: 48px; 
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-}
-
-.fans-vertical-wrapper {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 16px;
-}
-
-.fan-card-compact {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-  padding: 2px 10px;
-}
-
-.white--text { color: #f0f0f5 !important; }
-.media-container { position: relative; width: 100%; display: block; }
-.buttons { border-radius: 12px !important; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255, 255, 255, 0.05); }
-.big-btn { height: 56px !important; font-size: 1.1rem !important; }
-</style>
-
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import Panel from '@/components/ui/Panel.vue'
 import BaseMixin from '@/components/mixins/base'
 import AfcMixin from '@/components/mixins/afc'
 import WebcamMixin from '@/components/mixins/webcam'
@@ -237,7 +137,6 @@ import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue";
 
 @Component({ 
   components: { 
-    Panel, 
     WebcamWrapper, 
     MiscellaneousSlider
   } 
@@ -314,3 +213,87 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   get bedTemp() { return (this.printer.heater_bed?.temperature || 0).toFixed(1) }
 }
 </script>
+
+<style scoped>
+/* =========================================================================
+   DYNAMIC ROUNDNESS
+   Hooks into --panel-radius from Panel.vue and scales down slightly to fit inside!
+   ========================================================================= */
+.inner-rounded,
+.webcam-fixed-wrapper,
+.responsive-thumbnail,
+.stat-card,
+.temp-card,
+.fans-vertical-wrapper,
+.buttons {
+  border-radius: calc(var(--panel-radius) - 4px) !important;
+}
+
+/* =========================================================================
+   STAT & TEMP CARDS (Hooks into --panel-inner-bg from Panel.vue)
+   ========================================================================= */
+/* Inside OurDashboardPanel.vue */
+.stat-card, .temp-card, .fans-vertical-wrapper {
+    background: var(--master-inner-bg, rgba(255,255,255,0.05)) !important;
+    border-radius: calc(var(--master-radius, 15px) - 6px) !important;
+}
+
+.stat-card { padding: 12px 8px; text-align: center; }
+.temp-card { width: 100%; padding: 10px 16px; min-height: 48px; display: flex; }
+.fans-vertical-wrapper { padding: 16px; }
+
+/* Fan nested items get slightly darker relative to the inner bg */
+.fan-card-compact {
+  background: rgba(0, 0, 0, 0.15); 
+  border-radius: calc(var(--panel-radius) - 6px);
+  padding: 2px 10px;
+}
+
+/* =========================================================================
+   MEDIA CONTAINERS
+   ========================================================================= */
+.webcam-fixed-wrapper {
+  width: 100%; aspect-ratio: 16 / 9; max-height: 400px; 
+  background: #000; overflow: hidden; position: relative;
+}
+.responsive-thumbnail { width: 100%; aspect-ratio: 16 / 9; max-height: 400px; }
+.media-container { position: relative; width: 100%; display: block; }
+.h-100 { height: 100% !important; }
+
+/* =========================================================================
+   PROGRESS OVERLAY & SVG
+   ========================================================================= */
+.overlay-progress-wrapper {
+  position: absolute; top: 15px; right: 15px; width: 90px; height: 90px;
+  background: rgba(15, 15, 20, 0.75); backdrop-filter: blur(12px); 
+  border-radius: calc(var(--panel-radius) - 2px);
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--panel-inner-border); z-index: 10;
+}
+
+.square-svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
+.border-ghost { fill: none; stroke: var(--panel-svg-track); stroke-width: 6; }
+.border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+/* =========================================================================
+   INTERNAL BUTTONS
+   ========================================================================= */
+.internal-toggle-wrapper { position: absolute; bottom: 15px; left: 15px; z-index: 11; }
+
+.internal-orange-btn {
+  height: 40px !important;
+  border-radius: calc(var(--panel-radius) - 6px) !important;
+  letter-spacing: 1px; border: 1px solid var(--panel-inner-border);
+}
+
+.buttons { 
+  letter-spacing: 1px; text-transform: uppercase; 
+  border: 1px solid var(--panel-inner-border); 
+}
+.big-btn { height: 56px !important; font-size: 1.1rem !important; }
+
+/* =========================================================================
+   UTILITIES
+   ========================================================================= */
+.white--text { color: var(--panel-text-main) !important; }
+</style>

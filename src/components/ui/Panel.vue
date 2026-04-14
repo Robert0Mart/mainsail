@@ -8,8 +8,7 @@
             :color="toolbarColor"
             :class="getToolbarClass"
             :height="panelToolbarHeight"
-            class="panel-toolbar"
-            :style="additionalStyle">
+            class="panel-toolbar">
             <slot name="buttons-left" />
             <v-toolbar-title class="d-flex align-center">
                 <slot v-if="hasIconSlot" name="icon" />
@@ -52,7 +51,7 @@ export default class Panel extends Mixins(BaseMixin) {
     @Prop({ required: true, default: '' }) declare readonly title: string | TranslateResult
     @Prop({ default: false }) declare readonly collapsible: boolean
     @Prop({ required: true }) declare readonly cardClass: string
-    @Prop({ default: '' }) declare readonly toolbarColor: string
+    @Prop({ default: '' }) declare readonly toolbarColor: string 
     @Prop({ default: '' }) declare readonly toolbarClass: string
     @Prop({ default: false }) declare readonly loading: boolean
     @Prop({ default: true }) declare readonly marginBottom: boolean
@@ -76,78 +75,59 @@ export default class Panel extends Mixins(BaseMixin) {
 
     get getToolbarClass() {
         let output = this.toolbarClass
-
         if (this.collapsible) output += ' collapsible'
-
         return output
-    }
-
-    get additionalStyle() {
-        return this.$vuetify.theme.dark ? '' : 'border-bottom: 1px solid #A8A8A8'
     }
 }
 </script>
 
-<style scoped>
-/* MANTIDO: Estilos originais do componente */
-.expanded header.v-toolbar {
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+<style>
+/* =========================================================================
+   👑 GLOBAL DESIGN MASTER CONTROL
+   Because this is in Dashboard.vue (the top parent) and NOT scoped, 
+   these variables will successfully flow down to every single panel.
+   ========================================================================= */
+:root {
+    /* Set to RED and 24px roundness temporarily so we KNOW when it works */
+    --master-bg: rgb(58, 58, 108); 
+    --master-radius: 24px;
+    --master-border: 1px solid #ffffff;
+
+    /* Inner elements */
+    --master-inner-bg: rgba(255, 255, 255, 0.05);
+    --master-inner-border: rgba(255, 255, 255, 0.1);
 }
 
-.btn-collapsible > * {
-    will-change: transform;
-    transition: transform 500ms;
-}
-.icon-rotate-90 {
-    transform: rotate(90deg);
-}
-
-.panel-toolbar {
-    overflow-y: hidden;
-}
-
-::v-deep .panel-toolbar .v-btn {
-    height: 100% !important;
-    max-height: none;
+/* NUCLEAR OVERRIDE FOR THE REDESIGN WRAPPER
+  This explicitly targets Vuetify's dark mode card class to ensure it can't be overwritten.
+*/
+html body .v-application .theme--dark .v-card.clean-dashboard-card,
+html body .v-application .theme--light .v-card.clean-dashboard-card,
+html body .v-application .v-card.clean-dashboard-card {
+    background-color: var(--master-bg) !important;
+    background: var(--master-bg) !important;
+    border-radius: var(--master-radius) !important;
+    border: var(--master-border) !important;
 }
 </style>
 
-<style>
-/* MANTIDO: Regras originais do Mainsail */
-.v-card.panel .v-toolbar__content {
-    padding-right: 0;
-}
-.v-card.panel .v-toolbar__content .subheading {
-    user-select: none;
-}
-.panel-toolbar .v-btn.v-btn--icon {
-    width: var(--panel-toolbar-icon-btn-width) !important;
+<style scoped>
+/* Keep your existing scoped styles exactly as they were! */
+.clean-divider {
+    border-color: rgba(255, 255, 255, 0.03) !important;
 }
 
-.v-card.panel {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
-    border-radius: 15px !important;        /* Cantos ligeiramente mais arredondados */
-    overflow: hidden;
-    transition: all 0.3s ease;
+::v-deep .transparent-bg,
+::v-deep .transparent-bg .v-card,
+::v-deep .transparent-bg .v-sheet {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
 }
 
-/* 2. Barra Superior (Cabeçalho) */
-.panel-toolbar {
-    background-color: #2c3e50 !important; /* Cor da barra (ex: azul acinzentado) */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-/* 3. Texto do Título e Ícones */
-.panel-toolbar .subheading, 
-.panel-toolbar .v-icon {
-    color: #ffffff !important;           /* Força o texto e ícones a branco */
-    font-weight: 500 !important;
-}
-
-/* 4. Efeito ao passar o rato (Opcional, dá um ar moderno) */
-.v-card.panel:hover {
-    border-color: var(--v-primary-base) !important; /* A borda brilha com a cor principal */
+::v-deep .transparent-bg .v-card__title {
+    background: transparent !important;
 }
 </style>
