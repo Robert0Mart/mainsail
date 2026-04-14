@@ -3,16 +3,23 @@
         <template v-if="redesignMode">
             <v-row justify="center" class="mt-4">
                 <v-col cols="12" xl="10">
-                    <v-card class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
-                        
-                        <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
-                            <our-dashboard-panel class="transparent-bg" />
-                        </div>
+                    <div class="d-flex flex-column" style="gap: 50px;">
 
-                        <v-divider vertical class="hidden-sm-and-down clean-divider"></v-divider>
-                        <v-divider class="hidden-md-and-up clean-divider"></v-divider>
+                        <v-card class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
+                            <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
+                                <our-dashboard-panel class="transparent-bg" />
+                            </div>
+                            <v-divider vertical class="hidden-sm-and-down clean-divider"></v-divider>
+                            <v-divider class="hidden-md-and-up clean-divider"></v-divider>
+                        </v-card>
 
-                    </v-card>
+                        <v-card class="d-flex flex-column clean-dashboard-card" elevation="4">
+                            <div class="flex-grow-1 w-100 pa-5">
+                                <axis-panel class="transparent-bg" />
+                            </div>
+                        </v-card>
+
+                    </div>
                 </v-col>
             </v-row>
         </template>
@@ -128,6 +135,7 @@ import TemperaturePanel from '@/components/panels/TemperaturePanel.vue'
 import WebcamPanel from '@/components/panels/WebcamPanel.vue'
 
 import OurDashboardPanel from '@/components/panels/OurPanels/ourdashboard.vue'
+import AxisPanel from '@/components/panels/OurPanels/axispanel.vue'
 
 @Component({
     components: {
@@ -148,6 +156,7 @@ import OurDashboardPanel from '@/components/panels/OurPanels/ourdashboard.vue'
         TemperaturePanel,
         WebcamPanel,
         OurDashboardPanel,
+        AxisPanel,
     },
 })
 export default class PageDashboard extends Mixins(DashboardMixin) {
@@ -187,19 +196,16 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 </script>
 
 <style scoped>
-/* Modern main container */
 .clean-dashboard-card {
     background-color: #1a1a1f !important;
     border-radius: 12px !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Subtle divider styling */
 .clean-divider {
     border-color: rgba(255, 255, 255, 0.03) !important;
 }
 
-/* Strip inner components styles */
 ::v-deep .transparent-bg,
 ::v-deep .transparent-bg .v-card,
 ::v-deep .transparent-bg .v-sheet {
@@ -210,7 +216,6 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
     margin: 0 !important;
 }
 
-/* Remove default Vuetify card headers backgrounds if they exist */
 ::v-deep .transparent-bg .v-card__title {
     background: transparent !important;
 }
