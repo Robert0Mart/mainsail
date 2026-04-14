@@ -195,24 +195,51 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 }
 </script>
 
+<style>
+/* =========================================================================
+   👑 GLOBAL DESIGN MASTER CONTROL (The "Brain")
+   We keep this in Dashboard.vue so the wrapper card can see it.
+   ========================================================================= */
+:root {
+    /* Colors & Borders */
+    --master-bg: rgb(78, 78, 107); 
+    --master-radius: 24px;
+    --master-border: 1px solid rgba(255, 255, 255, 0.2);
+
+    /* Dimensions */
+    --master-panel-height: 65vh; 
+    --master-panel-width: 100vw; 
+
+    /* Inner elements */
+    --master-inner-bg: rgba(255, 255, 255, 0.05);
+    --master-inner-border: rgba(255, 255, 255, 0.1);
+}
+</style>
+
 <style scoped>
 /* =========================================================================
    HOOK INTO THE GLOBAL DESIGN SYSTEM
-   Instead of hardcoding colors, we tell the redesign wrapper to use the 
-   variables we defined in Panel.vue's :root!
    ========================================================================= */
 .clean-dashboard-card {
-    background-color: var(--panel-bg, #1a1a1f) !important;
-    border-radius: var(--panel-radius, 12px) !important;
-    border: var(--panel-border, 1px solid rgba(255, 255, 255, 0.05)) !important;
+    /* Use our new Master variables */
+    background-color: var(--master-bg) !important;
+    border-radius: var(--master-radius) !important;
+    border: var(--master-border) !important;
+    
+    /* Apply the global height/width to the wrapper as well */
+    min-height: var(--master-panel-height) !important;
+    width: var(--master-panel-width) !important;
+    
+    display: flex;
+    overflow: hidden; /* Keeps the corners clean */
 }
 
 .clean-divider {
     border-color: rgba(255, 255, 255, 0.03) !important;
 }
 
-/* Since .clean-dashboard-card is now acting as our "Main Panel", 
-  we keep making the inner Vue components transparent so they don't double-stack backgrounds. 
+/* The "Eraser": This makes sure the PANELS inside this wrapper don't 
+   have their own backgrounds, so we only see the Redesign Card's background.
 */
 ::v-deep .transparent-bg,
 ::v-deep .transparent-bg .v-card,
@@ -222,6 +249,9 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
     box-shadow: none !important;
     border: none !important;
     margin: 0 !important;
+    /* We reset the height here so the inner content just fills the parent */
+    min-height: auto !important; 
+    height: 100% !important;
 }
 
 ::v-deep .transparent-bg .v-card__title {

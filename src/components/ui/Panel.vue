@@ -81,53 +81,58 @@ export default class Panel extends Mixins(BaseMixin) {
 }
 </script>
 
-<style>
-/* =========================================================================
-   👑 GLOBAL DESIGN MASTER CONTROL
-   Because this is in Dashboard.vue (the top parent) and NOT scoped, 
-   these variables will successfully flow down to every single panel.
-   ========================================================================= */
-:root {
-    /* Set to RED and 24px roundness temporarily so we KNOW when it works */
-    --master-bg: rgb(58, 58, 108); 
-    --master-radius: 24px;
-    --master-border: 1px solid #ffffff;
-
-    /* Inner elements */
-    --master-inner-bg: rgba(255, 255, 255, 0.05);
-    --master-inner-border: rgba(255, 255, 255, 0.1);
+<style scoped>
+/* Logic for panel interaction remains scoped */
+.expanded header.v-toolbar {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
-/* NUCLEAR OVERRIDE FOR THE REDESIGN WRAPPER
-  This explicitly targets Vuetify's dark mode card class to ensure it can't be overwritten.
-*/
-html body .v-application .theme--dark .v-card.clean-dashboard-card,
-html body .v-application .theme--light .v-card.clean-dashboard-card,
-html body .v-application .v-card.clean-dashboard-card {
-    background-color: var(--master-bg) !important;
-    background: var(--master-bg) !important;
-    border-radius: var(--master-radius) !important;
-    border: var(--master-border) !important;
+.btn-collapsible > * {
+    will-change: transform;
+    transition: transform 500ms;
+}
+.icon-rotate-90 {
+    transform: rotate(90deg);
+}
+
+.panel-toolbar {
+    overflow-y: hidden;
+}
+
+::v-deep .panel-toolbar .v-btn {
+    height: 100% !important;
+    max-height: none;
 }
 </style>
 
-<style scoped>
-/* Keep your existing scoped styles exactly as they were! */
-.clean-divider {
-    border-color: rgba(255, 255, 255, 0.03) !important;
+<style>
+/* =========================================================================
+   APPLY GLOBAL MASTER STYLES
+   These rules look for the variables you set in Dashboard.vue
+   ========================================================================= */
+html body .v-application .v-card.panel.v-sheet,
+html body .v-application .v-card.panel {
+    background-color: var(--master-bg) !important;
+    border-radius: var(--master-radius) !important;
+    border: var(--master-border) !important;
+    
+    /* Global size application */
+    min-height: var(--master-panel-height) !important;
+    width: var(--master-panel-width) !important;
 }
 
-::v-deep .transparent-bg,
-::v-deep .transparent-bg .v-card,
-::v-deep .transparent-bg .v-sheet {
-    background-color: transparent !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    margin: 0 !important;
-}
-
-::v-deep .transparent-bg .v-card__title {
-    background: transparent !important;
+/* =========================================================================
+   🛡️ THE SHIELD: PROTECT INNER ELEMENTS
+   This prevents panels inside the dashboard redesign from scaling 
+   uncontrollably and keeps them fluid.
+   ========================================================================= */
+.clean-dashboard-card .v-card.panel,
+.transparent-bg .v-card.panel,
+.inner-card-wrapper .v-card.panel,
+.v-dialog .v-card.panel {
+    min-height: auto !important;
+    height: auto !important;
+    width: 100% !important;
 }
 </style>
