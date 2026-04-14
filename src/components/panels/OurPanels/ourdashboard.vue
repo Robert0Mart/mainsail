@@ -2,12 +2,11 @@
   <panel 
     title="Printing Dashboard" 
     icon="mdi-monitor-dashboard" 
-    card-class="our-dashboard-panel"
-    :margin-bottom="true"
+    card-class="blocks-main-panel"
     center-title
   >
-    <div class="pa-6 fill-height"> 
-      <v-row class="fill-height" align="start">
+    <div class="pa-6"> 
+      <v-row align="start">
         
         <v-col cols="12" lg="6" class="pr-lg-6 mb-6 mb-lg-0">
           <div class="media-container w-full">
@@ -15,14 +14,14 @@
               <webcam-wrapper 
                 :webcam="currentCam" 
                 page="dashboard"
-                class="rounded-lg overflow-hidden h-100"
+                class="rounded-lg h-100"
               />
             </div>
 
             <v-img
               v-else-if="showThumbnailView"
               :src="thumbnailUrl"
-              class="rounded-lg border-thumbnail shadow-xl responsive-thumbnail"
+              class="rounded-lg responsive-thumbnail shadow-xl"
               contain
             >
               <template v-slot:placeholder>
@@ -59,7 +58,7 @@
             </div>
           </div>
 
-          <v-row dense class="flex-shrink-0 mt-4">
+          <v-row dense class="mt-4">
             <v-col cols="6">
               <v-btn block :color="dynamicStartColor" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
                 <v-icon left>{{ dynamicStartIcon }}</v-icon> {{ dynamicStartText }}
@@ -74,7 +73,7 @@
         </v-col>
 
         <v-col cols="12" md="6" lg="3" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column">
-          <v-row dense class="stats-wrapper">
+          <v-row dense>
             <v-col cols="6" v-for="stat in mainStats" :key="stat.label">
               <div class="stat-card">
                 <span class="text-caption grey--text text-uppercase font-weight-bold">{{ stat.label }}</span>
@@ -107,46 +106,18 @@
 
         <v-col cols="12" md="6" lg="3" class="pl-lg-6 d-flex flex-column">
           <div class="d-flex flex-column" style="gap: 30px;"> 
-            <div class="temp-card nozzle-glow d-flex align-center px-3"> 
-              <v-icon x-small color="red lighten-1" class="mr-2">mdi-printer-3d-nozzle</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">EXTRUDER</span>
-              <span class="text-body-2 white--text font-weight-bold">{{ extruderTemp }}°C</span>
-            </div>
-            
-            <div class="temp-card bed-glow d-flex align-center px-3"> 
-              <v-icon x-small color="blue lighten-1" class="mr-2">mdi-radiator</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">BED</span>
-              <span class="text-body-2 white--text font-weight-bold">{{ bedTemp }}°C</span>
-            </div>
-
-            <div class="temp-card chamber-glow d-flex align-center px-3"> 
-              <v-icon x-small color="orange lighten-1" class="mr-2">mdi-thermometer-lines</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">CHAMBER</span>
-              <span class="text-body-2 white--text font-weight-bold">25.0°C</span>
-            </div>
-
-            <div class="temp-card mcu-glow d-flex align-center px-3"> 
-              <v-icon x-small color="green lighten-1" class="mr-2">mdi-chip</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">MCU</span>
-              <span class="text-body-2 white--text font-weight-bold">42.1°C</span>
-            </div>
-
-            <div class="temp-card host-glow d-flex align-center px-3"> 
-              <v-icon x-small color="purple lighten-1" class="mr-2">mdi-raspberry-pi</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">HOST</span>
-              <span class="text-body-2 white--text font-weight-bold">38.5°C</span>
-            </div>
-
-            <div class="temp-card extra-glow d-flex align-center px-3"> 
-              <v-icon x-small color="grey lighten-1" class="mr-2">mdi-thermometer-plus</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">EXTRA 1</span>
-              <span class="text-body-2 white--text font-weight-bold">--°C</span>
-            </div>
-
-            <div class="temp-card extra-glow d-flex align-center px-3"> 
-              <v-icon x-small color="grey lighten-1" class="mr-2">mdi-thermometer-plus</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">EXTRA 2</span>
-              <span class="text-body-2 white--text font-weight-bold">--°C</span>
+            <div v-for="temp in [
+              {n:'EXTRUDER', v:extruderTemp, i:'mdi-printer-3d-nozzle', c:'red'},
+              {n:'BED', v:bedTemp, i:'mdi-radiator', c:'blue'},
+              {n:'CHAMBER', v:'25.0', i:'mdi-thermometer-lines', c:'orange'},
+              {n:'MCU', v:'42.1', i:'mdi-chip', c:'green'},
+              {n:'HOST', v:'38.5', i:'mdi-raspberry-pi', c:'purple'},
+              {n:'EXTRA 1', v:'--', i:'mdi-thermometer-plus', c:'grey'},
+              {n:'EXTRA 2', v:'--', i:'mdi-thermometer-plus', c:'grey'}
+            ]" :key="temp.n" class="temp-card d-flex align-center px-3"> 
+              <v-icon x-small :color="temp.c + ' lighten-1'" class="mr-2">{{ temp.i }}</v-icon>
+              <span class="text-caption grey--text font-weight-bold mr-auto">{{ temp.n }}</span>
+              <span class="text-body-2 white--text font-weight-bold">{{ temp.v }}°C</span>
             </div>
           </div>
         </v-col>
@@ -156,34 +127,30 @@
 </template>
 
 <style scoped>
-::v-deep .our-dashboard-panel { 
-  height: 100%; 
-  min-height: 60vh;
+::v-deep .blocks-main-panel { 
   background: linear-gradient(145deg, #1c1c22, #141419) !important;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
 }
-
-.fill-height { height: 100%; }
 
 .webcam-fixed-wrapper {
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 400px; 
   background: #000;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
 }
+
 .h-100 { height: 100% !important; }
 
 .responsive-thumbnail {
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 400px;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .square-svg {
@@ -192,135 +159,70 @@
   height: 100%;
   transform: rotate(-90deg);
 }
-.border-ghost {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 6;
-}
-.border-active {
-  fill: none;
-  stroke-width: 6;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
+
+.border-ghost { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 6; }
+.border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
 
 .overlay-progress-wrapper {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   width: 90px; 
   height: 90px;
-  background: rgba(15, 15, 20, 0.6);
-  backdrop-filter: blur(10px); 
-  border-radius: 12px;
+  background: rgba(15, 15, 20, 0.7);
+  backdrop-filter: blur(12px); 
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 10;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.overlay-content {
-  position: relative;
-  z-index: 11;
-  text-align: center;
-}
-
-.internal-toggle-wrapper {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  z-index: 11;
-}
+.internal-toggle-wrapper { position: absolute; bottom: 15px; left: 15px; z-index: 11; }
 
 .internal-orange-btn {
-  height: 38px !important;
-  border-radius: 8px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
   letter-spacing: 1px;
-  font-size: 0.80rem !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.stats-wrapper {
-  margin-bottom: 0px !important;
-}
-
 .stat-card {
-  background: rgba(255, 255, 255, 0.025);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 10px 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 8px;
   text-align: center;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-  background: rgba(255, 255, 255, 0.04);
 }
 
 .temp-card {
   width: 100%;
-  padding: 8px 14px; 
-  min-height: 44px; 
-  background: rgba(255, 255, 255, 0.025);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: all 0.3s ease;
+  padding: 10px 16px; 
+  min-height: 48px; 
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
 }
 
 .fans-vertical-wrapper {
-  background: rgba(255, 255, 255, 0.015);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 16px;
 }
 
 .fan-card-compact {
   background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  padding: 0px 8px;
+  border-radius: 10px;
+  padding: 2px 10px;
 }
 
-.nozzle-glow:hover { border-color: rgba(244, 67, 54, 0.3); background: rgba(244, 67, 54, 0.05); }
-.bed-glow:hover { border-color: rgba(33, 150, 243, 0.3); background: rgba(33, 150, 243, 0.05); }
-.chamber-glow:hover { border-color: rgba(255, 152, 0, 0.3); background: rgba(255, 152, 0, 0.05); }
-.mcu-glow:hover { border-color: rgba(76, 175, 80, 0.3); background: rgba(76, 175, 80, 0.05); }
-.host-glow:hover { border-color: rgba(156, 39, 176, 0.3); background: rgba(156, 39, 176, 0.05); }
-.extra-glow:hover { border-color: rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.03); }
-
-.mr-auto { margin-right: auto !important; }
 .white--text { color: #f0f0f5 !important; }
-.opacity-10 { opacity: 0.05; }
-.text-right { text-align: right; }
-.w-full { width: 100%; }
-
-.media-container {
-  position: relative;
-  width: 100%;
-  display: block; 
-}
-
-.buttons {
-  border-radius: 10px !important;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  box-shadow: none !important; 
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.big-btn {
-  height: 54px !important;
-  font-size: 1rem !important;
-}
+.media-container { position: relative; width: 100%; display: block; }
+.buttons { border-radius: 12px !important; letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255, 255, 255, 0.05); }
+.big-btn { height: 56px !important; font-size: 1.1rem !important; }
 </style>
 
 <script lang="ts">
@@ -335,8 +237,8 @@ import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue";
 
 @Component({ 
   components: { 
-    Panel,
-    WebcamWrapper,
+    Panel, 
+    WebcamWrapper, 
     MiscellaneousSlider
   } 
 })
@@ -345,42 +247,19 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   isLive = true
   showThumbnailView = false
 
-  get webcams() {
-    return this.$store.getters['gui/webcams/getWebcams']
-  }
-
+  get webcams() { return this.$store.getters['gui/webcams/getWebcams'] }
   get currentCam() {
     const cams = this.webcams;
-    if (cams && cams.length > 0) return cams[0];
-    return { service: 'mjpeg', stream_url: '' };
+    return (cams && cams.length > 0) ? cams[0] : { service: 'mjpeg', stream_url: '' };
   }
-
-  get thumbnailUrl() {
-    return this.$store.getters['files/getFileThumbnail'] || ''
-  }
-
+  get thumbnailUrl() { return this.$store.getters['files/getFileThumbnail'] || '' }
   get printer() { return this.$store.state.printer }
-
   get isPrinting() { return this.$store.getters['printer/getIsPrinting'] }
   get isPaused() { return this.$store.getters['printer/getIsPaused'] }
 
-  get dynamicStartText() {
-    if (this.isPrinting) return 'PAUSE'
-    if (this.isPaused) return 'RESUME'
-    return 'START'
-  }
-
-  get dynamicStartIcon() {
-    if (this.isPrinting) return 'mdi-pause'
-    if (this.isPaused) return 'mdi-play-pause'
-    return 'mdi-play'
-  }
-
-  get dynamicStartColor() {
-    if (this.isPrinting) return 'amber darken-2'
-    if (this.isPaused) return 'success darken-1'
-    return 'success'
-  }
+  get dynamicStartText() { return this.isPrinting ? 'PAUSE' : (this.isPaused ? 'RESUME' : 'START'); }
+  get dynamicStartIcon() { return this.isPrinting ? 'mdi-pause' : (this.isPaused ? 'mdi-play-pause' : 'mdi-play'); }
+  get dynamicStartColor() { return this.isPrinting ? 'amber darken-2' : (this.isPaused ? 'success darken-1' : 'success'); }
 
   dynamicStartAction() {
     if (this.isPrinting) return this.$socket.emit('printer.print.pause')
@@ -388,76 +267,50 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     return this.$socket.emit('printer.print.start')
   }
 
-  toggleInternalView() {
-    this.showThumbnailView = !this.showThumbnailView;
-  }
+  toggleInternalView() { this.showThumbnailView = !this.showThumbnailView; }
 
   get miscellaneous() {
-    const allFans = this.$store.getters['printer/getMiscellaneous'] ?? []
-    return allFans.filter((fan: any) => {
-      if (!fan || !fan.name) return true
-      return !fan.name.toLowerCase().includes('hotend')
-    })
+    return (this.$store.getters['printer/getMiscellaneous'] ?? []).filter((f: any) => f && f.name && !f.name.toLowerCase().includes('hotend'))
   }
 
   get displayProgress() {
     if (!this.klipperReadyForGui) return 0;
-    const realPhysicalProgress = this.printer.display_status?.progress || 0;
-    const fileReadProgress = this.printer.virtual_sdcard?.progress || 0;
-    const actualProgress = realPhysicalProgress > 0 ? realPhysicalProgress : fileReadProgress;
-    return Math.floor(actualProgress * 100);
+    const progress = this.printer.display_status?.progress || this.printer.virtual_sdcard?.progress || 0;
+    return Math.floor(progress * 100);
   }
 
   get edgeStyle() {
-    const offset = this.perimeter - (this.perimeter * (this.displayProgress / 100))
-    return {
-      strokeDasharray: this.perimeter,
-      strokeDashoffset: offset,
-      stroke: 'var(--v-primary-base)'
+    return { 
+      strokeDasharray: this.perimeter, 
+      strokeDashoffset: this.perimeter - (this.perimeter * (this.displayProgress / 100)), 
+      stroke: 'var(--v-primary-base)' 
     }
   }
 
   get mainStats() {
     return [
-      { label: this.$t('Panels.StatusPanel.Speed'), value: this.realSpeed, unit: 'mm/s' },
-      { label: this.$t('Panels.StatusPanel.Flow'), value: this.realFlow, unit: 'mm³/s' },
-      { label: this.$t('Panels.StatusPanel.Layer'), value: `${this.current_layer} / ${this.max_layers}`, unit: '' },
-      { label: this.$t('Panels.StatusPanel.ETA'), value: this.etaTime, unit: '' }
+      { label: 'Speed', value: this.realSpeed, unit: 'mm/s' },
+      { label: 'Flow', value: this.realFlow, unit: 'mm³/s' },
+      { label: 'Layer', value: `${this.current_layer} / ${this.max_layers}`, unit: '' },
+      { label: 'ETA', value: this.etaTime, unit: '' }
     ]
   }
 
-  get current_layer() { 
-    const storeLayer = this.$store.getters['printer/getPrintCurrentLayer'] || this.$store.getters['printer/getCurrentLayer'];
-    const objectLayer = this.printer.print_stats?.info?.current_layer;
-    return storeLayer || objectLayer || 0;
-  }
+  get current_layer() { return this.$store.getters['printer/getPrintCurrentLayer'] || 0; }
+  get max_layers() { return this.$store.getters['printer/getPrintMaxLayers'] || 0; }
   
-  get max_layers() { 
-    const storeTotal = this.$store.getters['printer/getPrintMaxLayers'] || this.$store.getters['printer/getTotalLayers'];
-    const objectTotal = this.printer.print_stats?.info?.total_layer;
-    return storeTotal || objectTotal || 0;
-  }
-
   get realSpeed() {
     const live = this.printer.motion_report?.live_velocity
-    if (live != null) return live.toFixed(0)
-    const req = this.printer.gcode_move?.speed || 0
-    const fac = this.printer.gcode_move?.speed_factor || 1
-    return ((req / 60) * fac).toFixed(0)
+    return live != null ? live.toFixed(0) : '0';
   }
 
   get realFlow() {
-    const live_ev = this.printer.motion_report?.live_extruder_velocity || 0
-    const diameter = this.printer.configfile?.settings?.extruder?.filament_diameter || 1.75
-    const section = Math.pow(diameter / 2, 2) * Math.PI
-    return (section * live_ev).toFixed(1)
+    const section = Math.pow(1.75 / 2, 2) * Math.PI
+    return (section * (this.printer.motion_report?.live_extruder_velocity || 0)).toFixed(1);
   }
 
   get etaTime() { return this.$store.getters['printer/getEstimatedTimeETAFormat'] || '--:--' }
   get extruderTemp() { return (this.printer.extruder?.temperature || 0).toFixed(1) }
-  get bedTemp() {
-    const bed = this.printer.heater_bed || this.printer.heaters?.bed
-    return (bed?.temperature || 0).toFixed(1)
-  }
+  get bedTemp() { return (this.printer.heater_bed?.temperature || 0).toFixed(1) }
 }
 </script>
