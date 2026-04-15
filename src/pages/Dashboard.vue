@@ -1,8 +1,8 @@
 <template>
     <div>
         <template v-if="redesignMode">
-            <v-row justify="center" class="mt-4">
-                <v-col cols="12" xl="10">
+                <v-row justify="center" class="mt-4 ma-0 pa-0">
+                    <v-col cols="12" class="pa-0 ma-0">
                     <div class="d-flex flex-column" style="gap: 50px;">
 
                         <v-card class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
@@ -202,13 +202,13 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
    ========================================================================= */
 :root {
     /* Colors & Borders */
-    --master-bg: rgb(78, 78, 107); 
+    --master-bg: rgba(128, 0, 213, 0.753); 
     --master-radius: 24px;
-    --master-border: 1px solid rgba(255, 255, 255, 0.2);
+    --master-border: 1px solid rgba(255, 255, 255, 0.1);
 
     /* Dimensions */
     --master-panel-height: 65vh; 
-    --master-panel-width: 100vw; 
+    --master-panel-width: calc(100vw - 32px); /* adjust 32px to match your padding */
 
     /* Inner elements */
     --master-inner-bg: rgba(255, 255, 255, 0.05);

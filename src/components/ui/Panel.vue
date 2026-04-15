@@ -116,10 +116,6 @@ html body .v-application .v-card.panel {
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
-    
-    /* Global size application */
-    min-height: var(--master-panel-height) !important;
-    width: var(--master-panel-width) !important;
 }
 
 
@@ -129,28 +125,5 @@ html body .v-application .v-card.panel {
 .v-dialog .v-card.panel {
     min-height: auto !important;
     height: auto !important;
-    width: 100% !important;
-}
-</style>
-
-<style>
-:root {
-    /* Set to RED and 24px roundness temporarily so we KNOW when it works */
-    --master-bg: #2c0536; 
-    --master-radius: 24px;
-    --master-border: 1px solid #ffffff;
-
-    /* Inner elements */
-    --master-inner-bg: rgba(255, 255, 255, 0.05);
-    --master-inner-border: rgba(255, 255, 255, 0.1);
-}
-*/
-html body .v-application .theme--dark .v-card.clean-dashboard-card,
-html body .v-application .theme--light .v-card.clean-dashboard-card,
-html body .v-application .v-card.clean-dashboard-card {
-    background-color: var(--master-bg) !important;
-    background: var(--master-bg) !important;
-    border-radius: var(--master-radius) !important;
-    border: var(--master-border) !important;
 }
 </style>
