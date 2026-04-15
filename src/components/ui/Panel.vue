@@ -122,11 +122,7 @@ html body .v-application .v-card.panel {
     width: var(--master-panel-width) !important;
 }
 
-/* =========================================================================
-   🛡️ THE SHIELD: PROTECT INNER ELEMENTS
-   This prevents panels inside the dashboard redesign from scaling 
-   uncontrollably and keeps them fluid.
-   ========================================================================= */
+
 .clean-dashboard-card .v-card.panel,
 .transparent-bg .v-card.panel,
 .inner-card-wrapper .v-card.panel,
@@ -134,5 +130,27 @@ html body .v-application .v-card.panel {
     min-height: auto !important;
     height: auto !important;
     width: 100% !important;
+}
+</style>
+
+<style>
+:root {
+    /* Set to RED and 24px roundness temporarily so we KNOW when it works */
+    --master-bg: #2c0536; 
+    --master-radius: 24px;
+    --master-border: 1px solid #ffffff;
+
+    /* Inner elements */
+    --master-inner-bg: rgba(255, 255, 255, 0.05);
+    --master-inner-border: rgba(255, 255, 255, 0.1);
+}
+*/
+html body .v-application .theme--dark .v-card.clean-dashboard-card,
+html body .v-application .theme--light .v-card.clean-dashboard-card,
+html body .v-application .v-card.clean-dashboard-card {
+    background-color: var(--master-bg) !important;
+    background: var(--master-bg) !important;
+    border-radius: var(--master-radius) !important;
+    border: var(--master-border) !important;
 }
 </style>
