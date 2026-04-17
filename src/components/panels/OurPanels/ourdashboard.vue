@@ -284,7 +284,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   isAdvancedMode: boolean = localStorage.getItem('advancedMode') === 'true';
 
   ledItems: LedItem[] = [
-    { name: 'Led', klipperName: 'case_light', brightness: 80, enabled: true },
+    { name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true },
   ];
 
   mounted() {
@@ -304,45 +304,41 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   
   get thumbnailUrl(): string {
     const activeFile = this.printer?.print_stats?.filename;
-    if (!activeFile || activeFile === '') return '';
-    
+    if (!activeFile) return '';
+
+    let path = '';
+
     try {
       const g1 = this.$store.getters['files/getFileThumbnail'];
-      if (typeof g1 === 'function') {
-        const r = g1(activeFile) || g1(`gcodes/${activeFile}`);
-        if (r) return r;
-      }
+      if (typeof g1 === 'function') path = g1(activeFile);
     } catch (_) {}
 
-    try {
-      const g2 = this.$store.getters['files/getFileThumbnailByPath'];
-      if (typeof g2 === 'function') {
-        const r = g2(activeFile) || g2(`gcodes/${activeFile}`);
-        if (r) return r;
-      }
-    } catch (_) {}
-
-    try {
-      const basename = activeFile.split('/').pop() ?? activeFile;
-      const sources = [
-        this.$store.state.files?.fileList,
-        this.$store.state.files?.gcodes?.childrens,
-        this.$store.state.files?.gcodes?.items,
-      ];
-      for (const list of sources) {
-        if (!Array.isArray(list)) continue;
-        const found = list.find((f: any) =>
-          f?.filename === basename || f?.filename === activeFile
-        );
-        if (found?.thumbnails?.length) {
-          const best = [...found.thumbnails].sort((a: any, b: any) => (b.width ?? 0) - (a.width ?? 0))[0];
-          if (best?.absolute_path) return best.absolute_path;
-          if (best?.relative_path) return `/server/files/${best.relative_path}`;
+    if (!path) {
+      try {
+        const list = this.$store.state.files?.gcodes?.items || this.$store.state.files?.fileList || [];
+        const fileObj = list.find((f: any) => f.filename === activeFile || f.path === activeFile);
+        if (fileObj?.thumbnails?.length) {
+          const best = [...fileObj.thumbnails].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+          path = best.relative_path;
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
+    }
 
-    return '';
+    if (!path) {
+      const thumbs = this.printer?.print_stats?.info?.thumbnails;
+      if (thumbs?.length) {
+        const best = [...thumbs].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+        path = best.relative_path;
+      }
+    }
+
+    if (!path) return '';
+
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('/server/files/')) return `http://192.168.1.120${path}`;
+    if (path.startsWith('/')) return `http://192.168.1.120/server/files/gcodes${path}`;
+    
+    return `http://192.168.1.120/server/files/gcodes/${path}`;
   }
   
   get printer() { return this.$store.state.printer || {} }
@@ -395,7 +391,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
       this.onLedBrightnessChange(led);
     } else {
       this.$socket.emit('printer.gcode.script', {
-        script: `SET_PIN PIN=${led.klipperName} VALUE=0`
+        script: `SET_LED LED=${led.klipperName} WHITE=0 SYNC=0`
       });
     }
   }
@@ -404,7 +400,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     if (!led.enabled) return;
     const v = parseFloat((led.brightness / 100).toFixed(2));
     this.$socket.emit('printer.gcode.script', {
-      script: `SET_PIN PIN=${led.klipperName} VALUE=${v}`
+      script: `SET_LED LED=${led.klipperName} WHITE=${v} SYNC=0`
     });
   }
 
