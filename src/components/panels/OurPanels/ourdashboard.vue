@@ -111,7 +111,9 @@
 
             <div class="media-controls-overlay d-flex justify-start align-end pa-3" v-if="!isStandby || !showThumbnailView">
               <v-btn icon color="white" class="fs-btn-clean" @click="toggleFullscreen">
-                <v-icon color="white">mdi-fullscreen</v-icon>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+                  <path d="M5 5h5v2H7v3H5V5zm9 0h5v5h-2V7h-3V5zm5 9v5h-5v-2h3v-3h2zm-9 5H5v-5h2v3h3v2z"/>
+                </svg>
               </v-btn>
             </div>
           </div>
