@@ -37,7 +37,7 @@
 
             <div v-if="!showThumbnailView" class="h-100 w-100 relative">
               <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" style="background: #000;" />
-              <div class="cam-progress-badge d-flex align-center justify-center">
+              <div class="cam-progress-badge d-flex align-center justify-center" v-if="!isStandby">
                 <span class="white--text font-weight-black">{{ displayProgress }}%</span>
               </div>
             </div>
@@ -45,7 +45,12 @@
             <div v-else class="h-100 w-100">
 
               <div v-if="!isStandby" class="thumbnail-wrapper h-100 w-100 relative inner-rounded">
-                <v-img v-if="thumbnailUrl" :src="thumbnailUrl" class="responsive-thumbnail inner-rounded h-100 w-100" contain />
+                <v-img 
+                  v-if="thumbnailUrl" 
+                  :src="thumbnailUrl" 
+                  class="responsive-thumbnail inner-rounded h-100 w-100" 
+                  contain 
+                />
                 <div v-else class="no-thumb-bg d-flex flex-column align-center justify-center inner-rounded h-100 w-100">
                   <v-icon size="64" color="white" style="opacity: 0.1">mdi-cube-scan</v-icon>
                   <span class="grey--text text-caption mt-2">PREVIEWING MODEL...</span>
@@ -71,21 +76,20 @@
                   <v-icon color="white">mdi-chevron-down</v-icon>
                 </div>
 
-                <div class="standby-mini-tabs d-flex flex-shrink-0 mx-2" style="height: 30px;">
+                <div class="standby-mini-tabs d-flex flex-shrink-0 mx-2">
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 0 ? 'active-mini-tab' : ''" @click="standbyTab = 0">
-                    <v-icon small :color="standbyTab === 0 ? '#2196f3' : 'white'">mdi-file-document-outline</v-icon>
+                    <v-icon small :color="standbyTab === 0 ? '#2196f3' : '#888'">mdi-file-document-outline</v-icon>
+                    <span class="mini-tab-label ml-1" :style="{ color: standbyTab === 0 ? '#2196f3' : '#888' }">Files</span>
                   </div>
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
-                    <v-icon small :color="standbyTab === 1 ? '#2196f3' : 'white'">mdi-history</v-icon>
-                  </div>
-                  <div class="mini-tab flex-grow-1" :class="standbyTab === 2 ? 'active-mini-tab' : ''" @click="standbyTab = 2">
-                    <v-icon small :color="standbyTab === 2 ? '#2196f3' : 'white'">mdi-format-list-bulleted</v-icon>
+                    <v-icon small :color="standbyTab === 1 ? '#2196f3' : '#888'">mdi-format-list-bulleted</v-icon>
+                    <span class="mini-tab-label ml-1" :style="{ color: standbyTab === 1 ? '#2196f3' : '#888' }">Queue</span>
                     <span class="badge ml-2">0</span>
                   </div>
                 </div>
 
-                <div class="standby-content flex-grow-1 overflow-y-auto px-2 py-2" style="max-height: 280px;">
-                  <template v-if="standbyTab === 0 || standbyTab === 1">
+                <div class="standby-content flex-grow-1 overflow-y-auto px-2 py-2">
+                  <template v-if="standbyTab === 0">
                     <div v-for="(file, index) in mockHistory" :key="index" class="history-item d-flex align-center pa-3 mx-1">
                       <v-icon color="cyan lighten-2" class="mr-4">mdi-cube-scan</v-icon>
                       <div class="flex-grow-1 overflow-hidden pr-3">
@@ -95,8 +99,8 @@
                       <v-icon :color="file.color">{{ file.icon }}</v-icon>
                     </div>
                   </template>
-                  <template v-else-if="standbyTab === 2">
-                    <div class="d-flex align-center justify-center h-100 pa-4">
+                  <template v-else-if="standbyTab === 1">
+                    <div class="d-flex align-center justify-center pa-6">
                       <span class="grey--text text-body-2 text-center">There is currently no file in the job queue.</span>
                     </div>
                   </template>
@@ -162,6 +166,7 @@
           <div class="fans-vertical-wrapper mt-4 pa-4">
             <span class="text-caption grey--text font-weight-bold mb-3 d-block px-1">CONTROLS</span>
             <div class="d-flex flex-column" style="gap: 12px;">
+              
               <div v-for="(object, index) in displayFans" :key="'fan-'+index" class="fan-card-compact px-3 py-1">
                 <miscellaneous-slider 
                   :name="object.name" 
@@ -178,15 +183,23 @@
               
               <v-divider class="my-1" style="border-color: rgba(255,255,255,0.05)"></v-divider>
 
-              <span class="text-caption grey--text font-weight-bold mb-1 d-block px-1">LED LIGHTING</span>
+              <span class="text-caption grey--text font-weight-bold mb-1 d-block px-1"></span>
 
               <div v-for="(led, index) in displayLeds" :key="'led-'+index" class="fan-card-compact px-3 py-3">
                 
                 <div class="d-flex align-center justify-space-between mb-2 px-1">
                   <span class="white--text text-body-2 font-weight-bold d-flex align-center">
-                    <v-icon small class="mr-2" :color="led.enabled ? 'amber lighten-2' : 'grey darken-1'">
-                      {{ led.enabled ? 'mdi-lightbulb' : 'mdi-lightbulb-outline' }}
-                    </v-icon>
+                    <span class="led-icon-wrap mr-2" :class="led.enabled ? 'led-on' : 'led-off'">
+                      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <line v-if="led.enabled" x1="12" y1="1"   x2="12" y2="3"   stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+                        <line v-if="led.enabled" x1="4.2"  y1="4.2"  x2="5.6"  y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+                        <line v-if="led.enabled" x1="1"   y1="12"  x2="3"   y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+                        <line v-if="led.enabled" x1="19.8" y1="4.2"  x2="18.4" y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+                        <line v-if="led.enabled" x1="23"  y1="12"  x2="21"  y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 3C8.13 3 5 6.13 5 10c0 2.38 1.19 4.47 3 5.74V18c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" :fill="led.enabled ? '#FFD54F' : '#555'"/>
+                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z" :fill="led.enabled ? '#FFB300' : '#444'"/>
+                      </svg>
+                    </span>
                     {{ led.name }}
                   </span>
                   <v-switch 
@@ -201,7 +214,7 @@
 
                 <transition name="fade-slide">
                   <div v-if="led.enabled" class="d-flex align-center px-1" style="gap: 8px;">
-                    <v-icon small color="grey">mdi-brightness-4</v-icon>
+                    <v-icon small color="grey darken-1">mdi-brightness-4</v-icon>
                     <v-slider
                       v-model="led.brightness"
                       :min="0"
@@ -209,7 +222,7 @@
                       :step="1"
                       hide-details
                       dense
-                      color="primary"
+                      color="amber darken-1"
                       track-color="rgba(255,255,255,0.12)"
                       class="flex-grow-1 my-0"
                       @change="onLedBrightnessChange(led)"
@@ -233,7 +246,7 @@
 
         <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column">
           <div class="d-flex flex-column" style="gap: 16px;"> 
-            <div v-for="temp in temperatureCards" :key="temp.n" class="temp-card d-flex align-center px-5"> 
+            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-5"> 
               <v-icon x-small :color="temp.c + ' lighten-1'" class="mr-4">{{ temp.i }}</v-icon>
               <span class="text-caption grey--text font-weight-bold mr-auto">{{ temp.n }}</span>
               <span class="text-body-2 white--text font-weight-bold">{{ temp.v }}°C</span>
@@ -268,10 +281,21 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   isLive = true;
   showThumbnailView = false;
   standbyTab = 0;
+  isAdvancedMode: boolean = localStorage.getItem('advancedMode') === 'true';
 
   ledItems: LedItem[] = [
     { name: 'Led', klipperName: 'case_light', brightness: 80, enabled: true },
   ];
+
+  mounted() {
+    this.$root.$on('advancedModeChanged', (value: boolean) => {
+      this.isAdvancedMode = value;
+    });
+  }
+
+  beforeDestroy() {
+    this.$root.$off('advancedModeChanged');
+  }
 
   get currentCam() { 
     const cams = this.$store.getters['gui/webcams/getWebcams'];
@@ -282,11 +306,41 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     const activeFile = this.printer?.print_stats?.filename;
     if (!activeFile || activeFile === '') return '';
     
-    const getter = this.$store.getters['files/getFileThumbnail'];
-    if (typeof getter === 'function') return getter(activeFile) || '';
-    
-    const byPath = this.$store.getters['files/getFileThumbnailByPath'];
-    if (typeof byPath === 'function') return byPath(activeFile) || '';
+    try {
+      const g1 = this.$store.getters['files/getFileThumbnail'];
+      if (typeof g1 === 'function') {
+        const r = g1(activeFile) || g1(`gcodes/${activeFile}`);
+        if (r) return r;
+      }
+    } catch (_) {}
+
+    try {
+      const g2 = this.$store.getters['files/getFileThumbnailByPath'];
+      if (typeof g2 === 'function') {
+        const r = g2(activeFile) || g2(`gcodes/${activeFile}`);
+        if (r) return r;
+      }
+    } catch (_) {}
+
+    try {
+      const basename = activeFile.split('/').pop() ?? activeFile;
+      const sources = [
+        this.$store.state.files?.fileList,
+        this.$store.state.files?.gcodes?.childrens,
+        this.$store.state.files?.gcodes?.items,
+      ];
+      for (const list of sources) {
+        if (!Array.isArray(list)) continue;
+        const found = list.find((f: any) =>
+          f?.filename === basename || f?.filename === activeFile
+        );
+        if (found?.thumbnails?.length) {
+          const best = [...found.thumbnails].sort((a: any, b: any) => (b.width ?? 0) - (a.width ?? 0))[0];
+          if (best?.absolute_path) return best.absolute_path;
+          if (best?.relative_path) return `/server/files/${best.relative_path}`;
+        }
+      }
+    } catch (_) {}
 
     return '';
   }
@@ -341,7 +395,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
       this.onLedBrightnessChange(led);
     } else {
       this.$socket.emit('printer.gcode.script', {
-        script: `SET_LED LED=${led.klipperName} RED=0 GREEN=0 BLUE=0 SYNC=0`
+        script: `SET_PIN PIN=${led.klipperName} VALUE=0`
       });
     }
   }
@@ -350,16 +404,16 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     if (!led.enabled) return;
     const v = parseFloat((led.brightness / 100).toFixed(2));
     this.$socket.emit('printer.gcode.script', {
-      script: `SET_LED LED=${led.klipperName} RED=${v} GREEN=${v} BLUE=${v} SYNC=0`
+      script: `SET_PIN PIN=${led.klipperName} VALUE=${v}`
     });
   }
 
   get displayProgress() {
     if (this.isStandby) return 0;
-    let progress = 0;
-    if (this.printer?.display_status?.progress) progress = this.printer.display_status.progress;
-    else if (this.printer?.virtual_sdcard?.progress) progress = this.printer.virtual_sdcard.progress;
-    return Math.floor(progress * 100);
+    let p = 0;
+    if (this.printer?.display_status?.progress)      p = this.printer.display_status.progress;
+    else if (this.printer?.virtual_sdcard?.progress) p = this.printer.virtual_sdcard.progress;
+    return Math.floor(p * 100);
   }
   
   get edgeStyle() {
@@ -372,14 +426,14 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 
   get mainStats() {
     return [
-      { label: 'Speed',    value: this.realSpeed,                              unit: 'mm/s' },
-      { label: 'Flow',     value: this.realFlow,                               unit: 'mm³/s' },
-      { label: 'Layer',    value: this.current_layer + ' / ' + this.max_layers, unit: '' },
-      { label: 'FILAMENT', value: this.zHeight,                                unit: 'mm' }
+      { label: 'Speed',    value: this.realSpeed,                               unit: 'mm/s'  },
+      { label: 'Flow',     value: this.realFlow,                                unit: 'mm³/s' },
+      { label: 'Layer',    value: this.current_layer + ' / ' + this.max_layers, unit: ''      },
+      { label: 'FILAMENT', value: this.zHeight,                                 unit: 'mm'    }
     ];
   }
   get current_layer() { return this.$store.getters['printer/getPrintCurrentLayer'] || 0; }
-  get max_layers()    { return this.$store.getters['printer/getPrintMaxLayers'] || 0; }
+  get max_layers()    { return this.$store.getters['printer/getPrintMaxLayers']    || 0; }
   get realSpeed() {
     if (this.printer?.motion_report?.live_velocity != null) return this.printer.motion_report.live_velocity.toFixed(0);
     return '0';
@@ -395,26 +449,34 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     return '0.00';
   }
 
-  get extruderTemp() { return this.printer?.extruder?.temperature?.toFixed(1) ?? '0.0'; }
+  get extruderTemp() { return this.printer?.extruder?.temperature?.toFixed(1)   ?? '0.0'; }
   get bedTemp()      { return this.printer?.heater_bed?.temperature?.toFixed(1) ?? '0.0'; }
+  
   get temperatureCards() {
     return [
-      { n: 'EXTRUDER', v: this.extruderTemp, i: 'mdi-printer-3d-nozzle',   c: 'red'    },
-      { n: 'BED',      v: this.bedTemp,      i: 'mdi-radiator',             c: 'blue'   },
-      { n: 'CHAMBER',  v: '25.0',            i: 'mdi-thermometer-lines',    c: 'orange' },
-      { n: 'MCU',      v: '42.1',            i: 'mdi-chip',                 c: 'green'  },
-      { n: 'HOST',     v: '38.5',            i: 'mdi-raspberry-pi',         c: 'purple' },
-      { n: 'EXTRA 1',  v: '--',              i: 'mdi-thermometer-plus',     c: 'grey'   }
+      { n: 'EXTRUDER', v: this.extruderTemp, i: 'mdi-printer-3d-nozzle',  c: 'red'    },
+      { n: 'BED',      v: this.bedTemp,      i: 'mdi-radiator',            c: 'blue'   },
+      { n: 'CHAMBER',  v: '25.0',            i: 'mdi-thermometer-lines',   c: 'orange' },
+      { n: 'MCU',      v: '42.1',            i: 'mdi-chip',                c: 'green'  },
+      { n: 'HOST',     v: '38.5',            i: 'mdi-raspberry-pi',        c: 'purple' },
+      { n: 'EXTRA 1',  v: '--',              i: 'mdi-thermometer-plus',    c: 'grey'   }
     ];
+  }
+
+  get visibleTemperatureCards() {
+    if (this.isAdvancedMode) {
+      return this.temperatureCards;
+    }
+    return this.temperatureCards.slice(0, 3);
   }
 
   get mockHistory() {
     return [
-      { name: 'winscreen_whiper_cap_peugeot_207_ASA_1h39m.gcode', filament: '6.80 m / 17 g',   time: '1h 38m 45s',  icon: 'mdi-check-circle-outline', color: '#4caf50' },
-      { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g', time: '19h 23m 55s', icon: 'mdi-alert-outline',         color: '#ff9800' },
-      { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g', time: '16h 24m 17s', icon: 'mdi-check-circle-outline',  color: '#4caf50' },
-      { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g', time: '1d 11m 29s',  icon: 'mdi-close-circle-outline',  color: '#f44336' },
-      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g',time: '1d 9h 44m 42s',icon: 'mdi-alert-outline',        color: '#ff9800' }
+      { name: 'winscreen_whiper_cap_peugeot_207_ASA_1h39m.gcode', filament: '6.80 m / 17 g',    time: '1h 38m 45s',    icon: 'mdi-check-circle-outline', color: '#4caf50' },
+      { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g',  time: '19h 23m 55s',   icon: 'mdi-alert-outline',         color: '#ff9800' },
+      { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g',  time: '16h 24m 17s',   icon: 'mdi-check-circle-outline',  color: '#4caf50' },
+      { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g',  time: '1d 11m 29s',    icon: 'mdi-close-circle-outline',  color: '#f44336' },
+      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' }
     ];
   }
 }
@@ -431,90 +493,56 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   background: var(--master-inner-bg, rgba(255,255,255,0.05)) !important;
 }
 
-.clean-tabs-wrapper {
-  padding: 4px;
-  border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05));
-}
+.clean-tabs-wrapper { padding: 4px; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); }
 .tab-btn {
   border-radius: calc(var(--master-radius, 15px) - 8px) !important;
-  font-weight: 800 !important;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  height: 38px !important;
+  font-weight: 800 !important; letter-spacing: 1px;
+  transition: all 0.3s ease; height: 38px !important;
 }
 .active-tab   { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
 .inactive-tab { background: transparent !important; color: #888 !important; }
 
-.media-container {
-  width: 100%;
-  min-height: 380px;
-  background: #000;
-  position: relative;
-  display: flex;
-  overflow: hidden;
-}
+.media-container { width: 100%; min-height: 380px; background: #000; position: relative; display: flex; overflow: hidden; }
 
 .cam-progress-badge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(15, 15, 20, 0.75);
-  backdrop-filter: blur(12px);
-  padding: 8px 16px;
-  border-radius: calc(var(--master-radius, 15px) - 6px);
-  border: 1px solid var(--panel-inner-border);
-  z-index: 10;
-  font-size: 1.1rem;
+  position: absolute; top: 15px; right: 15px;
+  width: 60px; height: 60px;
+  background: rgba(15,15,20,0.75); backdrop-filter: blur(12px);
+  border-radius: 8px; border: 1px solid var(--panel-inner-border);
+  z-index: 10; font-size: 1.1rem;
 }
 
-.media-controls-overlay {
-  position: absolute; bottom: 0; left: 0; width: 100%; z-index: 35; pointer-events: none;
-}
+.media-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 35; pointer-events: none; }
 .fs-btn-clean {
   pointer-events: auto !important;
-  background: rgba(0,0,0,0.6) !important;
-  margin: 15px;
-  border-radius: 8px !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
+  background: rgba(0,0,0,0.6) !important; margin: 15px;
+  border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.1) !important;
 }
 
-.standby-wrapper {
-  background: rgba(0,0,0,0.4) !important;
-  border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05));
-  overflow: hidden;
-}
-.standby-header {
-  background: rgba(0,0,0,0.3);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+.top-progress-bar-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 25; }
+.top-progress-fill { height: 100%; background: var(--v-primary-base); transition: width 0.5s ease; }
+
+.standby-wrapper { background: rgba(0,0,0,0.4) !important; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); overflow: hidden; }
+.standby-header  { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
 .standby-mini-tabs {
-  background: rgba(0,0,0,0.3);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  height: 30px; margin: 0 8px; border-radius: 4px;
+  display: flex;
+  background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);
+  height: 36px; margin: 0 8px; border-radius: 4px;
 }
 .mini-tab {
   display: flex; align-items: center; justify-content: center;
-  padding: 2px 0; cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.2s;
+  padding: 2px 8px; cursor: pointer;
+  border-bottom: 2px solid transparent; transition: border-color 0.2s;
 }
-.active-mini-tab { border-bottom: 2px solid #2196f3; }
-.standby-content { max-height: 280px; overflow-y: auto; padding: 8px !important; }
-.badge {
-  background: rgba(255,255,255,0.15); color: #fff;
-  font-size: 0.65rem; padding: 2px 6px;
-  border-radius: 12px; font-weight: bold;
-}
-.history-item {
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  margin-bottom: 4px;
-}
+.active-mini-tab  { border-bottom: 2px solid #2196f3; }
+.mini-tab-label   { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
+.standby-content  { max-height: 280px; overflow-y: auto; padding: 8px !important; }
+.badge { background: rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
+.history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
 
 .overlay-progress-wrapper {
-  position: absolute; top: 15px; right: 15px;
-  width: 80px; height: 80px;
-  background: rgba(15,15,20,0.75);
-  backdrop-filter: blur(12px);
+  position: absolute; top: 15px; right: 15px; width: 80px; height: 80px;
+  background: rgba(15,15,20,0.75); backdrop-filter: blur(12px);
   border-radius: calc(var(--master-radius, 15px) - 6px);
   display: flex; align-items: center; justify-content: center;
   border: 1px solid var(--panel-inner-border); z-index: 10;
@@ -522,15 +550,9 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .square-svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
 .border-ghost  { fill: none; stroke: var(--panel-svg-track, rgba(255,255,255,0.1)); stroke-width: 6; }
 .border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
-.overlay-content {
-  position: relative; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-}
+.overlay-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
 
-.file-info-panel {
-  border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05));
-  min-height: 80px; padding: 12px 20px !important;
-}
+.file-info-panel { border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); min-height: 80px; padding: 12px 20px !important; }
 .info-label { font-size: 0.65rem; color: #888; text-transform: uppercase; display: block; font-weight: bold; }
 .info-value  { font-size: 1rem; }
 
@@ -540,15 +562,13 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .fan-card-compact {
   background: rgba(0,0,0,0.15);
   border-radius: calc(var(--master-radius, 15px) - 8px);
-  margin: 4px 8px;
-  padding: 8px 12px !important;
+  margin: 4px 8px; padding: 8px 12px !important;
 }
 
-.led-value-badge {
-  min-width: 34px;
-  text-align: right;
-  font-size: 0.75rem;
-}
+.led-icon-wrap { display: inline-flex; align-items: center; transition: filter 0.3s ease; }
+.led-on  { filter: drop-shadow(0 0 5px rgba(255, 213, 79, 0.9)); }
+.led-off { filter: none; opacity: 0.4; }
+.led-value-badge { min-width: 34px; text-align: right; font-size: 0.75rem; }
 
 .custom-switch ::v-deep .v-input--switch__thumb { color: white !important; }
 .custom-switch ::v-deep .v-input--switch__track { background-color: rgba(255,255,255,0.2) !important; }
@@ -559,8 +579,8 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .buttons { letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.1)); }
 .big-btn { height: 56px !important; font-size: 1.1rem !important; }
 
-.white--text  { color: var(--panel-text-main, #fff) !important; }
-.h-100        { height: 100% !important; }
-.flex-shrink-0{ flex-shrink: 0 !important; }
-.relative     { position: relative; }
+.white--text   { color: var(--panel-text-main, #fff) !important; }
+.h-100         { height: 100% !important; }
+.flex-shrink-0 { flex-shrink: 0 !important; }
+.relative      { position: relative; }
 </style>
