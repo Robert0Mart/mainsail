@@ -17,7 +17,7 @@
               depressed 
               @click="showThumbnailView = false"
             >
-              <v-icon small left>mdi-camera</v-icon> CAM
+              <v-icon small left color="white">mdi-camera</v-icon> <span class="white--text">CAM</span>
             </v-btn>
             <v-btn 
               class="tab-btn flex-grow-1" 
@@ -25,16 +25,11 @@
               depressed 
               @click="showThumbnailView = true"
             >
-              <v-icon small left>mdi-printer-3d</v-icon> 3D
+              <v-icon small left color="white">mdi-printer-3d</v-icon> <span class="white--text">3D</span>
             </v-btn>
           </div>
 
           <div class="media-container flex-grow-1 mb-4 shadow-xl relative overflow-hidden" ref="mediaBox">
-            
-            <div class="top-progress-bar-wrapper" v-if="!isStandby">
-              <div class="top-progress-fill" :style="{ width: displayProgress + '%' }"></div>
-            </div>
-
             <div v-if="!showThumbnailView" class="h-100 w-100 relative">
               <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" style="background: #000;" />
               <div class="cam-progress-badge d-flex align-center justify-center" v-if="!isStandby">
@@ -43,17 +38,11 @@
             </div>
 
             <div v-else class="h-100 w-100">
-
               <div v-if="!isStandby" class="thumbnail-wrapper h-100 w-100 relative inner-rounded">
-                <v-img 
-                  v-if="thumbnailUrl" 
-                  :src="thumbnailUrl" 
-                  class="responsive-thumbnail inner-rounded h-100 w-100" 
-                  contain 
-                />
+                <v-img v-if="thumbnailUrl" :src="thumbnailUrl" class="responsive-thumbnail inner-rounded h-100 w-100" contain />
                 <div v-else class="no-thumb-bg d-flex flex-column align-center justify-center inner-rounded h-100 w-100">
                   <v-icon size="64" color="white" style="opacity: 0.1">mdi-cube-scan</v-icon>
-                  <span class="grey--text text-caption mt-2">PREVIEWING MODEL...</span>
+                  <span class="white--text text-caption mt-2">PREVIEWING MODEL...</span>
                 </div>
                 
                 <div class="overlay-progress-wrapper">
@@ -78,13 +67,13 @@
 
                 <div class="standby-mini-tabs d-flex flex-shrink-0 mx-2">
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 0 ? 'active-mini-tab' : ''" @click="standbyTab = 0">
-                    <v-icon small :color="standbyTab === 0 ? '#2196f3' : '#888'">mdi-file-document-outline</v-icon>
-                    <span class="mini-tab-label ml-1" :style="{ color: standbyTab === 0 ? '#2196f3' : '#888' }">Files</span>
+                    <v-icon small color="white">mdi-file-document-outline</v-icon>
+                    <span class="mini-tab-label ml-1 white--text">Files</span>
                   </div>
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
-                    <v-icon small :color="standbyTab === 1 ? '#2196f3' : '#888'">mdi-format-list-bulleted</v-icon>
-                    <span class="mini-tab-label ml-1" :style="{ color: standbyTab === 1 ? '#2196f3' : '#888' }">Queue</span>
-                    <span class="badge ml-2">0</span>
+                    <v-icon small color="white">mdi-format-list-bulleted</v-icon>
+                    <span class="mini-tab-label ml-1 white--text">Queue</span>
+                    <span class="badge ml-2 white--text">0</span>
                   </div>
                 </div>
 
@@ -94,24 +83,23 @@
                       <v-icon color="cyan lighten-2" class="mr-4">mdi-cube-scan</v-icon>
                       <div class="flex-grow-1 overflow-hidden pr-3">
                         <div class="white--text text-body-2 text-truncate">{{ file.name }}</div>
-                        <div class="grey--text text-caption text-truncate">Filament: {{ file.filament }} | Time: {{ file.time }}</div>
+                        <div class="white--text text-caption text-truncate">Filament: {{ file.filament }} | Time: {{ file.time }}</div>
                       </div>
                       <v-icon :color="file.color">{{ file.icon }}</v-icon>
                     </div>
                   </template>
                   <template v-else-if="standbyTab === 1">
                     <div class="d-flex align-center justify-center pa-6">
-                      <span class="grey--text text-body-2 text-center">There is currently no file in the job queue.</span>
+                      <span class="white--text text-body-2 text-center">There is currently no file in the job queue.</span>
                     </div>
                   </template>
                 </div>
               </div>
-
             </div>
 
             <div class="media-controls-overlay d-flex justify-start align-end pa-3" v-if="!isStandby || !showThumbnailView">
               <v-btn icon color="white" class="fs-btn-clean" @click="toggleFullscreen">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white">
                   <path d="M5 5h5v2H7v3H5V5zm9 0h5v5h-2V7h-3V5zm5 9v5h-5v-2h3v-3h2zm-9 5H5v-5h2v3h3v2z"/>
                 </svg>
               </v-btn>
@@ -121,19 +109,19 @@
           <div class="file-info-panel px-6 py-4 mb-4 flex-shrink-0">
             <v-row dense no-gutters>
               <v-col cols="3">
-                <span class="info-label">ESTIMATE</span>
+                <span class="info-label white--text">ESTIMATE</span>
                 <div class="info-value white--text font-weight-bold">{{ printEstimate }}</div>
               </v-col>
               <v-col cols="3">
-                <span class="info-label">SLICER</span>
-                <div class="info-value white--text font-weight-bold text-truncate">{{ slicerName }}</div>
+                <span class="info-label white--text">SLICER EST.</span>
+                <div class="info-value white--text font-weight-bold text-truncate">{{ slicerEstimatedTime }}</div>
               </v-col>
               <v-col cols="3">
-                <span class="info-label">TOTAL</span>
+                <span class="info-label white--text">TOTAL</span>
                 <div class="info-value white--text font-weight-bold">{{ totalTime }}</div>
               </v-col>
               <v-col cols="3">
-                <span class="info-label">ETA</span>
+                <span class="info-label white--text">ETA</span>
                 <div class="info-value white--text font-weight-bold">{{ etaTime }}</div>
               </v-col>
             </v-row>
@@ -142,12 +130,12 @@
           <v-row dense class="flex-shrink-0 mt-auto">
             <v-col cols="6">
               <v-btn block :color="dynamicStartColor" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
-                <v-icon left>{{ dynamicStartIcon }}</v-icon> {{ dynamicStartText }}
+                <v-icon left color="white">{{ dynamicStartIcon }}</v-icon> <span class="white--text">{{ dynamicStartText }}</span>
               </v-btn>
             </v-col>
             <v-col cols="6">
               <v-btn block color="error" class="buttons big-btn font-weight-black" depressed @click="() => {}">
-                <v-icon left>mdi-stop</v-icon> STOP PRINT
+                <v-icon left color="white">mdi-stop</v-icon> <span class="white--text">STOP PRINT</span>
               </v-btn>
             </v-col>
           </v-row>
@@ -158,100 +146,63 @@
             <v-row dense>
               <v-col cols="6" v-for="stat in mainStats" :key="stat.label">
                 <div class="stat-card mb-3 pa-4">
-                  <span class="text-caption grey--text text-uppercase font-weight-bold">{{ stat.label }}</span>
-                  <div class="white--text font-weight-bold text-subtitle-1">{{ stat.value }} <small class="grey--text">{{ stat.unit }}</small></div>
+                  <span class="text-caption white--text text-uppercase font-weight-bold">{{ stat.label }}</span>
+                  <div class="white--text font-weight-bold text-subtitle-1">{{ stat.value }} <small class="white--text">{{ stat.unit }}</small></div>
                 </div>
               </v-col>
             </v-row>
           </div>
 
           <div class="fans-vertical-wrapper mt-4 pa-4">
-            <span class="text-caption grey--text font-weight-bold mb-3 d-block px-1">CONTROLS</span>
+            <span class="text-caption white--text font-weight-bold mb-3 d-block px-1">CONTROLS</span>
             <div class="d-flex flex-column" style="gap: 12px;">
-              
               <div v-for="(object, index) in displayFans" :key="'fan-'+index" class="fan-card-compact px-3 py-1">
-                <miscellaneous-slider 
-                  :name="object.name" 
-                  :type="object.type" 
-                  :target="object.power" 
-                  :rpm="object.rpm" 
-                  :controllable="object.controllable" 
-                  :pwm="object.pwm" 
-                  :off_below="object.off_below" 
-                  :max="object.max_power" 
-                  :multi="parseInt(object.scale || '1')" 
-                />
+                <miscellaneous-slider :name="object.name" :type="object.type" :target="object.power" :rpm="object.rpm" :controllable="object.controllable" :pwm="object.pwm" :off_below="object.off_below" :max="object.max_power" :multi="parseInt(object.scale || '1')" />
               </div>
               
-              <v-divider class="my-1" style="border-color: rgba(255,255,255,0.05)"></v-divider>
-
-              <span class="text-caption grey--text font-weight-bold mb-1 d-block px-1"></span>
+              <v-divider class="my-1" style="border-color: rgba(255,255,255,0.1)"></v-divider>
 
               <div v-for="(led, index) in displayLeds" :key="'led-'+index" class="fan-card-compact px-3 py-3">
-                
                 <div class="d-flex align-center justify-space-between mb-2 px-1">
                   <span class="white--text text-body-2 font-weight-bold d-flex align-center">
                     <span class="led-icon-wrap mr-2" :class="led.enabled ? 'led-on' : 'led-off'">
                       <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <line v-if="led.enabled" x1="12" y1="1"   x2="12" y2="3"   stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="4.2"  y1="4.2"  x2="5.6"  y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="1"   y1="12"  x2="3"   y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="19.8" y1="4.2"  x2="18.4" y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="23"  y1="12"  x2="21"  y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
                         <path d="M12 3C8.13 3 5 6.13 5 10c0 2.38 1.19 4.47 3 5.74V18c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" :fill="led.enabled ? '#FFD54F' : '#555'"/>
-                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z" :fill="led.enabled ? '#FFB300' : '#444'"/>
                       </svg>
                     </span>
                     {{ led.name }}
                   </span>
-                  <v-switch 
-                    v-model="led.enabled"
-                    dense 
-                    hide-details 
-                    class="mt-0 pt-0 custom-switch" 
-                    color="primary"
-                    @change="onLedToggle(led)"
-                  />
+                  <v-switch v-model="led.enabled" dense hide-details class="mt-0 pt-0 custom-switch" color="primary" @change="onLedToggle(led)"/>
                 </div>
-
                 <transition name="fade-slide">
                   <div v-if="led.enabled" class="d-flex align-center px-1" style="gap: 8px;">
-                    <v-icon small color="grey darken-1">mdi-brightness-4</v-icon>
-                    <v-slider
-                      v-model="led.brightness"
-                      :min="0"
-                      :max="100"
-                      :step="1"
-                      hide-details
-                      dense
-                      color="amber darken-1"
-                      track-color="rgba(255,255,255,0.12)"
-                      class="flex-grow-1 my-0"
-                      @change="onLedBrightnessChange(led)"
-                    />
+                    <v-icon small color="white">mdi-brightness-4</v-icon>
+                    <v-slider v-model="led.brightness" :min="0" :max="100" hide-details dense color="amber darken-1" @change="onLedBrightnessChange(led)"/>
                     <v-icon small color="amber lighten-2">mdi-brightness-7</v-icon>
-                    <span class="white--text text-caption font-weight-bold led-value-badge">
-                      {{ led.brightness }}%
-                    </span>
+                    <span class="white--text text-caption font-weight-bold">{{ led.brightness }}%</span>
                   </div>
                 </transition>
-
-                <div v-if="!led.enabled" class="text-center py-1">
-                  <span class="grey--text text-caption">LED desligado</span>
-                </div>
-
               </div>
-
             </div>
           </div>
         </v-col>
 
         <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column">
           <div class="d-flex flex-column" style="gap: 16px;"> 
-            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-5"> 
-              <v-icon x-small :color="temp.c + ' lighten-1'" class="mr-4">{{ temp.i }}</v-icon>
-              <span class="text-caption grey--text font-weight-bold mr-auto">{{ temp.n }}</span>
-              <span class="text-body-2 white--text font-weight-bold">{{ temp.v }}°C</span>
+            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-4"> 
+              <v-icon x-small :color="temp.c + ' lighten-1'" class="mr-3">{{ temp.i }}</v-icon>
+              <span class="text-caption white--text font-weight-bold mr-auto">{{ temp.n }}</span>
+              <div class="d-flex align-center justify-end" style="gap: 12px;">
+                <div class="text-right">
+                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Current</div>
+                  <div class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">{{ temp.v }}°C</div>
+                  <div v-if="temp.h != null" class="white--text font-weight-bold" style="font-size: 0.7rem; line-height: 1;">{{ temp.h }}%</div>
+                </div>
+                <div v-if="temp.t != null" class="text-left pl-3" style="border-left: 1px solid rgba(255,255,255,0.3);">
+                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Target</div>
+                  <div class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">{{ temp.t }}°C</div>
+                </div>
+              </div>
             </div>
           </div>
         </v-col>
@@ -285,14 +236,10 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   standbyTab = 0;
   isAdvancedMode: boolean = localStorage.getItem('advancedMode') === 'true';
 
-  ledItems: LedItem[] = [
-    { name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true },
-  ];
+  ledItems: LedItem[] = [{ name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true }];
 
   mounted() {
-    this.$root.$on('advancedModeChanged', (value: boolean) => {
-      this.isAdvancedMode = value;
-    });
+    this.$root.$on('advancedModeChanged', (value: boolean) => { this.isAdvancedMode = value; });
   }
 
   beforeDestroy() {
@@ -307,56 +254,26 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   get thumbnailUrl(): string {
     const activeFile = this.printer?.print_stats?.filename;
     if (!activeFile) return '';
-
-    let path = '';
-
-    try {
-      const g1 = this.$store.getters['files/getFileThumbnail'];
-      if (typeof g1 === 'function') path = g1(activeFile);
-    } catch (_) {}
-
-    if (!path) {
-      try {
-        const list = this.$store.state.files?.gcodes?.items || this.$store.state.files?.fileList || [];
-        const fileObj = list.find((f: any) => f.filename === activeFile || f.path === activeFile);
-        if (fileObj?.thumbnails?.length) {
-          const best = [...fileObj.thumbnails].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
-          path = best.relative_path;
-        }
-      } catch (_) {}
+    let relPath = '';
+    const thumbnails = this.printer?.print_stats?.info?.thumbnails;
+    if (thumbnails?.length) {
+      const best = [...thumbnails].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+      relPath = best.relative_path;
     }
-
-    if (!path) {
-      const thumbs = this.printer?.print_stats?.info?.thumbnails;
-      if (thumbs?.length) {
-        const best = [...thumbs].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
-        path = best.relative_path;
-      }
-    }
-
-    if (!path) return '';
-
-    if (path.startsWith('http')) return path;
-    if (path.startsWith('/server/files/')) return `http://192.168.1.120${path}`;
-    if (path.startsWith('/')) return `http://192.168.1.120/server/files/gcodes${path}`;
-    
-    return `http://192.168.1.120/server/files/gcodes/${path}`;
+    if (!relPath) return '';
+    // Short: Fixed localhost path resolution
+    const cleanPath = relPath.startsWith('/') ? relPath.substring(1) : relPath;
+    return `http://192.168.1.120/server/files/${cleanPath}`;
   }
   
   get printer() { return this.$store.state.printer || {} }
   get isPrinting() { return this.$store.getters['printer/getIsPrinting'] || (this.printer?.print_stats?.state === 'printing'); }
   get isPaused() { return this.$store.getters['printer/getIsPaused'] || (this.printer?.print_stats?.state === 'paused'); }
-  
-  get isStandby() { 
-    if (this.isPrinting || this.isPaused) return false;
-    const filename = this.printer?.print_stats?.filename;
-    if (filename && filename !== '') return false;
-    return true;
-  }
+  get isStandby() { return !(this.printer?.print_stats?.filename); }
   
   get dynamicStartText() { return this.isPrinting ? 'PAUSE' : (this.isPaused ? 'RESUME' : 'START PRINT'); }
   get dynamicStartIcon() { return this.isPrinting ? 'mdi-pause' : (this.isPaused ? 'mdi-play-pause' : 'mdi-play'); }
-  get dynamicStartColor() { return this.isPrinting ? 'amber darken-2' : (this.isPaused ? 'success darken-1' : 'success'); }
+  get dynamicStartColor() { return this.isPrinting ? 'amber darken-2' : 'success'; }
   
   dynamicStartAction() {
     if (this.isPrinting) return this.$socket.emit('printer.print.pause');
@@ -367,218 +284,174 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   toggleFullscreen() {
     const el = this.$refs.mediaBox as HTMLElement;
     if (!document.fullscreenElement) el.requestFullscreen().catch(err => console.log(err));
-    else if (document.exitFullscreen) document.exitFullscreen();
-  }
-
-  get printEstimate() { if (this.isStandby) return '--:--'; return this.$store.getters['printer/getEstimatedTimeFormat'] || '--:--'; }
-  get slicerName()    { if (this.isStandby) return '--'; return this.printer?.print_stats?.info?.slicer || 'PrusaSlicer'; }
-  get totalTime()     { if (this.isStandby) return '--h --m'; return this.$store.getters['printer/getTotalTimeFormat'] || '--h --m'; }
-  get etaTime()       { if (this.isStandby) return '--:--'; return this.$store.getters['printer/getEstimatedTimeETAFormat'] || '--:--'; }
-  
-  get displayFans() {
-    const m = this.$store.getters['printer/getMiscellaneous'];
-    return m ? m.filter((f: any) => f && f.name && 
-      !f.name.toLowerCase().includes('hotend') && 
-      !f.name.toLowerCase().includes('light') &&
-      !f.name.toLowerCase().includes('led')
-    ) : [];
-  }
-
-  get displayLeds(): LedItem[] {
-    return this.ledItems;
-  }
-
-  onLedToggle(led: LedItem) {
-    if (led.enabled) {
-      this.onLedBrightnessChange(led);
-    } else {
-      this.$socket.emit('printer.gcode.script', {
-        script: `SET_LED LED=${led.klipperName} WHITE=0 SYNC=0`
-      });
-    }
-  }
-
-  onLedBrightnessChange(led: LedItem) {
-    if (!led.enabled) return;
-    const v = parseFloat((led.brightness / 100).toFixed(2));
-    this.$socket.emit('printer.gcode.script', {
-      script: `SET_LED LED=${led.klipperName} WHITE=${v} SYNC=0`
-    });
+    else document.exitFullscreen();
   }
 
   get displayProgress() {
-    if (this.isStandby) return 0;
-    let p = 0;
-    if (this.printer?.display_status?.progress)      p = this.printer.display_status.progress;
-    else if (this.printer?.virtual_sdcard?.progress) p = this.printer.virtual_sdcard.progress;
+    const p = this.printer?.display_status?.progress ?? this.printer?.virtual_sdcard?.progress ?? 0;
     return Math.floor(p * 100);
   }
+
+  get printEstimate() { 
+    if (this.isStandby) return '--:--'; 
+    const dur = this.printer?.print_stats?.print_duration || 0;
+    const prog = this.printer?.display_status?.progress || this.printer?.virtual_sdcard?.progress || 0;
+    if (prog > 0 && prog < 1) {
+      const rem = (dur / prog) - dur;
+      const h = Math.floor(rem / 3600);
+      const m = Math.floor((rem % 3600) / 60);
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    }
+    return '--:--';
+  }
+
+  // Short: Slicer Estimated Time calculation
+  get slicerEstimatedTime() {
+    if (this.isStandby) return '--:--';
+    let est = this.printer?.print_stats?.info?.estimated_time;
+    if (!est) {
+      const allFiles = this.$store.state.files?.gcodes?.items || [];
+      const found = allFiles.find((f: any) => f.filename === this.printer?.print_stats?.filename);
+      est = found?.metadata?.estimated_time;
+    }
+    if (est) {
+      const h = Math.floor(est / 3600);
+      const m = Math.floor((est % 3600) / 60);
+      return `${h}h ${m}m`;
+    }
+    return '--:--';
+  }
+
+  get totalTime() { 
+    if (this.isStandby) return '--h --m'; 
+    const dur = this.printer?.print_stats?.print_duration || 0;
+    const prog = this.printer?.display_status?.progress || this.printer?.virtual_sdcard?.progress || 0;
+    if (prog > 0) {
+      const tot = dur / prog;
+      const h = Math.floor(tot / 3600);
+      const m = Math.floor((tot % 3600) / 60);
+      return `${h}h ${m}m`;
+    }
+    return '--h --m';
+  }
+
+  get etaTime() { return this.$store.getters['printer/getEstimatedTimeETAFormat'] || '--:--'; }
   
-  get edgeStyle() {
-    return {
-      strokeDasharray: this.perimeter,
-      strokeDashoffset: this.perimeter - (this.perimeter * (this.displayProgress / 100)),
-      stroke: 'var(--v-primary-base)'
-    };
+  get displayFans() {
+    const m = this.$store.getters['printer/getMiscellaneous'];
+    return m ? m.filter((f: any) => f?.name && !f.name.toLowerCase().match(/hotend|light|led/)) : [];
+  }
+
+  get displayLeds(): LedItem[] { return this.ledItems; }
+
+  onLedToggle(led: LedItem) {
+    const script = led.enabled ? `SET_LED LED=${led.klipperName} WHITE=${led.brightness/100} SYNC=0` : `SET_LED LED=${led.klipperName} WHITE=0 SYNC=0`;
+    this.$socket.emit('printer.gcode.script', { script });
+  }
+
+  onLedBrightnessChange(led: LedItem) {
+    if (led.enabled) this.onLedToggle(led);
   }
 
   get mainStats() {
     return [
-      { label: 'Speed',    value: this.realSpeed,                               unit: 'mm/s'  },
-      { label: 'Flow',     value: this.realFlow,                                unit: 'mm³/s' },
-      { label: 'Layer',    value: this.current_layer + ' / ' + this.max_layers, unit: ''      },
-      { label: 'FILAMENT', value: this.zHeight,                                 unit: 'mm'    }
+      { label: 'Speed',    value: this.printer?.motion_report?.live_velocity?.toFixed(0) || '0', unit: 'mm/s' },
+      { label: 'Flow',     value: (2.405 * (this.printer?.motion_report?.live_extruder_velocity || 0)).toFixed(1), unit: 'mm³/s' },
+      { label: 'Layer',    value: (this.$store.getters['printer/getPrintCurrentLayer'] || 0) + ' / ' + (this.$store.getters['printer/getPrintMaxLayers'] || 0), unit: '' },
+      // Short: Swapped Z-POS for Filament
+      { label: 'FILAMENT', value: this.printer?.print_stats?.filament_used?.toFixed(1) || '0.0', unit: 'm' }
     ];
-  }
-  get current_layer() { return this.$store.getters['printer/getPrintCurrentLayer'] || 0; }
-  get max_layers()    { return this.$store.getters['printer/getPrintMaxLayers']    || 0; }
-  get realSpeed() {
-    if (this.printer?.motion_report?.live_velocity != null) return this.printer.motion_report.live_velocity.toFixed(0);
-    return '0';
-  }
-  get realFlow() {
-    const section = Math.pow(1.75 / 2, 2) * Math.PI;
-    let vel = 0;
-    if (this.printer?.motion_report?.live_extruder_velocity) vel = this.printer.motion_report.live_extruder_velocity;
-    return (section * vel).toFixed(1);
-  }
-  get zHeight() {
-    if (this.printer?.toolhead?.position?.length >= 3) return this.printer.toolhead.position[2].toFixed(2);
-    return '0.00';
   }
 
-  get extruderTemp() { return this.printer?.extruder?.temperature?.toFixed(1)   ?? '0.0'; }
-  get bedTemp()      { return this.printer?.heater_bed?.temperature?.toFixed(1) ?? '0.0'; }
-  
-  get temperatureCards() {
-    return [
-      { n: 'EXTRUDER', v: this.extruderTemp, i: 'mdi-printer-3d-nozzle',  c: 'red'    },
-      { n: 'BED',      v: this.bedTemp,      i: 'mdi-radiator',            c: 'blue'   },
-      { n: 'CHAMBER',  v: '25.0',            i: 'mdi-thermometer-lines',   c: 'orange' },
-      { n: 'MCU',      v: '42.1',            i: 'mdi-chip',                c: 'green'  },
-      { n: 'HOST',     v: '38.5',            i: 'mdi-raspberry-pi',        c: 'purple' },
-      { n: 'EXTRA 1',  v: '--',              i: 'mdi-thermometer-plus',    c: 'grey'   }
-    ];
+  // Short: Robust generic Klipper sensor search
+  getSensorData(name: string) {
+    if (!this.printer) return { temp: '--.-', target: null, humidity: null };
+    const normalizedSearch = name.toLowerCase().replace(/[_ ]/g, '');
+    for (const key in this.printer) {
+      const isSensor = key.startsWith('temperature_sensor ') || key.startsWith('temperature_fan ');
+      if (isSensor) {
+        const keyName = key.substring(key.indexOf(' ') + 1).toLowerCase().replace(/[_ ]/g, '');
+        if (keyName === normalizedSearch) {
+          const data = this.printer[key];
+          return { temp: data.temperature?.toFixed(1) || '--.-', target: data.target > 0 ? data.target.toFixed(0) : null, humidity: data.humidity?.toFixed(0) || null };
+        }
+      }
+    }
+    return { temp: '--.-', target: null, humidity: null };
   }
 
   get visibleTemperatureCards() {
-    if (this.isAdvancedMode) {
-      return this.temperatureCards;
-    }
-    return this.temperatureCards.slice(0, 3);
+    const chamber = this.getSensorData('chamber');
+    const cb = this.getSensorData('controllerboard');
+    const soc = this.getSensorData('soc');
+    const thc = this.getSensorData('toolheadcontroller');
+    const ths = this.getSensorData('toolheadscanner');
+
+    return [
+      { n: 'EXTRUDER', v: this.printer?.extruder?.temperature?.toFixed(1), t: this.printer?.extruder?.target?.toFixed(0), i: 'mdi-printer-3d-nozzle', c: 'red' },
+      { n: 'BED', v: this.printer?.heater_bed?.temperature?.toFixed(1), t: this.printer?.heater_bed?.target?.toFixed(0), i: 'mdi-radiator', c: 'blue' },
+      { n: 'CHAMBER', v: chamber.temp, t: chamber.target, h: chamber.humidity, i: 'mdi-thermometer-lines', c: 'orange' },
+      { n: 'CONTROLLER BOARD', v: cb.temp, i: 'mdi-chip', c: 'green' },
+      { n: 'SOC', v: soc.temp, i: 'mdi-raspberry-pi', c: 'purple' },
+      { n: 'TOOLHEAD CONTROLLER', v: thc.temp, i: 'mdi-toolhead-plus', c: 'blue-grey' },
+      { n: 'TOOLHEAD SCANNER', v: ths.temp, i: 'mdi-barcode-scan', c: 'grey' }
+    ];
   }
 
   get mockHistory() {
-    return [
-      { name: 'winscreen_whiper_cap_peugeot_207_ASA_1h39m.gcode', filament: '6.80 m / 17 g',    time: '1h 38m 45s',    icon: 'mdi-check-circle-outline', color: '#4caf50' },
-      { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g',  time: '19h 23m 55s',   icon: 'mdi-alert-outline',         color: '#ff9800' },
-      { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g',  time: '16h 24m 17s',   icon: 'mdi-check-circle-outline',  color: '#4caf50' },
-      { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g',  time: '1d 11m 29s',    icon: 'mdi-close-circle-outline',  color: '#f44336' },
-      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' }
-    ];
+    const filename = this.printer?.print_stats?.filename || 'No file printing';
+    return [{ name: filename, filament: '---', time: '---', icon: 'mdi-check-circle-outline', color: '#4caf50' }];
   }
+  
+  get edgeStyle() { return { strokeDasharray: this.perimeter, strokeDashoffset: this.perimeter - (this.perimeter * (this.displayProgress / 100)), stroke: '#2196f3' }; }
 }
 </script>
 
 <style scoped>
 .inner-rounded, .stat-card, .temp-card, .fans-vertical-wrapper,
 .clean-tabs-wrapper, .file-info-panel, .buttons, .media-container,
-.standby-wrapper {
-  border-radius: calc(var(--master-radius, 15px) - 6px) !important;
-}
+.standby-wrapper { border-radius: 12px !important; }
+
 .stat-card, .temp-card, .fans-vertical-wrapper, .clean-tabs-wrapper,
-.file-info-panel, .standby-wrapper {
-  background: var(--master-inner-bg, rgba(255,255,255,0.05)) !important;
-}
+.file-info-panel, .standby-wrapper { background: rgba(255,255,255,0.05) !important; }
 
-.clean-tabs-wrapper { padding: 4px; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); }
-.tab-btn {
-  border-radius: calc(var(--master-radius, 15px) - 8px) !important;
-  font-weight: 800 !important; letter-spacing: 1px;
-  transition: all 0.3s ease; height: 38px !important;
-}
-.active-tab   { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
-.inactive-tab { background: transparent !important; color: #888 !important; }
+.clean-tabs-wrapper { padding: 4px; border: 1px solid rgba(255,255,255,0.1); }
+.tab-btn { border-radius: 8px !important; font-weight: 800 !important; letter-spacing: 1px; height: 38px !important; }
+.active-tab { background: rgba(255,255,255,0.15) !important; }
 
-.media-container { width: 100%; min-height: 380px; background: #000; position: relative; display: flex; overflow: hidden; }
+/* Short: Adjusted container to avoid black bars */
+.media-container { background: #000; position: relative; overflow: hidden; }
 
-.cam-progress-badge {
-  position: absolute; top: 15px; right: 15px;
-  width: 60px; height: 60px;
-  background: rgba(15,15,20,0.75); backdrop-filter: blur(12px);
-  border-radius: 8px; border: 1px solid var(--panel-inner-border);
-  z-index: 10; font-size: 1.1rem;
-}
+.cam-progress-badge { position: absolute; top: 15px; right: 15px; width: 60px; height: 60px; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); border-radius: 8px; z-index: 10; }
+.media-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 35; }
+.fs-btn-clean { background: rgba(0,0,0,0.5) !important; border-radius: 8px !important; margin: 15px; }
 
-.media-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 35; pointer-events: none; }
-.fs-btn-clean {
-  pointer-events: auto !important;
-  background: rgba(0,0,0,0.6) !important; margin: 15px;
-  border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.1) !important;
-}
+.standby-wrapper { background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.05); }
+.standby-mini-tabs { background: rgba(0,0,0,0.3); height: 36px; margin: 0 8px; border-radius: 4px; }
+.mini-tab { cursor: pointer; border-bottom: 2px solid transparent; }
+.active-mini-tab { border-bottom: 2px solid #2196f3; }
+.badge { background: rgba(255,255,255,0.15); font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; }
 
-.top-progress-bar-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 25; }
-.top-progress-fill { height: 100%; background: var(--v-primary-base); transition: width 0.5s ease; }
-
-.standby-wrapper { background: rgba(0,0,0,0.4) !important; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); overflow: hidden; }
-.standby-header  { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
-.standby-mini-tabs {
-  display: flex;
-  background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);
-  height: 36px; margin: 0 8px; border-radius: 4px;
-}
-.mini-tab {
-  display: flex; align-items: center; justify-content: center;
-  padding: 2px 8px; cursor: pointer;
-  border-bottom: 2px solid transparent; transition: border-color 0.2s;
-}
-.active-mini-tab  { border-bottom: 2px solid #2196f3; }
-.mini-tab-label   { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
-.standby-content  { max-height: 280px; overflow-y: auto; padding: 8px !important; }
-.badge { background: rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
-.history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
-
-.overlay-progress-wrapper {
-  position: absolute; top: 15px; right: 15px; width: 80px; height: 80px;
-  background: rgba(15,15,20,0.75); backdrop-filter: blur(12px);
-  border-radius: calc(var(--master-radius, 15px) - 6px);
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--panel-inner-border); z-index: 10;
-}
+.overlay-progress-wrapper { position: absolute; top: 15px; right: 15px; width: 80px; height: 80px; background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); border-radius: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; }
 .square-svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
-.border-ghost  { fill: none; stroke: var(--panel-svg-track, rgba(255,255,255,0.1)); stroke-width: 6; }
+.border-ghost { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6; }
 .border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
-.overlay-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
 
-.file-info-panel { border: 1px solid var(--master-inner-border, rgba(255,255,255,0.05)); min-height: 80px; padding: 12px 20px !important; }
-.info-label { font-size: 0.65rem; color: #888; text-transform: uppercase; display: block; font-weight: bold; }
-.info-value  { font-size: 1rem; }
-
+.file-info-panel { border: 1px solid rgba(255,255,255,0.05); min-height: 80px; padding: 12px 20px !important; }
+.info-label { font-size: 0.65rem; text-transform: uppercase; font-weight: bold; }
 .stat-card { text-align: center; padding: 12px !important; margin: 4px !important; }
-.temp-card { width: 100%; min-height: 58px; display: flex; padding: 0 20px !important; margin-bottom: 8px; }
+.temp-card { width: 100%; min-height: 58px; margin-bottom: 8px; }
 
-.fan-card-compact {
-  background: rgba(0,0,0,0.15);
-  border-radius: calc(var(--master-radius, 15px) - 8px);
-  margin: 4px 8px; padding: 8px 12px !important;
-}
-
+.fan-card-compact { background: rgba(0,0,0,0.15); border-radius: 8px; margin: 4px 8px; padding: 8px 12px !important; }
 .led-icon-wrap { display: inline-flex; align-items: center; transition: filter 0.3s ease; }
-.led-on  { filter: drop-shadow(0 0 5px rgba(255, 213, 79, 0.9)); }
-.led-off { filter: none; opacity: 0.4; }
-.led-value-badge { min-width: 34px; text-align: right; font-size: 0.75rem; }
+.led-on { filter: drop-shadow(0 0 5px rgba(255, 213, 79, 0.9)); }
+.led-off { opacity: 0.4; }
 
 .custom-switch ::v-deep .v-input--switch__thumb { color: white !important; }
-.custom-switch ::v-deep .v-input--switch__track { background-color: rgba(255,255,255,0.2) !important; }
+.custom-switch ::v-deep .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
 
-.fade-slide-enter-active, .fade-slide-leave-active { transition: all 0.25s ease; }
-.fade-slide-enter, .fade-slide-leave-to            { opacity: 0; transform: translateY(-4px); }
-
-.buttons { letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--master-inner-border, rgba(255,255,255,0.1)); }
-.big-btn { height: 56px !important; font-size: 1.1rem !important; }
-
-.white--text   { color: var(--panel-text-main, #fff) !important; }
-.h-100         { height: 100% !important; }
+.white--text { color: #fff !important; }
+.h-100 { height: 100% !important; }
 .flex-shrink-0 { flex-shrink: 0 !important; }
-.relative      { position: relative; }
+.relative { position: relative; }
 </style>
