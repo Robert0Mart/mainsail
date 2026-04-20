@@ -25,7 +25,8 @@
               depressed 
               @click="showThumbnailView = true"
             >
-              <v-icon small left color="white">mdi-printer-3d/Files</v-icon> <span class="white--text">3D/Files</span>
+              <v-icon small left color="white">{{ isStandby ? 'mdi-file-document-multiple' : 'mdi-printer-3d' }}</v-icon> 
+              <span class="white--text">{{ isStandby ? 'FILES' : '3D' }}</span>
             </v-btn>
           </div>
 
@@ -113,7 +114,7 @@
             </div>
           </div>
 
-          <div class="file-info-panel px-6 py-4 mb-4 flex-shrink-0">
+          <div class="file-info-panel px-6 py-4 mb-4 flex-shrink-0" v-if="!isStandby">
             <v-row dense no-gutters>
               <v-col cols="3">
                 <span class="info-label white--text">ESTIMATE</span>
@@ -134,7 +135,7 @@
             </v-row>
           </div>
 
-          <v-row dense class="flex-shrink-0 mt-auto">
+          <v-row dense class="flex-shrink-0 mt-auto" v-if="!isStandby">
             <v-col cols="6">
               <v-btn block :color="dynamicStartColor" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
                 <v-icon left color="white">{{ dynamicStartIcon }}</v-icon> <span class="white--text">{{ dynamicStartText }}</span>
@@ -146,6 +147,15 @@
               </v-btn>
             </v-col>
           </v-row>
+
+          <v-row dense class="flex-shrink-0 mt-auto" v-else>
+            <v-col cols="12">
+              <v-btn block color="success" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
+                <v-icon left color="white">mdi-play</v-icon> <span class="white--text">START PRINT</span>
+              </v-btn>
+            </v-col>
+          </v-row>
+
         </v-col>
 
         <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column">
@@ -268,6 +278,12 @@
               </div>
 
             </div>
+
+            <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2" style="height: auto;">
+              <mmu-clog-meter style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
+              <span class="white--text font-weight-regular text-body-1" style="opacity: 0.7;">Clog/Tangle Detection</span>
+            </div>
+
           </div>
         </v-col>
 
@@ -283,7 +299,9 @@ import AfcMixin from '@/components/mixins/afc'
 import WebcamMixin from '@/components/mixins/webcam'
 import MiscellaneousSlider from '@/components/inputs/MiscellaneousSlider.vue'
 import MiscellaneousMixin from '@/components/mixins/miscellaneous'
-import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue";
+import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue"
+// A MÁGICA DOS PATHS ABSOLUTOS:
+import MmuClogMeter from '@/components/panels/Mmu/MmuClogMeter.vue' 
 
 interface LedItem {
   name: string;
@@ -292,7 +310,7 @@ interface LedItem {
   enabled: boolean;
 }
 
-@Component({ components: { WebcamWrapper, MiscellaneousSlider } })
+@Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuClogMeter } })
 export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
   readonly perimeter = 112 * 4;
   isLive = true;
@@ -571,9 +589,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
       { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g',  time: '19h 23m 55s',   icon: 'mdi-alert-outline',         color: '#ff9800' },
       { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g',  time: '16h 24m 17s',   icon: 'mdi-check-circle-outline',  color: '#4caf50' },
       { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g',  time: '1d 11m 29s',    icon: 'mdi-close-circle-outline',  color: '#f44336' },
-      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' },
-      { name: 'test_cube_PLA.gcode',                              filament: '2.10 m / 6 g',     time: '0h 25m 10s',    icon: 'mdi-check-circle-outline',  color: '#4caf50' },
-      { name: 'benchy_PETG.gcode',                                filament: '4.50 m / 13 g',    time: '1h 05m 20s',    icon: 'mdi-check-circle-outline',  color: '#4caf50' }
+      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' }
     ];
   }
   
@@ -607,7 +623,8 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
-.media-container { width: 100%; min-height: 380px; background: #000; position: relative; display: flex; overflow: hidden; }
+/* Short: Aumentada a caixa da câmara e do modo Standby para dar mais espaço (520px) */
+.media-container { width: 100%; min-height: 520px; background: #000; position: relative; display: flex; overflow: hidden; }
 
 .absolute-fill-wrapper {
   position: absolute;
@@ -632,7 +649,6 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .top-progress-bar-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 25; }
 .top-progress-fill { height: 100%; background: var(--v-primary-base); transition: width 0.5s ease; }
 
-/* The fix for the scroll inside standby */
 .standby-wrapper { 
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; 
@@ -651,11 +667,10 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .active-mini-tab  { border-bottom: 2px solid #2196f3; }
 .mini-tab-label   { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
 
-/* Flexbox scroll trick */
 .standby-content {
   flex: 1 1 auto;
   overflow-y: auto;
-  height: 0; /* Crucial for flex scrolling */
+  height: 0; 
   padding: 8px !important;
 }
 .standby-content::-webkit-scrollbar {
