@@ -22,7 +22,7 @@
                 <v-spacer></v-spacer>
 
                 <v-btn class="unified-btn mb-2" depressed icon @click="adjustZOffset(0.1)">
-                  <img src="public\img\icons\blocks_icons\afastar aproximar_aproximar.svg" alt="More Proximity"
+                 // <img src="public\img\icons\blocks_icons\afastar aproximar_aproximar.svg" alt="More Proximity"
                     width="24" height="24" />
                 </v-btn>
 
