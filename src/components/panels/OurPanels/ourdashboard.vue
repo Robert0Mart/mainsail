@@ -31,14 +31,14 @@
 
           <div class="media-container flex-grow-1 mb-4 shadow-xl relative overflow-hidden" ref="mediaBox">
             
-            <div v-if="!showThumbnailView" class="h-100 w-100 relative">
+            <div v-if="!showThumbnailView" class="h-100 w-100 absolute-fill-wrapper">
               <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" style="background: #000;" />
               <div class="cam-progress-badge d-flex align-center justify-center" v-if="!isStandby">
                 <span class="white--text font-weight-black">{{ displayProgress }}%</span>
               </div>
             </div>
 
-            <div v-else class="h-100 w-100">
+            <div v-else class="h-100 w-100 absolute-fill-wrapper">
               <div v-if="!isStandby" class="thumbnail-wrapper h-100 w-100 relative inner-rounded">
                 <v-img 
                   v-if="thumbnailUrl" 
@@ -83,7 +83,7 @@
                   </div>
                 </div>
 
-                <div class="standby-content flex-grow-1 overflow-y-auto px-2 py-2">
+                <div class="standby-content flex-grow-1 px-2 py-2">
                   <template v-if="standbyTab === 0">
                     <div v-for="(file, index) in mockHistory" :key="index" class="history-item d-flex align-center pa-3 mx-1">
                       <v-icon color="cyan lighten-2" class="mr-4">mdi-cube-scan</v-icon>
@@ -95,7 +95,7 @@
                     </div>
                   </template>
                   <template v-else-if="standbyTab === 1">
-                    <div class="d-flex align-center justify-center pa-6">
+                    <div class="d-flex align-center justify-center pa-6 h-100">
                       <span class="white--text text-body-2 text-center">There is currently no file in the job queue.</span>
                     </div>
                   </template>
@@ -249,8 +249,21 @@
                 </div>
                 
                 <div v-if="temp.t != null" class="text-left pl-3" style="border-left: 1px solid rgba(255,255,255,0.3);">
-                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Target</div>
-                  <div class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">{{ temp.t }}°C</div>
+                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">Target</div>
+                  
+                  <div v-if="temp.k" class="d-flex align-center">
+                    <input 
+                      type="number" 
+                      class="target-input font-weight-bold" 
+                      :value="temp.t" 
+                      @change="(e) => setTemperature(temp.k, e.target.value)"
+                      @keyup.enter="(e) => { e.target.blur(); setTemperature(temp.k, e.target.value); }"
+                    />
+                    <span class="white--text ml-1 font-weight-bold" style="font-size: 0.95rem;">°C</span>
+                  </div>
+                  <div v-else class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">
+                    {{ temp.t }}°C
+                  </div>
                 </div>
               </div>
 
@@ -361,6 +374,12 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     else document.exitFullscreen();
   }
 
+  setTemperature(heater: string, value: string) {
+    const target = parseInt(value, 10);
+    if (isNaN(target)) return;
+    this.$socket.emit('printer.gcode.script', { script: `SET_HEATER_TEMPERATURE HEATER=${heater} TARGET=${target}` });
+  }
+
   get displayProgress() {
     const p = this.printer?.display_status?.progress ?? this.printer?.virtual_sdcard?.progress ?? 0;
     return Math.floor(p * 100);
@@ -452,7 +471,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 
   get mainStats() {
     const filUsedMm = this.printer?.print_stats?.filament_used || 0;
-    const filUsedM = (filUsedMm / 1000).toFixed(2); // Convert to meters
+    const filUsedM = (filUsedMm / 1000).toFixed(2);
 
     return [
       { label: 'Speed',    value: this.printer?.motion_report?.live_velocity?.toFixed(0) || '0', unit: 'mm/s'  },
@@ -529,8 +548,8 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     const ths = this.getSensorData('toolheadscanner');
 
     return [
-      { n: 'EXTRUDER', v: this.extruderTemp, t: this.extruderTarget, h: null, i: 'mdi-printer-3d-nozzle', c: 'red' },
-      { n: 'BED', v: this.bedTemp, t: this.bedTarget, h: null, i: 'mdi-radiator', c: 'blue' },
+      { n: 'EXTRUDER', k: 'extruder', v: this.extruderTemp, t: this.extruderTarget, h: null, i: 'mdi-printer-3d-nozzle', c: 'red' },
+      { n: 'BED', k: 'heater_bed', v: this.bedTemp, t: this.bedTarget, h: null, i: 'mdi-radiator', c: 'blue' },
       { n: 'CHAMBER', v: chamber.temp, t: chamber.target, h: chamber.humidity, i: 'mdi-thermometer-lines', c: 'orange' },
       { n: 'CONTROLLER BOARD', v: cb.temp, t: cb.target, h: cb.humidity, i: 'mdi-chip', c: 'green' },
       { n: 'SOC', v: soc.temp, t: soc.target, h: soc.humidity, i: 'mdi-raspberry-pi', c: 'purple' },
@@ -552,7 +571,9 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
       { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g',  time: '19h 23m 55s',   icon: 'mdi-alert-outline',         color: '#ff9800' },
       { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g',  time: '16h 24m 17s',   icon: 'mdi-check-circle-outline',  color: '#4caf50' },
       { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g',  time: '1d 11m 29s',    icon: 'mdi-close-circle-outline',  color: '#f44336' },
-      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' }
+      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' },
+      { name: 'test_cube_PLA.gcode',                              filament: '2.10 m / 6 g',     time: '0h 25m 10s',    icon: 'mdi-check-circle-outline',  color: '#4caf50' },
+      { name: 'benchy_PETG.gcode',                                filament: '4.50 m / 13 g',    time: '1h 05m 20s',    icon: 'mdi-check-circle-outline',  color: '#4caf50' }
     ];
   }
   
@@ -588,6 +609,11 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 
 .media-container { width: 100%; min-height: 380px; background: #000; position: relative; display: flex; overflow: hidden; }
 
+.absolute-fill-wrapper {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+}
+
 .cam-progress-badge {
   position: absolute; top: 15px; right: 15px;
   width: 60px; height: 60px;
@@ -606,7 +632,11 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .top-progress-bar-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 25; }
 .top-progress-fill { height: 100%; background: var(--v-primary-base); transition: width 0.5s ease; }
 
-.standby-wrapper { background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+/* The fix for the scroll inside standby */
+.standby-wrapper { 
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; 
+}
 .standby-header  { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05); }
 .standby-mini-tabs {
   display: flex;
@@ -620,7 +650,29 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 }
 .active-mini-tab  { border-bottom: 2px solid #2196f3; }
 .mini-tab-label   { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
-.standby-content  { max-height: 280px; overflow-y: auto; padding: 8px !important; }
+
+/* Flexbox scroll trick */
+.standby-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  height: 0; /* Crucial for flex scrolling */
+  padding: 8px !important;
+}
+.standby-content::-webkit-scrollbar {
+  width: 6px;
+}
+.standby-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+.standby-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.standby-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 .badge { background: rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
 
@@ -656,6 +708,27 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 
 .custom-switch ::v-deep .v-input--switch__thumb { color: white !important; }
 .custom-switch ::v-deep .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
+
+.target-input {
+  width: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.target-input:focus {
+  border-color: var(--v-primary-base, #2196f3);
+  background: rgba(0, 0, 0, 0.5);
+}
+.target-input::-webkit-outer-spin-button,
+.target-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 .fade-slide-enter-active, .fade-slide-leave-active { transition: all 0.25s ease; }
 .fade-slide-enter, .fade-slide-leave-to            { opacity: 0; transform: translateY(-4px); }
