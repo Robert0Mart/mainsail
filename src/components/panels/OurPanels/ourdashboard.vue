@@ -25,7 +25,7 @@
               depressed 
               @click="showThumbnailView = true"
             >
-              <v-icon small left color="white">mdi-printer-3d</v-icon> <span class="white--text">3D</span>
+              <v-icon small left color="white">mdi-printer-3d/Files</v-icon> <span class="white--text">3D/Files</span>
             </v-btn>
           </div>
 
