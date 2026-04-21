@@ -97,7 +97,7 @@ export default class ConsoleTableEntry extends Mixins(BaseMixin) {
 }
 
 .msg-command {
-    color: #00E5FF !important; /* Ciano vibrante para os comandos que tu envias */
+    color: #2196f3 !important; /* Ciano vibrante para os comandos que tu envias */
     font-weight: 500;
 }
 
@@ -123,7 +123,7 @@ export default class ConsoleTableEntry extends Mixins(BaseMixin) {
 
 /* Estilo para sugestões de comando (links clicáveis) */
 ::v-deep .command {
-    color: #00E5FF !important;
+    color: #2196f3 !important;
     text-decoration: none;
     border-bottom: 1px dashed rgba(0, 229, 255, 0.4);
 }

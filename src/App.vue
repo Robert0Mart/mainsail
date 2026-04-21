@@ -125,8 +125,16 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
 /* CONFIGURAÇÃO DO FUNDO (BACKGROUND) */
 html, body, #app, .v-application, .v-application--wrap, .theme--dark.v-application {
     background-color: transparent !important;
-    background-image: url('/img/icons/blocks_icons/Background.jpeg') !important;
-    background-size: cover !important;
+    
+background: hsla(207, 76%, 31%, 1);
+
+background: linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
+
+background: -moz-linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
+
+background: -webkit-linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
+
+filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#13548A", endColorstr="#04131F", GradientType=1 );    background-size: cover !important;
     background-position: center center !important;
     background-attachment: fixed !important;
 }

@@ -1,11 +1,9 @@
 import vue from '@vitejs/plugin-vue2'
 import version from 'vite-plugin-package-version'
 import { defineConfig } from 'vite'
-
 import Components from 'unplugin-vue-components/vite'
 import { VuetifyResolver } from 'unplugin-vue-components/resolvers'
 import { checker } from 'vite-plugin-checker'
-
 import path from 'path'
 import buildVersion from './src/plugins/build-version'
 import buildReleaseInfo from './src/plugins/build-release_info'
@@ -90,7 +88,6 @@ export default defineConfig({
             resolvers: [VuetifyResolver()],
         }),
     ],
-
     css: {
         preprocessorOptions: {
             sass: {
@@ -106,7 +103,6 @@ export default defineConfig({
             plugins: [postcssNesting()],
         },
     },
-
     build: {
         target: 'es2020',
         rollupOptions: {
@@ -116,7 +112,6 @@ export default defineConfig({
                         if (id.includes('/codemirror/') || id.includes('/@codemirror/')) {
                             return 'codemirror'
                         }
-
                         const chunkedLibs = ['vuetify', 'echarts', 'overlayscrollbars']
                         for (const lib of chunkedLibs) {
                             if (id.includes(`/node_modules/${lib}/`)) {
@@ -131,7 +126,6 @@ export default defineConfig({
             transformMixedEsModules: true,
         },
     },
-
     envPrefix: 'VUE_',
     resolve: {
         alias: {
@@ -140,21 +134,19 @@ export default defineConfig({
             events: 'events',
         },
     },
-
     optimizeDeps: {
-        include: ['events', 'typed_janus_js'],
+        include: ['events'],
+        exclude: ['typed_janus_js'],
         esbuildOptions: {
             define: {
                 global: 'globalThis',
             },
         },
     },
-
     server: {
         host: '0.0.0.0',
         port: 5173,
     },
-
     test: {
         environment: 'node',
         include: ['tests/**/*.spec.ts'],
