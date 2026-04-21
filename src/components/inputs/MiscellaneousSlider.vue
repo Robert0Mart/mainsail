@@ -19,11 +19,10 @@
                     </template>
 
                     <template v-else-if="type.includes('fan')">
-                        <img 
-                            src="/img/icons/blocks_icons/FANsvg.svg" 
-                            class="mr-2 blocks-icon" 
-                            :class="fanClasses" 
-                        />
+                        <v-icon 
+                            class="mr-2" 
+                            :class="fanClasses"
+                        >{{ mdiFan }}</v-icon>
                     </template>
 
                     <v-icon v-else small class="mr-2">{{ mdiDipSwitch }}</v-icon>
@@ -90,7 +89,7 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import { Debounce } from 'vue-debounce-decorator'
 import BaseMixin from '@/components/mixins/base'
 import { convertName } from '@/plugins/helpers'
-import { mdiMinus, mdiPlus, mdiToggleSwitch, mdiToggleSwitchOffOutline, mdiDipSwitch } from '@mdi/js'
+import { mdiMinus, mdiPlus, mdiToggleSwitch, mdiToggleSwitchOffOutline, mdiDipSwitch, mdiFan } from '@mdi/js'
 
 @Component
 export default class MiscellaneousSlider extends Mixins(BaseMixin) {
@@ -99,6 +98,7 @@ export default class MiscellaneousSlider extends Mixins(BaseMixin) {
     mdiToggleSwitch = mdiToggleSwitch
     mdiToggleSwitchOffOutline = mdiToggleSwitchOffOutline
     mdiDipSwitch = mdiDipSwitch
+    mdiFan = mdiFan
     convertName = convertName
 
     private isLocked = false
@@ -119,7 +119,15 @@ export default class MiscellaneousSlider extends Mixins(BaseMixin) {
     @Prop({ type: Number, default: 0 }) declare off_below: number
     @Prop({ type: String, default: '' }) declare colorOrder: string
 
-    get value(): number { return Math.round((this.target / this.max) * 100) / 100 }
+    get value(): number { 
+        // Forçar 100% (1.0) para ventoinhas específicas (sempre ligadas)
+        const displayName = this.convertName(this.name).toLowerCase()
+        if (displayName.includes('fan board') || displayName.includes('hotend fan')) {
+            return 1.0 
+        }
+        return Math.round((this.target / this.max) * 100) / 100 
+    }
+    
     get lockSliders() { return this.$store.state.gui.uiSettings.lockSlidersOnTouchDevices }
     get lockSlidersDelay() { return this.$store.state.gui.uiSettings.lockSlidersDelay }
 
@@ -156,7 +164,7 @@ export default class MiscellaneousSlider extends Mixins(BaseMixin) {
     get errors() { return this.inputValue.toString() === '' ? ['Error'] : [] }
     
     get fanClasses() { 
-        // Esta classe faz o SVG rodar quando a ventoinha está ligada
+        // Rodar o ícone apenas quando a ventoinha está > 0 (ligada)
         return (!this.$store.state.gui.uiSettings.disableFanAnimation && this.value > 0) ? 'icon-rotate' : '' 
     }
     
@@ -176,7 +184,7 @@ export default class MiscellaneousSlider extends Mixins(BaseMixin) {
     object-fit: contain;
 }
 
-/* Animação de rotação para o SVG da Ventoinha */
+/* Animação de Rotação para a ventoinha */
 .icon-rotate {
     animation: icon-rotate 2s infinite linear;
 }

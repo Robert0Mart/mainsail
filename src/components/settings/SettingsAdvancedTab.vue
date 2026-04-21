@@ -34,9 +34,7 @@ export default class SettingsAdvancedTab extends Vue {
         
         // 3. Emite um evento global para que o Dashboard saiba que mudou sem refresh
         this.$root.$emit('advancedModeChanged', value)
-        
-        // Se o teu projeto usa Vuex (Store), o ideal seria:
-        // this.$store.commit('setAdvancedMode', value)
+    
     }
 }
 </script>

@@ -8,8 +8,7 @@
             :color="toolbarColor"
             :class="getToolbarClass"
             :height="panelToolbarHeight"
-            class="panel-toolbar"
-            :style="additionalStyle">
+            class="panel-toolbar">
             <slot name="buttons-left" />
             <v-toolbar-title class="d-flex align-center">
                 <slot v-if="hasIconSlot" name="icon" />
@@ -52,7 +51,7 @@ export default class Panel extends Mixins(BaseMixin) {
     @Prop({ required: true, default: '' }) declare readonly title: string | TranslateResult
     @Prop({ default: false }) declare readonly collapsible: boolean
     @Prop({ required: true }) declare readonly cardClass: string
-    @Prop({ default: '' }) declare readonly toolbarColor: string
+    @Prop({ default: '' }) declare readonly toolbarColor: string 
     @Prop({ default: '' }) declare readonly toolbarClass: string
     @Prop({ default: false }) declare readonly loading: boolean
     @Prop({ default: true }) declare readonly marginBottom: boolean
@@ -76,20 +75,14 @@ export default class Panel extends Mixins(BaseMixin) {
 
     get getToolbarClass() {
         let output = this.toolbarClass
-
         if (this.collapsible) output += ' collapsible'
-
         return output
-    }
-
-    get additionalStyle() {
-        return this.$vuetify.theme.dark ? '' : 'border-bottom: 1px solid #A8A8A8'
     }
 }
 </script>
 
 <style scoped>
-/* MANTIDO: Estilos originais do componente */
+/* Logic for panel interaction remains scoped */
 .expanded header.v-toolbar {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -114,40 +107,23 @@ export default class Panel extends Mixins(BaseMixin) {
 </style>
 
 <style>
-/* MANTIDO: Regras originais do Mainsail */
-.v-card.panel .v-toolbar__content {
-    padding-right: 0;
-}
-.v-card.panel .v-toolbar__content .subheading {
-    user-select: none;
-}
-.panel-toolbar .v-btn.v-btn--icon {
-    width: var(--panel-toolbar-icon-btn-width) !important;
-}
-
-.v-card.panel {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #333333 !important; /* Borda fina para separar os painéis */
-    border-radius: 15px !important;        /* Cantos ligeiramente mais arredondados */
-    overflow: hidden;
-    transition: all 0.3s ease;
+/* =========================================================================
+   APPLY GLOBAL MASTER STYLES
+   These rules look for the variables you set in Dashboard.vue
+   ========================================================================= */
+html body .v-application .v-card.panel.v-sheet,
+html body .v-application .v-card.panel {
+    background-color: var(--master-bg) !important;
+    border-radius: var(--master-radius) !important;
+    border: var(--master-border) !important;
 }
 
-/* 2. Barra Superior (Cabeçalho) */
-.panel-toolbar {
-    background-color: #2c3e50 !important; /* Cor da barra (ex: azul acinzentado) */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
 
-/* 3. Texto do Título e Ícones */
-.panel-toolbar .subheading, 
-.panel-toolbar .v-icon {
-    color: #ffffff !important;           /* Força o texto e ícones a branco */
-    font-weight: 500 !important;
-}
-
-/* 4. Efeito ao passar o rato (Opcional, dá um ar moderno) */
-.v-card.panel:hover {
-    border-color: var(--v-primary-base) !important; /* A borda brilha com a cor principal */
+.clean-dashboard-card .v-card.panel,
+.transparent-bg .v-card.panel,
+.inner-card-wrapper .v-card.panel,
+.v-dialog .v-card.panel {
+    min-height: auto !important;
+    height: auto !important;
 }
 </style>

@@ -1,0 +1,25 @@
+{
+    "name": "Node.js Estágio - Vue & TS",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+    
+    // Adiciona isto para o VS Code instalar o GitHub CLI sozinho:
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+
+    "runArgs": ["--userns=keep-id"],
+    "containerUser": "node",
+    "remoteUser": "node",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vue.volar",
+                "dbaeumer.vscode-eslint",
+                "streetsidesoftware.code-spell-checker",
+                "streetsidesoftware.code-spell-checker-portuguese"
+            ]
+        }
+    },
+    "forwardPorts": [5173]
+}
