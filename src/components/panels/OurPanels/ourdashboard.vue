@@ -734,6 +734,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   outline: none;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  -moz-appearance: textfield;
 }
 .target-input:focus {
   border-color: var(--v-primary-base, #2196f3);
