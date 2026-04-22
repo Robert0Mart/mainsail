@@ -92,11 +92,11 @@
 
             <div class="control-module d-flex flex-nowrap justify-space-between px-3 py-3" style="gap: 10px;">
               <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="sendGcode('G28')">HOME ALL</v-btn>
+                @click="doSend('G28')">HOME ALL</v-btn>
               <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="sendGcode('M84')">MOTORS OFF</v-btn>
+                @click="doSend('M84')">MOTORS OFF</v-btn>
               <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="sendGcode('MACRO_1')">Z TILT</v-btn>
+                @click="doSend('MACRO_1')">Z TILT</v-btn>
             </div>
           </div>
         </v-col>
@@ -136,12 +136,13 @@
               style="background: rgba(0,0,0,0.2); border-radius: 8px; height: auto;">
 
               <v-row no-gutters class="mb-4">
-                <v-col v-for="n in 4" :key="`gate-icon-${n}`" cols="3" class="d-flex flex-column align-center px-1">
-                  <span class="gate-label mb-1">Gate {{ n }}</span>
+                <v-col v-for="n in activeGateCount" :key="`gate-icon-${n}`" cols="auto"
+                  class="d-flex flex-column align-center px-1">
+                  <span class="gate-label mb-1">Gate {{ n - 1 }}</span>
 
-                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate, 'pulse-red': n === 4 }"
+                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate }"
                     @click="selectedGate = n - 1" style="display: flex; align-items: center; justify-content: center;">
-                    <img src="public/img/icons/blocks_icons/spool-full.svg" width="30" height="30" class="gate-icon"
+                    <img src="/img/icons/blocks_icons/spool-full.svg" width="30" height="30" class="gate-icon"
                       style="transform: translateY(2px); display: block;" />
                   </div>
 
@@ -155,7 +156,7 @@
                 </v-col>
               </v-row>
 
-              <v-row no-gutters>
+              <v-row no-gutters v-if="gates.length > 0">
                 <v-col cols="6" class="pr-3 d-flex flex-column" style="gap: 2px;">
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Slot</span>
@@ -163,7 +164,10 @@
                   </div>
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Status</span>
-                    <span class="gate-data-val" :style="{ color: '#4caf50' }">Ready</span>
+                    <span class="gate-data-val"
+                      :style="{ color: gates[selectedGate] && (gates[selectedGate].status === 'Ready' || gates[selectedGate].status === 'Buffered') ? '#4caf50' : '#ff5252' }">
+                      {{ gates[selectedGate] ? gates[selectedGate].status : '--' }}
+                    </span>
                   </div>
                 </v-col>
 
@@ -171,7 +175,7 @@
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Color</span>
                     <div :style="{
-                      backgroundColor: getGateColor(selectedGate),
+                      backgroundColor: gates[selectedGate] ? gates[selectedGate].color : '#333',
                       width: '14px',
                       height: '14px',
                       borderRadius: '50%',
@@ -180,7 +184,7 @@
                   </div>
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Material</span>
-                    <span class="gate-data-val">PLA</span>
+                    <span class="gate-data-val">{{ gates[selectedGate] ? gates[selectedGate].material : '--' }}</span>
                   </div>
                 </v-col>
               </v-row>
@@ -195,9 +199,9 @@
               </div>
               <div class="d-flex flex-row flex-wrap justify-center w-100" style="gap: 8px;">
                 <v-btn class="font-weight-black rounded-lg flex-grow-1" color="teal" height="40" depressed
-                  @click="sendGcode('LOAD_FILAMENT')">LOAD</v-btn>
+                  @click="doSend('LOAD_FILAMENT')">LOAD</v-btn>
                 <v-btn class="font-weight-black rounded-lg flex-grow-1" color="error" height="40" depressed
-                  @click="sendGcode('UNLOAD_FILAMENT')">UNLOAD</v-btn>
+                  @click="doSend('UNLOAD_FILAMENT')">UNLOAD</v-btn>
               </div>
             </div>
           </div>
@@ -223,11 +227,16 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import Panel from '@/components/ui/Panel.vue'
-import BaseMixin from '@/components/mixins/base'
+import MmuMixin, { 
+  GATE_UNKNOWN, 
+  GATE_EMPTY, 
+  GATE_AVAILABLE, 
+  GATE_AVAILABLE_FROM_BUFFER 
+} from '@/components/mixins/mmu'
 import MmuPanel from '@/components/panels/MmuPanel.vue'
 
 @Component({ components: { Panel, MmuPanel } })
-export default class AxisPanel extends Mixins(BaseMixin) {
+export default class AxisPanel extends Mixins(MmuMixin) {
   zOffsetLocal = 0
   speedFactor = 100
   extrusionFactor = 100
@@ -237,54 +246,73 @@ export default class AxisPanel extends Mixins(BaseMixin) {
   extrudeRate = 5
   selectedGate = 0
 
-  axisColor(axis: string) {
-    if (axis === 'X') return '#ff5252'
-    if (axis === 'Y') return '#4caf50'
-    return '#2196f3'
+  // Reference the official gate count from MmuMixin
+  get activeGateCount() {
+    return this.mmu?.gate_status?.length || 0
+  }
+
+  // Maps the gate data using official constants from mmu.ts
+  get gates() {
+    const mmu = this.mmu
+    if (!mmu || !mmu.gate_status) return []
+
+    const statusMap: Record<number, string> = {
+      [GATE_UNKNOWN]: 'Unknown',
+      [GATE_EMPTY]: 'Empty',
+      [GATE_AVAILABLE]: 'Ready',
+      [GATE_AVAILABLE_FROM_BUFFER]: 'Buffered'
+    }
+
+    return mmu.gate_status.map((rawStatus: number, index: number) => {
+      return {
+        status: statusMap[rawStatus] || 'Unknown',
+        material: mmu.gate_material?.[index] || '--',
+        color: this.formColorString(mmu.gate_color?.[index]) // Uses official color helper
+      }
+    })
   }
 
   getGateColor(index: number) {
-    const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffeb3b'];
-    return colors[index] || '#333';
+    return this.gates[index]?.color || '#333'
   }
 
   @Watch('printer.gcode_move.homing_origin', { immediate: true, deep: true })
   onHomingOriginChange(newVal: any) {
-    if (newVal && newVal[2] !== undefined) this.zOffsetLocal = newVal[2];
+    if (newVal && newVal[2] !== undefined) this.zOffsetLocal = newVal[2]
+  }
+
+  axisColor(axis: string) {
+    const colors: Record<string, string> = { X: '#ff5252', Y: '#4caf50', Z: '#2196f3' }
+    return colors[axis] || '#fff'
   }
 
   moveAxis(axis: string, dist: number) {
-    this.$socket.emit('printer.gcode.script', { script: `G91\nG1 ${axis}${dist} F6000\nG90` });
+    this.doSend(`G91\nG1 ${axis}${dist} F6000\nG90`)
   }
 
   homeAxis(axis: string) {
-    this.$socket.emit('printer.gcode.script', { script: `G28 ${axis}` });
+    this.doSend(`G28 ${axis}`)
   }
 
   adjustZOffset(step: number) {
-    this.$socket.emit('printer.gcode.script', { script: `SET_GCODE_OFFSET Z_ADJUST=${step} MOVE=1` });
+    this.doSend(`SET_GCODE_OFFSET Z_ADJUST=${step} MOVE=1`)
   }
 
   updateSpeedFactor() {
-    this.$socket.emit('printer.gcode.script', { script: `M220 S${this.speedFactor}` });
+    this.doSend(`M220 S${this.speedFactor}`)
   }
 
   updateExtrusionFactor() {
-    this.$socket.emit('printer.gcode.script', { script: `M221 S${this.extrusionFactor}` });
+    this.doSend(`M221 S${this.extrusionFactor}`)
   }
 
   updatePressureAdvance() {
-    this.$socket.emit('printer.gcode.script', { script: `SET_PRESSURE_ADVANCE ADVANCE=${this.pressureAdvance} SMOOTH_TIME=${this.smoothTime}` });
+    this.doSend(`SET_PRESSURE_ADVANCE ADVANCE=${this.pressureAdvance} SMOOTH_TIME=${this.smoothTime}`)
   }
 
   runExtrusion(type: 'extrude' | 'retract') {
-    const dir = type === 'extrude' ? '' : '-';
-    const speed = this.extrudeRate * 60;
-    this.$socket.emit('printer.gcode.script', { script: `G91\nG1 E${dir}${this.extrudeLength} F${speed}\nG90` });
-  }
-
-  sendGcode(script: string) {
-    this.$socket.emit('printer.gcode.script', { script });
+    const dir = type === 'extrude' ? '' : '-'
+    this.doSend(`G91\nG1 E${dir}${this.extrudeLength} F${this.extrudeRate * 60}\nG90`)
   }
 }
 </script>
@@ -347,25 +375,7 @@ export default class AxisPanel extends Mixins(BaseMixin) {
 .active-gate {
   background: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
-}
-
-.pulse-red {
-  animation: border-pulse-red 2s infinite;
-}
-
-@keyframes border-pulse-red {
-  0% {
-    border-color: rgba(255, 82, 82, 0.5);
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
-  }
-  70% {
-    border-color: rgba(255, 82, 82, 1);
-    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
-  }
-  100% {
-    border-color: rgba(255, 82, 82, 0.5);
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
-  }
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .gate-icon {
