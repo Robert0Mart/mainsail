@@ -132,15 +132,19 @@
               </div>
             </div>
 
-            <div class="dark-wrapper pa-4 flex-grow-1 d-flex flex-column justify-center"
-              style="background: rgba(0,0,0,0.2); border-radius: 8px;">
-              <v-row no-gutters class="mb-6">
+            <div class="dark-wrapper pa-4 d-flex flex-column"
+              style="background: rgba(0,0,0,0.2); border-radius: 8px; height: auto;">
+
+              <v-row no-gutters class="mb-4">
                 <v-col v-for="n in 4" :key="`gate-icon-${n}`" cols="3" class="d-flex flex-column align-center px-1">
-                  <span class="gate-label mb-2">Gate {{ n }}</span>
-                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate }"
-                    @click="selectedGate = n - 1">
-                    <img src="public/img/icons/blocks_icons/spool-full.svg" width="45" height="45" class="gate-icon" />
+                  <span class="gate-label mb-1">Gate {{ n }}</span>
+
+                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate, 'pulse-red': n === 4 }"
+                    @click="selectedGate = n - 1" style="display: flex; align-items: center; justify-content: center;">
+                    <img src="public/img/icons/blocks_icons/spool-full.svg" width="30" height="30" class="gate-icon"
+                      style="transform: translateY(2px); display: block;" />
                   </div>
+
                   <div class="gate-filament-status" :style="{
                     backgroundColor: getGateColor(n - 1),
                     width: '100%',
@@ -152,7 +156,7 @@
               </v-row>
 
               <v-row no-gutters>
-                <v-col cols="6" class="pr-3 d-flex flex-column" style="gap: 4px;">
+                <v-col cols="6" class="pr-3 d-flex flex-column" style="gap: 2px;">
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Slot</span>
                     <span class="gate-data-val">{{ selectedGate }}</span>
@@ -163,7 +167,7 @@
                   </div>
                 </v-col>
 
-                <v-col cols="6" class="pl-3 d-flex flex-column" style="gap: 4px;">
+                <v-col cols="6" class="pl-3 d-flex flex-column" style="gap: 2px;">
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key">Color</span>
                     <div :style="{
@@ -337,11 +341,31 @@ export default class AxisPanel extends Mixins(BaseMixin) {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 2px solid transparent;
 }
 
 .active-gate {
   background: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
+}
+
+.pulse-red {
+  animation: border-pulse-red 2s infinite;
+}
+
+@keyframes border-pulse-red {
+  0% {
+    border-color: rgba(255, 82, 82, 0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
+  }
+  70% {
+    border-color: rgba(255, 82, 82, 1);
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+  100% {
+    border-color: rgba(255, 82, 82, 0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
 }
 
 .gate-icon {
