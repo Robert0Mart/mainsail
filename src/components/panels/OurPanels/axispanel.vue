@@ -3,9 +3,8 @@
     <div class="pa-4">
       <v-row align="stretch" justify="center">
 
-        <v-col cols="12" lg="8" xl="4" class="d-flex flex-column mb-4 px-3">
+        <v-col cols="12" lg="7" xl="4" class="d-flex flex-column mb-4 px-3">
           <div class="dark-wrapper d-flex flex-column align-stretch w-100 h-100" style="gap: 15px;">
-
             <div class="d-flex flex-column flex-sm-row align-stretch w-100" style="gap: 15px;">
               <div class="control-module z-offset-box d-flex flex-column align-center px-4 py-7" style="flex: 1;">
                 <span class="section-title mb-4">Z-OFFSET</span>
@@ -71,7 +70,6 @@
                   </v-col>
                 </v-row>
               </div>
-
               <div class="control-module pa-4">
                 <div class="d-flex align-center mb-2">
                   <v-icon small color="grey lighten-1" class="mr-3">mdi-printer-3d-nozzle</v-icon>
@@ -91,134 +89,97 @@
             </div>
 
             <div class="control-module d-flex flex-nowrap justify-space-between px-3 py-3" style="gap: 10px;">
-              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="doSend('G28')">HOME ALL</v-btn>
-              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="doSend('M84')">MOTORS OFF</v-btn>
-              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed
-                @click="doSend('MACRO_1')">Z TILT</v-btn>
+              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed @click="doSend('G28')">HOME ALL</v-btn>
+              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed @click="doSend('M84')">MOTORS OFF</v-btn>
+              <v-btn class="bottom-action-btn flex-grow-1 font-weight-bold rounded-lg" height="40" depressed @click="doSend('MACRO_1')">Z TILT</v-btn>
             </div>
           </div>
         </v-col>
 
-        <v-col cols="12" lg="4" xl="3" class="d-flex flex-column mb-4 px-3">
-          <div class="control-module pa-6 d-flex flex-column h-100" style="gap: 20px;">
+        <v-col cols="12" lg="5" xl="4" class="d-flex flex-column mb-4 px-3">
+          <div class="control-module pa-6 d-flex flex-column h-100" style="gap: 15px;">
+            
             <div class="dark-wrapper pa-4" style="background: rgba(0,0,0,0.2); border-radius: 8px;">
               <div class="d-flex flex-row justify-center flex-wrap" style="gap: 15px;">
-                <div class="d-flex flex-column" style="gap: 15px; flex: 1; min-width: 120px;">
+                <div class="d-flex flex-column" style="gap: 10px; flex: 1; min-width: 120px;">
                   <span class="micro-label">PRESSURE ADVANCE</span>
-                  <v-text-field v-model="pressureAdvance" type="number" dense outlined hide-details suffix="s"
-                    class="sleek-input mt-1" @change="updatePressureAdvance" />
+                  <v-text-field v-model="pressureAdvance" type="number" dense outlined hide-details suffix="s" class="sleek-input" @change="updatePressureAdvance" />
                   <span class="micro-label">FILAMENT LENGTH</span>
-                  <v-text-field v-model.number="extrudeLength" type="number" dense outlined hide-details suffix="mm"
-                    class="sleek-input mt-1 mb-1" />
+                  <v-text-field v-model.number="extrudeLength" type="number" dense outlined hide-details suffix="mm" class="sleek-input" />
                   <div class="d-flex flex-row" style="gap: 4px;">
-                    <v-btn v-for="n in [50, 10, 1]" :key="`len-${n}`" x-small depressed class="pill-btn flex-grow-1"
-                      @click="extrudeLength = n">{{ n }}</v-btn>
+                    <v-btn v-for="n in [50, 10, 1]" :key="`len-${n}`" x-small depressed class="pill-btn flex-grow-1" @click="extrudeLength = n">{{ n }}</v-btn>
                   </div>
                 </div>
-                <div class="d-flex flex-column" style="gap: 15px; flex: 1; min-width: 120px;">
+                <div class="d-flex flex-column" style="gap: 10px; flex: 1; min-width: 120px;">
                   <span class="micro-label">SMOOTH TIME</span>
-                  <v-text-field v-model="smoothTime" type="number" dense outlined hide-details suffix="s"
-                    class="sleek-input mt-1" @change="updatePressureAdvance" />
+                  <v-text-field v-model="smoothTime" type="number" dense outlined hide-details suffix="s" class="sleek-input" @change="updatePressureAdvance" />
                   <span class="micro-label">FEEDRATE</span>
-                  <v-text-field v-model.number="extrudeRate" type="number" dense outlined hide-details suffix="mm/s"
-                    class="sleek-input mt-1 mb-1" />
+                  <v-text-field v-model.number="extrudeRate" type="number" dense outlined hide-details suffix="mm/s" class="sleek-input" />
                   <div class="d-flex flex-row" style="gap: 4px;">
-                    <v-btn v-for="n in [10, 5, 1]" :key="`feed-${n}`" x-small depressed class="pill-btn flex-grow-1"
-                      @click="extrudeRate = n">{{ n }}</v-btn>
+                    <v-btn v-for="n in [10, 5, 1]" :key="`feed-${n}`" x-small depressed class="pill-btn flex-grow-1" @click="extrudeRate = n">{{ n }}</v-btn>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="dark-wrapper pa-4 d-flex flex-column"
-              style="background: rgba(0,0,0,0.2); border-radius: 8px; height: auto;">
-
-              <v-row no-gutters class="mb-4">
-                <v-col v-for="n in activeGateCount" :key="`gate-icon-${n}`" cols="auto"
-                  class="d-flex flex-column align-center px-1">
+            <div class="dark-wrapper pa-4 d-flex flex-column" style="background: rgba(0,0,0,0.2); border-radius: 8px; flex-grow: 1;">
+              <div class="d-flex flex-row justify-center mb-6" style="gap: 12px; width: 100%;">
+                <v-col v-for="n in activeGateCount" :key="`gate-icon-${n}`" cols="auto" class="d-flex flex-column align-center px-1">
                   <span class="gate-label mb-1">Gate {{ n - 1 }}</span>
-
-                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate }"
-                    @click="selectedGate = n - 1" style="display: flex; align-items: center; justify-content: center;">
-                    <img src="/img/icons/blocks_icons/spool-full.svg" width="30" height="30" class="gate-icon"
-                      style="transform: translateY(2px); display: block;" />
+                  <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate }" @click="selectedGate = n - 1" style="display: flex; align-items: center; justify-content: center;">
+                    <img src="/img/icons/blocks_icons/spool-full.svg" width="30" height="30" class="gate-icon" />
                   </div>
-
-                  <div class="gate-filament-status" :style="{
-                    backgroundColor: getGateColor(n - 1),
-                    width: '100%',
-                    height: '8px',
-                    borderRadius: '4px',
-                    opacity: n - 1 === selectedGate ? 1 : 0.4
-                  }"></div>
+                  <div class="gate-filament-status" :style="{ backgroundColor: getGateColor(n - 1), width: '100%', height: '8px', borderRadius: '4px', opacity: n - 1 === selectedGate ? 1 : 0.4 }"></div>
                 </v-col>
-              </v-row>
-
-              <v-row no-gutters v-if="gates.length > 0">
-                <v-col cols="6" class="pr-3 d-flex flex-column" style="gap: 2px;">
-                  <div class="d-flex justify-space-between align-center">
-                    <span class="gate-data-key">Slot</span>
-                    <span class="gate-data-val">{{ selectedGate }}</span>
-                  </div>
-                  <div class="d-flex justify-space-between align-center">
-                    <span class="gate-data-key">Status</span>
-                    <span class="gate-data-val"
-                      :style="{ color: gates[selectedGate] && (gates[selectedGate].status === 'Ready' || gates[selectedGate].status === 'Buffered') ? '#4caf50' : '#ff5252' }">
-                      {{ gates[selectedGate] ? gates[selectedGate].status : '--' }}
-                    </span>
-                  </div>
-                </v-col>
-
-                <v-col cols="6" class="pl-3 d-flex flex-column" style="gap: 2px;">
-                  <div class="d-flex justify-space-between align-center">
-                    <span class="gate-data-key">Color</span>
-                    <div :style="{
-                      backgroundColor: gates[selectedGate] ? gates[selectedGate].color : '#333',
-                      width: '14px',
-                      height: '14px',
-                      borderRadius: '50%',
-                      border: '1px solid rgba(255,255,255,0.3)'
-                    }"></div>
-                  </div>
-                  <div class="d-flex justify-space-between align-center">
-                    <span class="gate-data-key">Material</span>
-                    <span class="gate-data-val">{{ gates[selectedGate] ? gates[selectedGate].material : '--' }}</span>
-                  </div>
-                </v-col>
-              </v-row>
-            </div>
-
-            <div class="d-flex flex-column align-center" style="gap: 8px;">
-              <div class="d-flex flex-row flex-wrap justify-center w-100" style="gap: 8px;">
-                <v-btn class="font-weight-black rounded-lg flex-grow-1" color="warning darken-1" height="40" depressed
-                  @click="runExtrusion('retract')">RETRACT</v-btn>
-                <v-btn class="font-weight-black rounded-lg flex-grow-1" color="blue" height="40" depressed
-                  @click="runExtrusion('extrude')">EXTRUDE</v-btn>
               </div>
-              <div class="d-flex flex-row flex-wrap justify-center w-100" style="gap: 8px;">
-                <v-btn class="font-weight-black rounded-lg flex-grow-1" color="teal" height="40" depressed
-                  @click="doSend('LOAD_FILAMENT')">LOAD</v-btn>
-                <v-btn class="font-weight-black rounded-lg flex-grow-1" color="error" height="40" depressed
-                  @click="doSend('UNLOAD_FILAMENT')">UNLOAD</v-btn>
+
+              <div v-if="gates.length > 0" class="d-flex flex-row align-start" style="gap: 10px;">
+                
+                <div class="d-flex justify-center mmu-graph-area" style="flex: 1.2; height: 290px;">
+                  <mmu-filament-status />
+                </div>
+                
+                <div class="d-flex flex-column" style="flex: 1; gap: 20px; min-width: 160px;">
+                  
+                  <div class="d-flex flex-column w-100" style="gap: 12px;">
+                    <div class="d-flex justify-space-between align-center">
+                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Slot</span>
+                      <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;">{{ selectedGate }}</span>
+                    </div>
+
+                    <div class="d-flex justify-space-between align-center">
+                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Status</span>
+                      <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;" :style="{ color: gates[selectedGate] && (gates[selectedGate].status === 'Ready' || gates[selectedGate].status === 'Buffered') ? '#4caf50' : '#ff5252' }">
+                        {{ gates[selectedGate] ? gates[selectedGate].status : '--' }}
+                      </span>
+                    </div>
+
+                    <div class="d-flex justify-space-between align-center">
+                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Color</span>
+                      <div :style="{ backgroundColor: gates[selectedGate] ? gates[selectedGate].color : '#333', width: '14px', height: '14px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.4)' }"></div>
+                    </div>
+
+                    <div class="d-flex justify-space-between align-center">
+                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Material</span>
+                      <span class="gate-data-val font-weight-black" style="font-size: 1.1rem;">
+                        {{ gates[selectedGate] ? gates[selectedGate].material : '--' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-column w-100" style="gap: 8px;">
+                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed @click="runExtrusion('retract')">RETRACT</v-btn>
+                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed @click="runExtrusion('extrude')">EXTRUDE</v-btn>
+                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed @click="doSend('LOAD_FILAMENT')">LOAD</v-btn>
+                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed @click="doSend('UNLOAD_FILAMENT')">UNLOAD</v-btn>
+                  </div>
+                  
+                </div>
               </div>
             </div>
+
           </div>
         </v-col>
-
-        <v-col cols="12" lg="12" xl="3" class="d-flex flex-column mb-4 px-3">
-          <div class="dark-wrapper d-flex flex-column align-stretch h-100 w-100 pa-4" style="gap: 15px;">
-            <div class="d-flex align-center mb-2 flex-shrink-0">
-              <v-icon small color="grey lighten-1" class="mr-3">mdi-palette-swatch</v-icon>
-              <span class="section-title">MMU CONTROL</span>
-            </div>
-            <div class="mmu-fix-wrapper w-100 flex-grow-1 overflow-y-auto">
-              <mmu-panel class="custom-mmu-panel" />
-            </div>
-          </div>
-        </v-col>
-
       </v-row>
     </div>
   </panel>
@@ -227,15 +188,16 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import Panel from '@/components/ui/Panel.vue'
-import MmuMixin, { 
-  GATE_UNKNOWN, 
-  GATE_EMPTY, 
-  GATE_AVAILABLE, 
-  GATE_AVAILABLE_FROM_BUFFER 
+import MmuMixin, {
+  GATE_UNKNOWN,
+  GATE_EMPTY,
+  GATE_AVAILABLE,
+  GATE_AVAILABLE_FROM_BUFFER
 } from '@/components/mixins/mmu'
 import MmuPanel from '@/components/panels/MmuPanel.vue'
+import MmuFilamentStatus from '@/components/panels/Mmu/MmuFilamentStatus.vue'
 
-@Component({ components: { Panel, MmuPanel } })
+@Component({ components: { Panel, MmuPanel , MmuFilamentStatus} })
 export default class AxisPanel extends Mixins(MmuMixin) {
   zOffsetLocal = 0
   speedFactor = 100
@@ -443,5 +405,17 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 ::v-deep .custom-mmu-panel .v-card__text>.row>.col-5:last-child,
 ::v-deep .custom-mmu-panel svg+div.text-center {
   display: none !important;
+}
+
+/* MMU Graph Text Overrides */
+.mmu-graph-area :deep(text) {
+  font-size: 17px !important;
+  font-weight: bold !important;
+}
+
+.mmu-graph-area :deep(.filament-label), 
+.mmu-graph-area :deep(.status-text) {
+  font-size: 14px !important;
+  font-weight: 800 !important;
 }
 </style>
