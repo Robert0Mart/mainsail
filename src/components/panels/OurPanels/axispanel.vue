@@ -4,86 +4,96 @@
       <v-row align="stretch" justify="center">
 
         <v-col cols="12" lg="6" xl="6" class="d-flex flex-column mb-4 px-3">
-          <div class="dark-wrapper d-flex flex-column align-stretch w-100 h-100" style="gap: 15px;">
+          <div class="dark-wrapper d-flex flex-column w-100 h-100" style="gap: 15px;">
 
-            <div class="d-flex flex-column flex-xl-row align-stretch w-100" style="gap: 15px;">
+            <div class="d-flex flex-column flex-xl-row align-stretch w-100 flex-grow-0" style="gap: 15px;">
               
               <div class="d-flex flex-column flex-sm-row w-100" style="flex: 1.2; gap: 15px;">
-                <div class="dark-wrapper d-flex flex-column align-center pa-4 w-100"
-                  style="flex: 1; min-height: 300px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                  <v-icon small color="grey lighten-1" class="mb-2">mdi-speedometer</v-icon>
-                  <span class="micro-label mb-4" style="font-size: 0.65rem; text-align: center;">SPEED</span>
+                <div class="dark-wrapper d-flex flex-column align-center justify-center pa-3 w-100"
+                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                  <v-icon small color="grey lighten-1" class="mb-1">mdi-speedometer</v-icon>
+                  <span class="micro-label mb-2" style="font-size: 0.65rem; text-align: center;">SPEED</span>
                   <div class="slider-fill">
                     <v-slider v-model="speedFactor" min="1" max="200" vertical hide-details color="blue"
                       @change="updateSpeedFactor" />
                   </div>
                   <v-text-field v-model.number="speedFactor" type="number" dense outlined hide-details
-                    class="sleek-input slider-number-input mt-4" style="max-width: 80px;" @change="updateSpeedFactor" />
+                    class="sleek-input slider-number-input mt-3" style="max-width: 80px;" @change="updateSpeedFactor" />
                 </div>
-                <div class="dark-wrapper d-flex flex-column align-center pa-4 w-100"
-                  style="flex: 1; min-height: 300px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                  <v-icon small color="grey lighten-1" class="mb-2">mdi-printer-3d-nozzle</v-icon>
-                  <span class="micro-label mb-4" style="font-size: 0.65rem; text-align: center;">EXTRUDER</span>
+                <div class="dark-wrapper d-flex flex-column align-center justify-center pa-3 w-100"
+                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                  <v-icon small color="grey lighten-1" class="mb-1">mdi-printer-3d-nozzle</v-icon>
+                  <span class="micro-label mb-2" style="font-size: 0.65rem; text-align: center;">EXTRUDER</span>
                   <div class="slider-fill">
                     <v-slider v-model="extrusionFactor" min="1" max="200" vertical hide-details color="blue"
                       @change="updateExtrusionFactor" />
                   </div>
                   <v-text-field v-model.number="extrusionFactor" type="number" dense outlined hide-details
-                    class="sleek-input slider-number-input mt-4" style="max-width: 80px;"
+                    class="sleek-input slider-number-input mt-3" style="max-width: 80px;"
                     @change="updateExtrusionFactor" />
                 </div>
               </div>
 
-              <div class="control-module z-offset-box d-flex flex-column align-center px-4 py-7 w-100" style="flex: 0.8;">
+              <div class="control-module z-offset-box d-flex flex-column align-center justify-center px-4 py-6 w-100" style="flex: 0.8; min-width: 100px;">
                 <span class="section-title mb-4">Z-OFFSET</span>
-                <v-btn class="unified-btn mb-1" depressed @click="adjustZOffset(0.25)">0.25</v-btn>
-                <v-btn class="unified-btn mb-1" depressed @click="adjustZOffset(0.05)">0.05</v-btn>
-                <v-btn class="unified-btn mb-1" depressed @click="adjustZOffset(0.01)">0.01</v-btn>
-                <v-btn class="unified-btn mb-4" depressed @click="adjustZOffset(0.005)">0.005</v-btn>
+                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.25)">0.25</v-btn>
+                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.05)">0.05</v-btn>
+                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.01)">0.01</v-btn>
+                <v-btn class="unified-btn mb-4 w-100" depressed @click="adjustZOffset(0.005)">0.005</v-btn>
                 <div class="z-value-glow my-2">{{ zOffsetLocal.toFixed(3) }}</div>
-                <v-btn class="unified-btn mb-2" depressed icon @click="adjustZOffset(0.1)">
+                <v-btn class="unified-btn mb-2 w-100" depressed icon @click="adjustZOffset(0.1)">
                   <img src="/img/icons/blocks_icons/afastar_aproximar_aproximar.svg" width="24" height="24" />
                 </v-btn>
-                <v-btn class="unified-btn" depressed icon @click="adjustZOffset(-0.1)">
+                <v-btn class="unified-btn w-100" depressed icon @click="adjustZOffset(-0.1)">
                   <img src="/img/icons/blocks_icons/afastar_aproximar_afastar.svg" width="24" height="24" />
                 </v-btn>
               </div>
 
-              <div class="control-module d-flex flex-wrap justify-center px-4 py-8 w-100" style="flex: 2; gap: 20px;">
-                <div v-for="axis in ['X', 'Y', 'Z', 'E/R']" :key="axis" class="axis-col d-flex flex-column align-center">
+              <div class="control-module d-flex flex-nowrap justify-space-between px-4 py-6 w-100" style="flex: 2.5; gap: 8px; min-width: 240px;">
+                <div v-for="axis in ['X', 'Y', 'Z', 'E/R']" :key="axis" class="axis-col d-flex flex-column align-center justify-center" style="flex: 1;">
+                  
+                  <div v-if="axis === 'E/R'" class="font-weight-black mb-1 text-center" style="font-size: 0.55rem; color: #4caf50; letter-spacing: 0.5px; line-height: 1;">EXTRUDE</div>
+                  <div v-else style="height: 12px; margin-bottom: 4px;"></div>
+
                   <template v-if="axis === 'Z'">
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', 25)">+25</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', 1)">+1</v-btn>
-                    <v-btn class="unified-btn mb-4" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 25)">+25</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
                   </template>
                   <template v-else>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, 100)">+100</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, 10)">+10</v-btn>
-                    <v-btn class="unified-btn mb-4" depressed @click="moveAxis(axis, 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 100)">+100</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 10)">+10</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis(axis, 1)">+1</v-btn>
                   </template>
                   
-                  <v-btn height="40" width="40" min-width="40" :color="axisColor(axis)"
-                    class="my-1 elevation-3 font-weight-bold rounded-lg" @click="homeAxis(axis)">{{ axis }}</v-btn>
+                  <v-btn height="36" width="100%" :color="axisColor(axis)"
+                    class="my-2 elevation-3 font-weight-bold rounded-lg label-btn" @click="homeAxis(axis)">{{ axis }}</v-btn>
                     
                   <template v-if="axis === 'Z'">
-                    <v-btn class="unified-btn mb-2 mt-4" depressed @click="moveAxis('Z', -0.1)">-0.1</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', -1)">-1</v-btn>
-                    <v-btn class="unified-btn" depressed @click="moveAxis('Z', -25)">-25</v-btn>
+                    <v-btn class="unified-btn mb-2 mt-3 w-100" depressed @click="moveAxis('Z', -0.1)">-0.1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', -1)">-1</v-btn>
+                    <v-btn class="unified-btn w-100" depressed @click="moveAxis('Z', -25)">-25</v-btn>
                   </template>
                   <template v-else>
-                    <v-btn class="unified-btn mb-2 mt-4" depressed @click="moveAxis(axis, -1)">-1</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, -10)">-10</v-btn>
-                    <v-btn class="unified-btn" depressed @click="moveAxis(axis, -100)">-100</v-btn>
+                    <v-btn class="unified-btn mb-2 mt-3 w-100" depressed @click="moveAxis(axis, -1)">-1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, -10)">-10</v-btn>
+                    <v-btn class="unified-btn w-100" depressed @click="moveAxis(axis, -100)">-100</v-btn>
                   </template>
+
+                  <div v-if="axis === 'E/R'" class="font-weight-black mt-2 text-center" style="font-size: 0.55rem; color: #ff5252; letter-spacing: 0.5px; line-height: 1;">RETRACT</div>
+                  <div v-else style="height: 12px; margin-top: 8px;"></div>
+
                 </div>
               </div>
             </div>
 
-            <v-row dense class="mt-2">
+            <div class="flex-grow-1"></div>
+
+            <v-row dense class="flex-grow-0" align="stretch">
 
               <v-col cols="12" xl="7" class="d-flex px-2 px-xl-0 pr-xl-2 mb-4 mb-xl-0">
-                <div class="dark-wrapper pa-3 w-100 d-flex flex-column"
-                  style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: 1px;">
+                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
+                  style="background: rgba(0,0,0,0.25); border-radius: 8px;">
 
                   <v-row dense>
                     <v-col cols="12" sm="6" class="d-flex flex-column mb-2 mb-sm-0" style="gap: 4px;">
@@ -102,17 +112,14 @@
               </v-col>
 
               <v-col cols="12" xl="5" class="d-flex px-2 px-xl-0 pl-xl-2">
-                <div class="dark-wrapper pa-3 w-100 d-flex flex-column justify-center"
+                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
                   style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: 8px;">
                   <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('G28')">HOME
-                    ALL</v-btn>
+                    @click="doSend('G28')">HOME ALL</v-btn>
                   <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('M84')">MOTORS
-                    OFF</v-btn>
+                    @click="doSend('M84')">MOTORS OFF</v-btn>
                   <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('MACRO_1')">Z
-                    TILT</v-btn>
+                    @click="doSend('MACRO_1')">Z TILT</v-btn>
                 </div>
               </v-col>
 
@@ -365,22 +372,24 @@ export default class AxisPanel extends Mixins(MmuMixin) {
   color: #fff;
 }
 
+.label-btn {
+  font-size: 0.85rem !important;
+  letter-spacing: 0 !important;
+  padding: 0 !important;
+}
+
 .unified-btn {
   background: rgba(247, 202, 0, 0.04) !important;
   color: #b0bec5 !important;
   border-radius: 8px !important;
+  min-width: 0 !important;
+  padding: 0 4px !important;
+  font-size: 0.85rem !important;
 }
 
 .bottom-action-btn {
   background: rgba(255, 255, 255, 0.05) !important;
   color: #b0bec5 !important;
-}
-
-.pill-btn {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #888 !important;
-  border-radius: 4px !important;
-  font-size: 0.65rem !important;
 }
 
 .sleek-input ::v-deep .v-input__slot {
@@ -390,9 +399,10 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 
 .slider-fill {
   width: 100%;
+  height: 160px; 
   display: flex;
   justify-content: center;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
 }
 
 .slider-fill ::v-deep .v-input,
@@ -432,12 +442,6 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 
 .slider-number-input ::v-deep input[type="number"] {
   -moz-appearance: textfield;
-}
-
-.mmu-fix-wrapper {
-  position: relative;
-  min-height: 400px;
-  overflow-x: hidden;
 }
 
 ::v-deep .custom-mmu-panel>.v-card {
