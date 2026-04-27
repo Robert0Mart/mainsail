@@ -49,40 +49,40 @@
                 </v-btn>
               </div>
 
-              <div class="control-module d-flex flex-wrap justify-center px-4 py-8 w-100" style="flex: 2; gap: 20px;">
-                <div v-for="axis in ['X', 'Y', 'Z', 'E/R']" :key="axis" class="axis-col d-flex flex-column align-center">
+              <div class="control-module d-flex flex-wrap justify-space-between px-4 py-8 w-100" style="flex: 2; gap: 10px;">
+                <div v-for="axis in ['X', 'Y', 'Z', 'E/R']" :key="axis" class="axis-col d-flex flex-column align-center" style="flex: 1;">
                   <template v-if="axis === 'Z'">
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', 25)">+25</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', 1)">+1</v-btn>
-                    <v-btn class="unified-btn mb-4" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 25)">+25</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-4 w-100" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
                   </template>
                   <template v-else>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, 100)">+100</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, 10)">+10</v-btn>
-                    <v-btn class="unified-btn mb-4" depressed @click="moveAxis(axis, 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 100)">+100</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 10)">+10</v-btn>
+                    <v-btn class="unified-btn mb-4 w-100" depressed @click="moveAxis(axis, 1)">+1</v-btn>
                   </template>
                   
-                  <v-btn height="40" width="40" min-width="40" :color="axisColor(axis)"
+                  <v-btn height="40" width="100%" min-width="40" :color="axisColor(axis)"
                     class="my-1 elevation-3 font-weight-bold rounded-lg" @click="homeAxis(axis)">{{ axis }}</v-btn>
                     
                   <template v-if="axis === 'Z'">
-                    <v-btn class="unified-btn mb-2 mt-4" depressed @click="moveAxis('Z', -0.1)">-0.1</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis('Z', -1)">-1</v-btn>
-                    <v-btn class="unified-btn" depressed @click="moveAxis('Z', -25)">-25</v-btn>
+                    <v-btn class="unified-btn mb-2 mt-4 w-100" depressed @click="moveAxis('Z', -0.1)">-0.1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', -1)">-1</v-btn>
+                    <v-btn class="unified-btn w-100" depressed @click="moveAxis('Z', -25)">-25</v-btn>
                   </template>
                   <template v-else>
-                    <v-btn class="unified-btn mb-2 mt-4" depressed @click="moveAxis(axis, -1)">-1</v-btn>
-                    <v-btn class="unified-btn mb-2" depressed @click="moveAxis(axis, -10)">-10</v-btn>
-                    <v-btn class="unified-btn" depressed @click="moveAxis(axis, -100)">-100</v-btn>
+                    <v-btn class="unified-btn mb-2 mt-4 w-100" depressed @click="moveAxis(axis, -1)">-1</v-btn>
+                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, -10)">-10</v-btn>
+                    <v-btn class="unified-btn w-100" depressed @click="moveAxis(axis, -100)">-100</v-btn>
                   </template>
                 </div>
               </div>
             </div>
 
-            <v-row dense class="mt-2" align="center">
+            <v-row dense class="mt-2" align="stretch">
 
               <v-col cols="12" xl="7" class="d-flex px-2 px-xl-0 pr-xl-2 mb-4 mb-xl-0">
-                <div class="dark-wrapper pa-3 w-100 d-flex flex-column justify-center"
+                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
                   style="background: rgba(0,0,0,0.25); border-radius: 8px;">
 
                   <v-row dense>
@@ -102,7 +102,7 @@
               </v-col>
 
               <v-col cols="12" xl="5" class="d-flex px-2 px-xl-0 pl-xl-2">
-                <div class="dark-wrapper pa-3 w-100 d-flex flex-column justify-center"
+                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
                   style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: 8px;">
                   <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
                     @click="doSend('G28')">HOME
@@ -369,6 +369,7 @@ export default class AxisPanel extends Mixins(MmuMixin) {
   background: rgba(247, 202, 0, 0.04) !important;
   color: #b0bec5 !important;
   border-radius: 8px !important;
+  min-width: 0 !important;
 }
 
 .bottom-action-btn {
