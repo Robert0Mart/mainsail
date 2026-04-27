@@ -677,7 +677,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   width: 6px;
 }
 .standby-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(221, 221, 221, 0.02);
   border-radius: 4px;
 }
 .standby-content::-webkit-scrollbar-thumb {

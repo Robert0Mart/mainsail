@@ -202,7 +202,7 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
    ========================================================================= */
 :root {
     /* Colors & Borders */
-    --master-bg: rgb(46, 46, 46); 
+    --master-bg: rgb(102, 0, 255); 
     --master-radius: 24px;
     --master-border: 1px solid rgba(255, 255, 255, 0.1);
 

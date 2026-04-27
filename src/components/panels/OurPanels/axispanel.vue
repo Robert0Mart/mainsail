@@ -177,7 +177,7 @@
                   <mmu-filament-status />
                 </div>
 
-                <div class="d-flex flex-column justify-center" style="flex: 1; gap: 20px; min-width: 160px;">
+                <div class="d-flex flex-column justify-center" style="flex: 1; gap: 100px; min-width: 160px;">
 
                   <div class="d-flex flex-column w-100" style="gap: 12px;">
                     <div class="d-flex justify-space-between align-center">
