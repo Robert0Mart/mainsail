@@ -5,10 +5,10 @@
     card-class="blocks-main-panel"
     center-title
   >
-    <div class="pa-6"> 
-      <v-row align="stretch">
+    <div class="pa-6 h-100"> 
+      <v-row align="stretch" class="h-100">
         
-        <v-col cols="12" lg="6" xl="5" class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column col-left-wrapper">
+        <v-col cols="12" lg="6" xl="5" class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column col-left-wrapper h-100">
           
           <div class="clean-tabs-wrapper d-flex mb-4 flex-shrink-0">
             <v-btn 
@@ -17,7 +17,8 @@
               depressed 
               @click="showThumbnailView = false"
             >
-              <v-icon small left color="white">mdi-camera</v-icon> <span class="white--text">CAM</span>
+              <img src="/img/icons/blocks_icons/sensorssvg.svg" width="18" height="18" class="mr-2" style="filter: brightness(0) invert(1);" /> 
+              <span class="white--text">CAM</span>
             </v-btn>
             <v-btn 
               class="tab-btn flex-grow-1" 
@@ -25,18 +26,15 @@
               depressed 
               @click="showThumbnailView = true"
             >
-              <v-icon small left color="white">{{ isStandby ? 'mdi-file-document-multiple' : 'mdi-printer-3d' }}</v-icon> 
+              <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="18" height="18" class="mr-2" style="filter: brightness(0) invert(1);" /> 
               <span class="white--text">{{ isStandby ? 'FILES' : '3D' }}</span>
             </v-btn>
           </div>
 
-          <div class="media-container flex-grow-1 mb-4 shadow-xl relative overflow-hidden" ref="mediaBox">
+          <div class="media-container flex-grow-1 shadow-xl relative overflow-hidden" ref="mediaBox">
             
             <div v-if="!showThumbnailView" class="h-100 w-100 absolute-fill-wrapper">
               <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" />
-              <div class="cam-progress-badge d-flex align-center justify-center" v-if="!isStandby">
-                <span class="white--text font-weight-black">{{ displayProgress }}%</span>
-              </div>
             </div>
 
             <div v-else class="h-100 w-100 absolute-fill-wrapper">
@@ -48,38 +46,28 @@
                   contain 
                 />
                 <div v-else class="no-thumb-bg d-flex flex-column align-center justify-center inner-rounded h-100 w-100">
-                  <v-icon size="64" color="white" style="opacity: 0.1">mdi-cube-scan</v-icon>
+                  <img src="/img/icons/blocks_icons/printsvg.svg" width="64" height="64" style="opacity: 0.1; filter: brightness(0) invert(1);" />
                   <span class="white--text text-caption mt-2">PREVIEWING MODEL...</span>
-                </div>
-                
-                <div class="overlay-progress-wrapper">
-                  <svg viewBox="0 0 120 120" class="square-svg">
-                    <rect x="4" y="4" width="112" height="112" rx="10" class="border-ghost" />
-                    <rect x="4" y="4" width="112" height="112" rx="10" class="border-active" :style="edgeStyle" />
-                  </svg>
-                  <div class="overlay-content">
-                    <span class="text-h5 font-weight-black white--text">{{ displayProgress }}%</span>
-                  </div>
                 </div>
               </div>
 
               <div v-else class="standby-wrapper d-flex flex-column h-100 w-100 inner-rounded">
                 <div class="standby-header d-flex align-center justify-space-between pa-4 flex-shrink-0">
                   <div class="d-flex align-center">
-                    <v-icon color="white" class="mr-3">mdi-information</v-icon>
+                    <img src="/img/icons/blocks_icons/infosvg.svg" width="20" height="20" class="mr-3" style="filter: brightness(0) invert(1);" />
                     <span class="white--text font-weight-regular text-h6">Standby</span>
                   </div>
-                  <v-icon color="white">mdi-chevron-down</v-icon>
+                  <img src="/img/icons/blocks_icons/downsvg.svg" width="16" height="16" style="filter: brightness(0) invert(1);" />
                 </div>
 
                 <div class="standby-mini-tabs d-flex flex-shrink-0 mx-2">
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 0 ? 'active-mini-tab' : ''" @click="standbyTab = 0">
-                    <v-icon small color="white">mdi-file-document-outline</v-icon>
-                    <span class="mini-tab-label ml-1 white--text">Files</span>
+                    <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="16" height="16" style="filter: brightness(0) invert(1);" />
+                    <span class="mini-tab-label ml-2 white--text">Files</span>
                   </div>
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
-                    <v-icon small color="white">mdi-format-list-bulleted</v-icon>
-                    <span class="mini-tab-label ml-1 white--text">Queue</span>
+                    <img src="/img/icons/blocks_icons/timesvg.svg" width="16" height="16" style="filter: brightness(0) invert(1);" />
+                    <span class="mini-tab-label ml-2 white--text">Queue</span>
                     <span class="badge ml-2 white--text">{{ queuedJobs.length }}</span>
                   </div>
                 </div>
@@ -87,12 +75,11 @@
                 <div class="standby-content flex-grow-1 px-2 py-2">
                   <template v-if="standbyTab === 0">
                     <div v-for="(file, index) in recentFiles" :key="index" class="history-item d-flex align-center pa-3 mx-1">
-                      <v-icon color="cyan lighten-2" class="mr-4">mdi-cube-scan</v-icon>
+                      <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="24" height="24" class="mr-4" style="filter: brightness(0) invert(1); opacity: 0.7;" />
                       <div class="flex-grow-1 overflow-hidden pr-3">
                         <div class="white--text text-body-2 text-truncate">{{ file.name }}</div>
                         <div class="white--text text-caption text-truncate">Filament: {{ file.filament }} | Time: {{ file.time }}</div>
                       </div>
-                      <v-icon :color="file.color">{{ file.icon }}</v-icon>
                     </div>
                     <div v-if="recentFiles.length === 0" class="d-flex align-center justify-center pa-6 h-100">
                       <span class="white--text text-body-2 text-center">No files found.</span>
@@ -100,7 +87,7 @@
                   </template>
                   <template v-else-if="standbyTab === 1">
                     <div v-for="(job, index) in queuedJobs" :key="'job-'+index" class="history-item d-flex align-center pa-3 mx-1">
-                      <v-icon color="cyan lighten-2" class="mr-4">mdi-clock-outline</v-icon>
+                      <img src="/img/icons/blocks_icons/timesvg.svg" width="24" height="24" class="mr-4" style="filter: brightness(0) invert(1); opacity: 0.7;" />
                       <div class="flex-grow-1 overflow-hidden pr-3">
                         <div class="white--text text-body-2 text-truncate">{{ job.filename }}</div>
                       </div>
@@ -123,7 +110,39 @@
             </div>
           </div>
 
-          <div class="file-info-panel px-6 py-4 mb-4 flex-shrink-0" v-if="!isStandby">
+          <div class="d-flex align-center justify-space-between pa-4 mt-4 inner-rounded flex-shrink-0" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05);">
+            <div class="d-flex align-center overflow-hidden pr-3">
+              <v-progress-circular 
+                :rotate="-90" 
+                :size="48" 
+                :width="4" 
+                :value="displayProgress" 
+                color="var(--v-primary-base)"
+                class="mr-4 flex-shrink-0"
+              >
+                <span class="white--text font-weight-bold" style="font-size: 0.75rem;">{{ displayProgress }}%</span>
+              </v-progress-circular>
+              <div class="d-flex flex-column overflow-hidden">
+                <span class="white--text font-weight-bold text-uppercase" style="letter-spacing: 1px;">
+                  {{ isStandby ? 'Standby' : (isPrinting ? 'Printing' : 'Paused') }}
+                </span>
+                <span class="white--text text-caption text-truncate" style="opacity: 0.7;">
+                  {{ activeFilename ? activeFilename : 'Ready to print' }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="d-flex align-center flex-shrink-0" style="gap: 12px;">
+              <v-btn fab small :color="isPrinting ? 'amber darken-2' : 'success darken-1'" depressed @click="dynamicStartAction">
+                <img :src="'/img/icons/blocks_icons/' + dynamicStartIcon" width="20" height="20" style="filter: brightness(0) invert(1);" />
+              </v-btn>
+              <v-btn v-if="!isStandby" fab small color="error" depressed @click="$socket.emit('printer.print.cancel')">
+                <img src="/img/icons/blocks_icons/stopsvg.svg" width="20" height="20" style="filter: brightness(0) invert(1);" />
+              </v-btn>
+            </div>
+          </div>
+
+          <div class="file-info-panel px-6 py-4 mt-4 flex-shrink-0" v-if="!isStandby">
             <v-row dense no-gutters>
               <v-col cols="3">
                 <span class="info-label white--text">ESTIMATE</span>
@@ -144,30 +163,9 @@
             </v-row>
           </div>
 
-          <v-row dense class="flex-shrink-0 mt-auto" v-if="!isStandby">
-            <v-col cols="6">
-              <v-btn block :color="dynamicStartColor" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
-                <v-icon left color="white">{{ dynamicStartIcon }}</v-icon> <span class="white--text">{{ dynamicStartText }}</span>
-              </v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn block color="error" class="buttons big-btn font-weight-black" depressed @click="() => {}">
-                <v-icon left color="white">mdi-stop</v-icon> <span class="white--text">STOP PRINT</span>
-              </v-btn>
-            </v-col>
-          </v-row>
-
-          <v-row dense class="flex-shrink-0 mt-auto" v-else>
-            <v-col cols="12">
-              <v-btn block color="success" class="buttons big-btn font-weight-black" depressed @click="dynamicStartAction">
-                <v-icon left color="white">mdi-play</v-icon> <span class="white--text">START PRINT</span>
-              </v-btn>
-            </v-col>
-          </v-row>
-
         </v-col>
 
-        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column">
+        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column h-100">
           <div class="flex-shrink-0">
             <v-row dense>
               <v-col cols="6" v-for="stat in mainStats" :key="stat.label">
@@ -179,7 +177,7 @@
             </v-row>
           </div>
 
-          <div class="fans-vertical-wrapper mt-4 pa-4">
+          <div class="fans-vertical-wrapper mt-4 pa-4 flex-grow-1 overflow-y-auto">
             <span class="text-caption white--text font-weight-bold mb-3 d-block px-1">CONTROLS</span>
             <div class="d-flex flex-column" style="gap: 12px;">
               
@@ -204,15 +202,7 @@
                 <div class="d-flex align-center justify-space-between mb-2 px-1">
                   <span class="white--text text-body-2 font-weight-bold d-flex align-center">
                     <span class="led-icon-wrap mr-2" :class="led.enabled ? 'led-on' : 'led-off'">
-                      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <line v-if="led.enabled" x1="12" y1="1"   x2="12" y2="3"   stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="4.2"  y1="4.2"  x2="5.6"  y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="1"   y1="12"  x2="3"   y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="19.8" y1="4.2"  x2="18.4" y2="5.6"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <line v-if="led.enabled" x1="23"  y1="12"  x2="21"  y2="12"  stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M12 3C8.13 3 5 6.13 5 10c0 2.38 1.19 4.47 3 5.74V18c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z" :fill="led.enabled ? '#FFD54F' : '#555'"/>
-                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1z" :fill="led.enabled ? '#FFB300' : '#444'"/>
-                      </svg>
+                      <img src="/img/icons/blocks_icons/LEDssvg.svg" width="18" height="18" style="filter: brightness(0) invert(1);" />
                     </span>
                     {{ led.name }}
                   </span>
@@ -228,7 +218,7 @@
 
                 <transition name="fade-slide">
                   <div v-if="led.enabled" class="d-flex align-center px-1" style="gap: 8px;">
-                    <v-icon small color="white">mdi-brightness-4</v-icon>
+                    <img src="/img/icons/blocks_icons/light_barsvg.svg" width="18" height="18" style="filter: brightness(0) invert(1);" />
                     <v-slider
                       v-model="led.brightness"
                       :min="0"
@@ -241,7 +231,7 @@
                       class="flex-grow-1 my-0"
                       @change="onLedBrightnessChange(led)"
                     />
-                    <v-icon small color="amber lighten-2">mdi-brightness-7</v-icon>
+                    <img src="/img/icons/blocks_icons/sun svg.svg" width="18" height="18" style="filter: brightness(0) invert(1);" />
                     <span class="white--text text-caption font-weight-bold led-value-badge">
                       {{ led.brightness }}%
                     </span>
@@ -254,10 +244,10 @@
           </div>
         </v-col>
 
-        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column">
-          <div class="d-flex flex-column" style="gap: 16px;"> 
-            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-4"> 
-              <v-icon x-small :color="temp.c + ' lighten-1'" class="mr-3">{{ temp.i }}</v-icon>
+        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column h-100">
+          <div class="d-flex flex-column flex-grow-1 overflow-y-auto" style="gap: 16px;"> 
+            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-4 flex-shrink-0"> 
+              <img :src="'/img/icons/blocks_icons/' + temp.i" width="24" height="24" class="mr-3" style="filter: brightness(0) invert(1);" />
               <span class="text-caption white--text font-weight-bold mr-auto">{{ temp.n }}</span>
               
               <div class="d-flex align-center justify-end" style="gap: 12px;">
@@ -288,7 +278,7 @@
 
             </div>
 
-            <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2" style="height: auto;">
+            <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2 flex-shrink-0" style="height: auto;">
               <mmu-clog-meter style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
               <span class="white--text font-weight-regular text-body-1" style="opacity: 0.7;">Clog/Tangle Detection</span>
             </div>
@@ -319,8 +309,7 @@ interface LedItem {
 }
 
 @Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuClogMeter } })
-export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
-  readonly perimeter = 112 * 4;
+export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
   isLive = true;
   showThumbnailView = false;
   standbyTab = 0;
@@ -345,7 +334,7 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
 
   async fetchMoonrakerFiles() {
     try {
-      const res = await fetch('http://192.168.1.112/server/files/list?root=gcodes');
+      const res = await fetch('/server/files/list?root=gcodes');
       if (res.ok) {
         const data = await res.json();
         if (data && data.result) {
@@ -360,17 +349,21 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
   }
 
   get recentFiles() {
-    let files = this.fetchedMoonrakerFiles;
+    let files = [];
     
-    if (!files || files.length === 0) {
-      if (this.$store.state.files?.gcodes?.items) {
-        files = this.$store.state.files.gcodes.items;
-      } else if (Array.isArray(this.$store.state.files?.gcodes)) {
-        files = this.$store.state.files.gcodes;
-      } else if (Array.isArray(this.$store.state.files?.files)) {
-        files = this.$store.state.files.files;
-      } else if (this.$store.getters['files/getFiles']) {
-        files = this.$store.getters['files/getFiles']('gcodes') || [];
+    if (this.fetchedMoonrakerFiles && this.fetchedMoonrakerFiles.length > 0) {
+      files = this.fetchedMoonrakerFiles;
+    } else {
+      const gcodes = this.$store.state.files?.gcodes;
+      if (Array.isArray(gcodes)) {
+        files = gcodes;
+      } else if (gcodes && Array.isArray(gcodes.items)) {
+        files = gcodes.items;
+      } else {
+        const getterFiles = this.$store.getters['files/getFiles'];
+        if (typeof getterFiles === 'function') {
+          files = getterFiles('gcodes') || [];
+        }
       }
     }
 
@@ -394,11 +387,17 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
          const m = Math.floor((estTime % 3600) / 60);
          time = `${h}h ${m}m`;
       }
+      
+      let fname = f.filename || f.path || 'Unknown';
+      if (fname.includes('/')) {
+         fname = fname.split('/').pop();
+      }
+
       return {
-        name: f.filename || f.path || 'Unknown',
+        name: fname,
         filament: fil,
         time: time,
-        icon: 'mdi-file-document-outline',
+        icon: 'file_iconsvg.svg',
         color: '#4caf50'
       };
     });
@@ -416,7 +415,7 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
     }
     
     try {
-      const res = await fetch(`http://192.168.1.112/server/files/metadata?filename=${encodeURIComponent(newFilename)}`);
+      const res = await fetch(`/server/files/metadata?filename=${encodeURIComponent(newFilename)}`);
       const data = await res.json();
       const thumbs = data.result?.thumbnails;
       
@@ -424,7 +423,7 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
         const best = [...thumbs].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
         let cleanPath = best.relative_path;
         if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
-        this.thumbnailUrl = `http://192.168.1.112/server/files/gcodes/${cleanPath}`;
+        this.thumbnailUrl = `/server/files/gcodes/${cleanPath}`;
       } else {
         this.thumbnailUrl = '';
       }
@@ -446,9 +445,7 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
     return !(this.isPrinting || this.isPaused);
   }
   
-  get dynamicStartText() { return this.isPrinting ? 'PAUSE' : (this.isPaused ? 'RESUME' : 'START PRINT'); }
-  get dynamicStartIcon() { return this.isPrinting ? 'mdi-pause' : (this.isPaused ? 'mdi-play-pause' : 'mdi-play'); }
-  get dynamicStartColor() { return this.isPrinting ? 'amber darken-2' : (this.isPaused ? 'success darken-1' : 'success'); }
+  get dynamicStartIcon() { return this.isPrinting ? 'pausesvg.svg' : 'playsvg.svg'; }
   
   dynamicStartAction() {
     if (this.isPrinting) return this.$socket.emit('printer.print.pause');
@@ -636,13 +633,13 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
     const ths = this.getSensorData('toolheadscanner');
 
     return [
-      { n: 'EXTRUDER', k: 'extruder', v: this.extruderTemp, t: this.extruderTarget, h: null, i: 'mdi-printer-3d-nozzle', c: 'red' },
-      { n: 'BED', k: 'heater_bed', v: this.bedTemp, t: this.bedTarget, h: null, i: 'mdi-radiator', c: 'blue' },
-      { n: 'CHAMBER', v: chamber.temp, t: chamber.target, h: chamber.humidity, i: 'mdi-thermometer-lines', c: 'orange' },
-      { n: 'CONTROLLER BOARD', v: cb.temp, t: cb.target, h: cb.humidity, i: 'mdi-chip', c: 'green' },
-      { n: 'SOC', v: soc.temp, t: soc.target, h: soc.humidity, i: 'mdi-raspberry-pi', c: 'purple' },
-      { n: 'TOOLHEAD CONTROLLER', v: thc.temp, t: thc.target, h: thc.humidity, i: 'mdi-toolhead-plus', c: 'blue-grey' },
-      { n: 'TOOLHEAD SCANNER', v: ths.temp, t: ths.target, h: ths.humidity, i: 'mdi-barcode-scan', c: 'grey' }
+      { n: 'EXTRUDER', k: 'extruder', v: this.extruderTemp, t: this.extruderTarget, h: null, i: 'nozzlesvg.svg', c: 'red' },
+      { n: 'BED', k: 'heater_bed', v: this.bedTemp, t: this.bedTarget, h: null, i: 'temperature_platesvg.svg', c: 'blue' },
+      { n: 'CHAMBER', v: chamber.temp, t: chamber.target, h: chamber.humidity, i: 'chamber_temperaturesvg.svg', c: 'orange' },
+      { n: 'CTRL BOARD', v: cb.temp, t: cb.target, h: cb.humidity, i: 'hot_temperaturesvg.svg', c: 'green' },
+      { n: 'SOC', v: soc.temp, t: soc.target, h: soc.humidity, i: 'temperaturesvg.svg', c: 'purple' },
+      { n: 'TOOLHEAD', v: thc.temp, t: thc.target, h: thc.humidity, i: 'temperaturesvg.svg', c: 'blue-grey' },
+      { n: 'SCANNER', v: ths.temp, t: ths.target, h: ths.humidity, i: 'sensorssvg.svg', c: 'grey' }
     ];
   }
 
@@ -665,9 +662,11 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
 
 <style scoped>
 .inner-rounded, .stat-card, .temp-card, .fans-vertical-wrapper,
-.clean-tabs-wrapper, .file-info-panel, .buttons, .media-container,
-.standby-wrapper {
+.clean-tabs-wrapper, .file-info-panel, .standby-wrapper {
   border-radius: calc(var(--master-radius, 15px) - 6px) !important;
+}
+.media-container {
+  border-radius: var(--master-radius, 15px) !important;
 }
 .stat-card, .temp-card, .fans-vertical-wrapper, .clean-tabs-wrapper,
 .file-info-panel, .standby-wrapper {
@@ -680,14 +679,14 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
   font-weight: 800 !important; letter-spacing: 1px;
   transition: all 0.3s ease; height: 38px !important;
 }
-.active-tab   { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+.active-tab   { background: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
 .media-container {
   width: 100%;
-  flex-grow: 1;
-  min-height: 580px;
-  background: transparent;
+  flex: 1 1 auto;
+  min-height: 450px;
+  background: #000000;
   position: relative;
   display: flex;
   overflow: hidden;
@@ -701,12 +700,12 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
   background: transparent !important;
 }
 
-::v-deep img,
-::v-deep video,
-::v-deep .webcam-image {
+::v-deep .media-container img,
+::v-deep .media-container video,
+::v-deep .media-container .webcam-image {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   display: block;
 }
 
@@ -715,23 +714,12 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
   top: 0; left: 0; width: 100%; height: 100%;
 }
 
-.cam-progress-badge {
-  position: absolute; top: 15px; right: 15px;
-  width: 60px; height: 60px;
-  background: rgba(15,15,20,0.8); backdrop-filter: blur(12px);
-  border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
-  z-index: 10; font-size: 1.1rem;
-}
-
 .media-controls-overlay { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 35; pointer-events: none; }
 .fs-btn-clean {
   pointer-events: auto !important;
   background: rgba(0,0,0,0.6) !important; margin: 15px;
   border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.1) !important;
 }
-
-.top-progress-bar-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 25; }
-.top-progress-fill { height: 100%; background: var(--v-primary-base); transition: width 0.5s ease; }
 
 .standby-wrapper { 
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -774,18 +762,6 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
 
 .badge { background: rgba(255,255,255,0.15); color: #ffffff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
-
-.overlay-progress-wrapper {
-  position: absolute; top: 15px; right: 15px; width: 80px; height: 80px;
-  background: rgba(15,15,20,0.8); backdrop-filter: blur(12px);
-  border-radius: calc(var(--master-radius, 15px) - 6px);
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid rgba(255,255,255,0.1); z-index: 10;
-}
-.square-svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
-.border-ghost  { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 6; }
-.border-active { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
-.overlay-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
 
 .file-info-panel { border: 1px solid rgba(255,255,255,0.05); min-height: 80px; padding: 12px 20px !important; }
 .info-label { font-size: 0.65rem; color: rgba(255,255,255,0.7); text-transform: uppercase; display: block; font-weight: bold; }
@@ -833,11 +809,8 @@ export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, Webc
 .fade-slide-enter-active, .fade-slide-leave-active { transition: all 0.25s ease; }
 .fade-slide-enter, .fade-slide-leave-to            { opacity: 0; transform: translateY(-4px); }
 
-.buttons { letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1); }
-.big-btn { height: 56px !important; font-size: 1.1rem !important; }
-
 .white--text   { color: #ffffff !important; }
 .h-100         { height: 100% !important; }
 .flex-shrink-0 { flex-shrink: 0 !important; }
 .relative      { position: relative; }
-</style> 
+</style>
