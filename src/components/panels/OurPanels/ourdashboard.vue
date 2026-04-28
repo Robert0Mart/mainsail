@@ -33,7 +33,7 @@
           <div class="media-container flex-grow-1 mb-4 shadow-xl relative overflow-hidden" ref="mediaBox">
             
             <div v-if="!showThumbnailView" class="h-100 w-100 absolute-fill-wrapper">
-              <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" style="background: #000;" />
+              <webcam-wrapper v-if="isLive" :webcam="currentCam" page="dashboard" class="h-100 w-100 inner-rounded" />
               <div class="cam-progress-badge d-flex align-center justify-center" v-if="!isStandby">
                 <span class="white--text font-weight-black">{{ displayProgress }}%</span>
               </div>
@@ -80,13 +80,13 @@
                   <div class="mini-tab flex-grow-1" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
                     <v-icon small color="white">mdi-format-list-bulleted</v-icon>
                     <span class="mini-tab-label ml-1 white--text">Queue</span>
-                    <span class="badge ml-2 white--text">0</span>
+                    <span class="badge ml-2 white--text">{{ queuedJobs.length }}</span>
                   </div>
                 </div>
 
                 <div class="standby-content flex-grow-1 px-2 py-2">
                   <template v-if="standbyTab === 0">
-                    <div v-for="(file, index) in mockHistory" :key="index" class="history-item d-flex align-center pa-3 mx-1">
+                    <div v-for="(file, index) in recentFiles" :key="index" class="history-item d-flex align-center pa-3 mx-1">
                       <v-icon color="cyan lighten-2" class="mr-4">mdi-cube-scan</v-icon>
                       <div class="flex-grow-1 overflow-hidden pr-3">
                         <div class="white--text text-body-2 text-truncate">{{ file.name }}</div>
@@ -94,9 +94,18 @@
                       </div>
                       <v-icon :color="file.color">{{ file.icon }}</v-icon>
                     </div>
+                    <div v-if="recentFiles.length === 0" class="d-flex align-center justify-center pa-6 h-100">
+                      <span class="white--text text-body-2 text-center">No files found.</span>
+                    </div>
                   </template>
                   <template v-else-if="standbyTab === 1">
-                    <div class="d-flex align-center justify-center pa-6 h-100">
+                    <div v-for="(job, index) in queuedJobs" :key="'job-'+index" class="history-item d-flex align-center pa-3 mx-1">
+                      <v-icon color="cyan lighten-2" class="mr-4">mdi-clock-outline</v-icon>
+                      <div class="flex-grow-1 overflow-hidden pr-3">
+                        <div class="white--text text-body-2 text-truncate">{{ job.filename }}</div>
+                      </div>
+                    </div>
+                    <div v-if="queuedJobs.length === 0" class="d-flex align-center justify-center pa-6 h-100">
                       <span class="white--text text-body-2 text-center">There is currently no file in the job queue.</span>
                     </div>
                   </template>
@@ -310,13 +319,14 @@ interface LedItem {
 }
 
 @Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuClogMeter } })
-export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
+export default class OurDashboardPanel  extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
   readonly perimeter = 112 * 4;
   isLive = true;
   showThumbnailView = false;
   standbyTab = 0;
   isAdvancedMode: boolean = localStorage.getItem('advancedMode') === 'true';
   thumbnailUrl: string = ''; 
+  fetchedMoonrakerFiles: any[] = [];
 
   ledItems: LedItem[] = [
     { name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true },
@@ -326,10 +336,72 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     this.$root.$on('advancedModeChanged', (value: boolean) => {
       this.isAdvancedMode = value;
     });
+    this.fetchMoonrakerFiles();
   }
 
   beforeDestroy() {
     this.$root.$off('advancedModeChanged');
+  }
+
+  async fetchMoonrakerFiles() {
+    try {
+      const res = await fetch('http://192.168.1.112/server/files/list?root=gcodes');
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.result) {
+          this.fetchedMoonrakerFiles = data.result;
+        }
+      }
+    } catch (e) {}
+  }
+
+  get queuedJobs() {
+    return this.$store.state.jobQueue?.queued_jobs || this.$store.state.server?.job_queue?.queued_jobs || [];
+  }
+
+  get recentFiles() {
+    let files = this.fetchedMoonrakerFiles;
+    
+    if (!files || files.length === 0) {
+      if (this.$store.state.files?.gcodes?.items) {
+        files = this.$store.state.files.gcodes.items;
+      } else if (Array.isArray(this.$store.state.files?.gcodes)) {
+        files = this.$store.state.files.gcodes;
+      } else if (Array.isArray(this.$store.state.files?.files)) {
+        files = this.$store.state.files.files;
+      } else if (this.$store.getters['files/getFiles']) {
+        files = this.$store.getters['files/getFiles']('gcodes') || [];
+      }
+    }
+
+    if (!files || files.length === 0) return [];
+
+    const sorted = [...files]
+      .filter((f: any) => f.filename || f.path)
+      .sort((a: any, b: any) => (b.modified || 0) - (a.modified || 0))
+      .slice(0, 10);
+    
+    return sorted.map((f: any) => {
+      let fil = '--';
+      const filTotal = f.metadata?.filament_total || f.filament_total || f.filament_used;
+      if (filTotal) {
+         fil = (filTotal / 1000).toFixed(2) + ' m';
+      }
+      let time = '--';
+      const estTime = f.metadata?.estimated_time || f.estimated_time;
+      if (estTime) {
+         const h = Math.floor(estTime / 3600);
+         const m = Math.floor((estTime % 3600) / 60);
+         time = `${h}h ${m}m`;
+      }
+      return {
+        name: f.filename || f.path || 'Unknown',
+        filament: fil,
+        time: time,
+        icon: 'mdi-file-document-outline',
+        color: '#4caf50'
+      };
+    });
   }
 
   get activeFilename() {
@@ -344,7 +416,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     }
     
     try {
-      const res = await fetch(`http://192.168.1.120/server/files/metadata?filename=${encodeURIComponent(newFilename)}`);
+      const res = await fetch(`http://192.168.1.112/server/files/metadata?filename=${encodeURIComponent(newFilename)}`);
       const data = await res.json();
       const thumbs = data.result?.thumbnails;
       
@@ -352,12 +424,11 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
         const best = [...thumbs].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
         let cleanPath = best.relative_path;
         if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
-        this.thumbnailUrl = `http://192.168.1.120/server/files/gcodes/${cleanPath}`;
+        this.thumbnailUrl = `http://192.168.1.112/server/files/gcodes/${cleanPath}`;
       } else {
         this.thumbnailUrl = '';
       }
     } catch (e) {
-      console.error('Failed to fetch Moonraker metadata:', e);
       this.thumbnailUrl = '';
     }
   }
@@ -582,16 +653,6 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
     return this.orderedTemperatureCards.slice(0, 3);
   }
 
-  get mockHistory() {
-    return [
-      { name: 'winscreen_whiper_cap_peugeot_207_ASA_1h39m.gcode', filament: '6.80 m / 17 g',    time: '1h 38m 45s',    icon: 'mdi-check-circle-outline', color: '#4caf50' },
-      { name: 'remake1-Volkswagen_ASA_19h24m.gcode',              filament: '76.75 m / 192 g',  time: '19h 23m 55s',   icon: 'mdi-alert-outline',         color: '#ff9800' },
-      { name: 'ASA_1.gcode',                                       filament: '71.85 m / 180 g',  time: '16h 24m 17s',   icon: 'mdi-check-circle-outline',  color: '#4caf50' },
-      { name: 'ASA_2.gcode',                                       filament: '74.22 m / 186 g',  time: '1d 11m 29s',    icon: 'mdi-close-circle-outline',  color: '#f44336' },
-      { name: 'remake1-Volkswagen_ASA_1d9h45m.gcode',             filament: '178.58 m / 447 g', time: '1d 9h 44m 42s', icon: 'mdi-alert-outline',         color: '#ff9800' }
-    ];
-  }
-  
   get edgeStyle() {
     return {
       strokeDasharray: this.perimeter,
@@ -622,22 +683,30 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
-.media-container { 
-  width: 100%; 
-  min-height: 550px;
-  background: #000; 
-  position: relative; 
-  display: flex; 
-  overflow: hidden; 
+.media-container {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 580px;
+  background: transparent;
+  position: relative;
+  display: flex;
+  overflow: hidden;
 }
 
-.media-container ::v-deep img, 
-.media-container ::v-deep video,
-.media-container ::v-deep .webcam-image {
+::v-deep .webcam-wrapper,
+::v-deep .webcam-wrapper > div {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex;
+  background: transparent !important;
+}
+
+::v-deep img,
+::v-deep video,
+::v-deep .webcam-image {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
-  object-position: center bottom !important;
   display: block;
 }
 
@@ -703,7 +772,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   background: rgba(255, 255, 255, 0.4);
 }
 
-.badge { background: rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
+.badge { background: rgba(255,255,255,0.15); color: #ffffff; font-size: 0.65rem; padding: 2px 6px; border-radius: 12px; font-weight: bold; }
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
 
 .overlay-progress-wrapper {
@@ -736,15 +805,15 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .led-off { filter: none; opacity: 0.4; }
 .led-value-badge { min-width: 34px; text-align: right; font-size: 0.75rem; }
 
-.custom-switch ::v-deep .v-input--switch__thumb { color: white !important; }
-.custom-switch ::v-deep .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
+::v-deep .custom-switch .v-input--switch__thumb { color: #ffffff !important; }
+::v-deep .custom-switch .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
 
 .target-input {
   width: 50px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  color: white;
+  color: #ffffff;
   text-align: center;
   outline: none;
   font-size: 0.9rem;
@@ -767,8 +836,8 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .buttons { letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1); }
 .big-btn { height: 56px !important; font-size: 1.1rem !important; }
 
-.white--text   { color: #fff !important; }
+.white--text   { color: #ffffff !important; }
 .h-100         { height: 100% !important; }
 .flex-shrink-0 { flex-shrink: 0 !important; }
 .relative      { position: relative; }
-</style>0
+</style> 
