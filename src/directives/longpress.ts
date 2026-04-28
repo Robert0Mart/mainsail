@@ -1,45 +1,25 @@
-import Vue from 'vue'
+import Vue, { VNode, VNodeDirective } from 'vue'
 
 Vue.directive('longpress', {
-    bind: function (el, binding, vNode) {
-        // Make sure expression provided is a function
+    bind: function (el: HTMLElement, binding: VNodeDirective, vNode: VNode) {
         if (typeof binding.value !== 'function') {
-            // Fetch name of component
             const compName = vNode.context?.$options.name
-            // pass warning to console
             let warn = `[longpress:] provided expression '${binding.expression}' is not a function, but has to be`
-            if (compName) {
-                warn += ` Found in component '${compName}' `
-            }
-
+            if (compName) warn += ` Found in component '${compName}' `
             console.warn(warn)
         }
 
         const debounceTime = Number(binding.arg ?? 1000)
+        let pressTimer: number | null = null
 
-        // Run Function
         const handler = (e: Partial<Touch> & { preventDefault: TouchEvent['preventDefault'] }) => {
             binding.value(e)
         }
 
-        // Define variable
-        let pressTimer: number | null = null
-
-        // Define funtion handlers
-        // Create timeout ( run function after 1s )
-        const before: string | null = null
         const start = (e: TouchEvent) => {
-            if (e.type === 'click') {
-                return
-            }
+            if (e.type === 'click' || (!e.touches || e.touches.length < 1)) return
 
-            if (!e.touches || e.touches.length < 1) {
-                return
-            }
-
-            document
-                .querySelector('body')
-                ?.setAttribute('style', 'user-select: none; -webkit-user-select: none; -moz-user-select: none;')
+            document.querySelector('body')?.setAttribute('style', 'user-select: none; -webkit-user-select: none; -moz-user-select: none;')
 
             setTimeout(() => {
                 document.querySelector('body')?.setAttribute('style', '')
@@ -47,11 +27,11 @@ Vue.directive('longpress', {
 
             if (pressTimer === null) {
                 pressTimer = window.setTimeout(() => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    e.stopImmediatePropagation()
-                    e.cancelBubble = true
-                    // Run function
+                    e.preventDefault();
+                    e.stopPropagation();
+                    (e as Event).stopImmediatePropagation();
+                    (e as any).cancelBubble = true;
+
                     handler({
                         clientX: e.touches[0].clientX,
                         clientY: e.touches[0].clientY,
@@ -71,32 +51,17 @@ Vue.directive('longpress', {
             return false
         }
 
-        // Cancel Timeout
         const cancel = () => {
-            // Check if timer has a value or not
             if (pressTimer !== null) {
                 clearTimeout(pressTimer)
                 pressTimer = null
-                if (before) {
-                    document.querySelector('body')?.setAttribute('style', before)
-                }
-                /*console.log(e.type);
-                if (e.type === "touchend" && vNode.data.on.click) {
-                    vNode.data.on.click();
-                }*/
             }
         }
 
-        // Add Event listeners
-        // el.addEventListener("mousedown", start);
-        el.addEventListener('touchstart', start)
-        // Cancel timeouts if this events happen
-        //el.addEventListener("click", cancel);
-        //el.addEventListener("mouseout", cancel);
-        el.addEventListener('touchmove', cancel)
-        el.addEventListener('touchend', cancel)
-        el.addEventListener('touchcancel', cancel)
-
+        el.addEventListener('touchstart', start as EventListener)
+        el.addEventListener('touchmove', cancel as EventListener)
+        el.addEventListener('touchend', cancel as EventListener)
+        el.addEventListener('touchcancel', cancel as EventListener)
         document.addEventListener('scroll', cancel, { passive: true })
     },
 })

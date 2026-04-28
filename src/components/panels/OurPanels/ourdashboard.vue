@@ -300,7 +300,6 @@ import WebcamMixin from '@/components/mixins/webcam'
 import MiscellaneousSlider from '@/components/inputs/MiscellaneousSlider.vue'
 import MiscellaneousMixin from '@/components/mixins/miscellaneous'
 import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue"
-// A MÁGICA DOS PATHS ABSOLUTOS:
 import MmuClogMeter from '@/components/panels/Mmu/MmuClogMeter.vue' 
 
 interface LedItem {
@@ -623,8 +622,24 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
-/* Short: Aumentada a caixa da câmara e do modo Standby para dar mais espaço (520px) */
-.media-container { width: 100%; min-height: 520px; background: #000; position: relative; display: flex; overflow: hidden; }
+.media-container { 
+  width: 100%; 
+  min-height: 550px;
+  background: #000; 
+  position: relative; 
+  display: flex; 
+  overflow: hidden; 
+}
+
+.media-container ::v-deep img, 
+.media-container ::v-deep video,
+.media-container ::v-deep .webcam-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  display: block;
+}
 
 .absolute-fill-wrapper {
   position: absolute;
@@ -677,7 +692,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   width: 6px;
 }
 .standby-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(221, 221, 221, 0.02);
   border-radius: 4px;
 }
 .standby-content::-webkit-scrollbar-thumb {
@@ -756,4 +771,4 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .h-100         { height: 100% !important; }
 .flex-shrink-0 { flex-shrink: 0 !important; }
 .relative      { position: relative; }
-</style>
+</style>0

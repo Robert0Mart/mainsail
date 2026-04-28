@@ -78,6 +78,8 @@ export interface ServerHistoryStateAllPrintStatusEntry {
     displayName: string
     value: number
     showInTable: boolean
+    valueFilament?: number  // Add this line
+    valueTime?: number      // Add this line
     itemStyle: {
         opacity: number
         color: string

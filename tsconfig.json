@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "ignoreDeprecations": "6.0",
         "target": "es2020",
         "module": "esnext",
         "strict": true,
@@ -13,21 +14,29 @@
         "sourceMap": true,
         "skipLibCheck": true,
         "baseUrl": ".",
-        "types": ["cypress", "vite/client"],
+        "types": [
+            "node", 
+            "vite/client"
+            // "cypress" and "mocha" removed from here to stop the "Cannot find type definition" error
+        ],
         "paths": {
             "@/*": ["src/*"]
         },
         "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-        "typeRoots": ["./node_modules/@types", "./node_modules/cypress/types", "./node_modules/vuetify/types"]
+        "typeRoots": [
+            "./node_modules/@types", 
+            "./node_modules/vuetify/types"
+        ]
     },
     "include": [
         "vite.config.ts",
         "src/types/*.d.ts",
         "components.d.ts",
         "src/main.ts",
-        "src/*/*.ts",
+        "src/**/*.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
+        // Keep these included so the files are still recognized as TS
         "cypress/**/*.ts",
         "tests/**/*.ts",
         "tests/**/*.tsx",

@@ -19,7 +19,6 @@ export default class HistoryStatsMixin extends Mixins(HistoryMixin) {
             cancelled: '#616161',
             default: '#424242',
         }
-
         return colorMap[status] ?? colorMap.default
     }
 
@@ -57,23 +56,20 @@ export default class HistoryStatsMixin extends Mixins(HistoryMixin) {
                 borderRadius: 3,
             },
             showInTable: true,
-        })
+        } as ServerHistoryStateAllPrintStatusEntry)
 
         return remaining
     }
 
     get allPrintStati() {
         let array = this.allJobs.map((job: ServerHistoryStateJob) => job.status)
-
         array = array.filter((item: string, index: number) => array.indexOf(item) === index)
-
         return array
     }
 
     get printStatusArray(): ServerHistoryStateAllPrintStatusEntry[] {
         return this.allPrintStati.map((status: string) => {
             const filterdJobs = this.allJobs.filter((job: ServerHistoryStateJob) => job.status === status)
-
             return {
                 name: status,
                 displayName: this.getLocalizedStatusName(status),
@@ -86,49 +82,30 @@ export default class HistoryStatsMixin extends Mixins(HistoryMixin) {
                     borderWidth: 2,
                     borderRadius: 3,
                 },
-            }
+            } as ServerHistoryStateAllPrintStatusEntry
         })
     }
 
     get printStatusArrayChart() {
+        const jobs = (this as any).selectedJobs?.length ? (this as any).selectedJobs : (this as any).jobs
         if (this.valueName === 'filament') {
-            const jobs = this.selectedJobs.length ? this.selectedJobs : this.jobs
-
             return this.printStatusArray
                 .map((entry) => {
-                    const value = jobs.reduce(
-                        (acc: number, cur: ServerHistoryStateJob) =>
-                            cur.status === entry.name ? acc + cur.filament_used : acc,
-                        0
-                    )
-
-                    return {
-                        ...entry,
-                        value,
-                    }
+                    const value = jobs.reduce((acc: number, cur: ServerHistoryStateJob) =>
+                        cur.status === entry.name ? acc + cur.filament_used : acc, 0)
+                    return { ...entry, value }
                 })
                 .filter((entry) => entry.value > 0)
         }
-
         if (this.valueName === 'time') {
-            const jobs = this.selectedJobs.length ? this.selectedJobs : this.jobs
-
             return this.printStatusArray
                 .map((entry) => {
-                    const value = jobs.reduce(
-                        (acc: number, cur: ServerHistoryStateJob) =>
-                            cur.status === entry.name ? acc + cur.total_duration : acc,
-                        0
-                    )
-
-                    return {
-                        ...entry,
-                        value,
-                    }
+                    const value = jobs.reduce((acc: number, cur: ServerHistoryStateJob) =>
+                        cur.status === entry.name ? acc + cur.total_duration : acc, 0)
+                    return { ...entry, value }
                 })
                 .filter((entry) => entry.value > 0)
         }
-
         return this.printStatusArray
     }
 

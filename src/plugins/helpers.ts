@@ -170,8 +170,7 @@ export const sortFiles = (items: FileStateFile[] | null, sortBy: string[], sortD
             if (b[sortBySingle] === null || b[sortBySingle] === undefined) return 1
 
             if (a[sortBySingle].constructor === String && b[sortBySingle].constructor === String) {
-                return a[sortBySingle].localeCompare(b[sortBySingle], undefined, { sensivity: 'base' })
-            }
+return String(a[sortBySingle]).localeCompare(String(b[sortBySingle]), undefined, { sensitivity: 'base' })            }
 
             if (a[sortBySingle] instanceof Array && b[sortBySingle] instanceof Array) {
                 const reducedA = a[sortBySingle].length ? a.filament.reduce((a: any, b: any) => a + b) : 0
