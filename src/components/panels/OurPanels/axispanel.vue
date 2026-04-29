@@ -123,7 +123,7 @@
                   </v-btn>
                   <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1" height="60" depressed
                     @click="doSend('MACRO_1')">
-                    <img src="/img/icons/blocks_icons/z_tiltsvg.svg" width="25" height="25" class="mr-2" />
+                    <!--<img src="/img/icons/blocks_icons/z_tiltsvg.svg" width="25" height="25" class="mr-2" />--> 
                     Z TILT
                   </v-btn>
                 </div>
