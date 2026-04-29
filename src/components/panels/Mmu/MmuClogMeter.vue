@@ -100,24 +100,51 @@ export default class MmuClogMeter extends Mixins(BaseMixin, MmuMixin) {
     X1_END = 70 + 63 * Math.cos((60 * Math.PI) / 180)
     Y1_END = 70 + 63 * Math.sin((60 * Math.PI) / 180)
 
+    // VARIÁVEIS PARA LIGAÇÃO DIRETA
+    localEncoderData: any = null;
+    pollingInterval: any = null;
+
+    mounted() {
+        this.fetchEncoderData();
+        // Vai buscar info à impressora real a cada 2 segundos
+        this.pollingInterval = setInterval(this.fetchEncoderData, 2000);
+    }
+
+    beforeDestroy() {
+        if (this.pollingInterval) clearInterval(this.pollingInterval);
+    }
+
+    async fetchEncoderData() {
+        try {
+            // Pede ao Moonraker o estado exato do mmu_encoder
+            const res = await fetch('http://192.168.1.112/printer/objects/query?mmu_encoder');
+            const data = await res.json();
+            if (data && data.result && data.result.status && data.result.status.mmu_encoder) {
+                this.localEncoderData = data.result.status.mmu_encoder;
+            }
+        } catch (e) {
+            // Ignora silenciosamente se houver falha de rede
+        }
+    }
+
     get encoderDesiredHeadroom() {
-        return this.mmuEncoder?.desired_headroom ?? 0
+        return this.localEncoderData?.desired_headroom ?? this.mmuEncoder?.desired_headroom ?? 0
     }
 
     get encoderDetectionLength() {
-        return this.mmuEncoder?.detection_length ?? 0
+        return this.localEncoderData?.detection_length ?? this.mmuEncoder?.detection_length ?? 0
     }
 
     get encoderDetectionMode() {
-        return this.mmuEncoder?.detection_mode ?? DIRECTION_UNKNOWN
+        return this.localEncoderData?.detection_mode ?? this.mmuEncoder?.detection_mode ?? DIRECTION_UNKNOWN
     }
 
     get encoderEnabled() {
-        return this.mmuEncoder?.enabled ?? false
+        return this.localEncoderData?.enabled ?? this.mmuEncoder?.enabled ?? false
     }
 
     get encoderFlowRate() {
-        return this.mmuEncoder?.flow_rate ?? 0
+        return this.localEncoderData?.flow_rate ?? this.mmuEncoder?.flow_rate ?? 0
     }
 
     get svgClasses() {
@@ -125,11 +152,11 @@ export default class MmuClogMeter extends Mixins(BaseMixin, MmuMixin) {
     }
 
     get headroom() {
-        return this.mmuEncoder?.headroom ?? 0
+        return this.localEncoderData?.headroom ?? this.mmuEncoder?.headroom ?? 0
     }
 
     get headroomMin() {
-        return this.mmuEncoder?.min_headroom ?? 0
+        return this.localEncoderData?.min_headroom ?? this.mmuEncoder?.min_headroom ?? 0
     }
 
     get headroomWarning() {
