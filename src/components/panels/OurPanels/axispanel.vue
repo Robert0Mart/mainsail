@@ -1,74 +1,95 @@
 <template>
   <panel title="Machine Control & Tools" icon="mdi-tools" card-class="blocks-axis-panel" center-title>
-    <div class="pa-4">
-      <v-row align="stretch" justify="center">
+    <div class="pa-4" style="max-height: 75vh; overflow: hidden;">
+      <v-row align="stretch" justify="center" style="max-height: 75vh;">
 
         <v-col cols="12" lg="6" xl="6" class="d-flex flex-column mb-4 px-3">
           <div class="dark-wrapper d-flex flex-column w-100 h-100" style="gap: 15px;">
 
-            <div class="d-flex flex-column flex-xl-row align-stretch w-100 flex-grow-0" style="gap: 15px;">
-              
+            <div class="d-flex flex-column flex-xl-row align-stretch w-100 flex-grow-1" style="gap: 15px;">
+
               <div class="d-flex flex-column flex-sm-row w-100" style="flex: 1.2; gap: 15px;">
-                <div class="dark-wrapper d-flex flex-column align-center justify-center pa-3 w-100"
-                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                  <v-icon small color="grey lighten-1" class="mb-1">mdi-speedometer</v-icon>
-                  <span class="micro-label mb-2" style="font-size: 0.65rem; text-align: center;">SPEED</span>
-                  <div class="slider-fill">
+                <div class="dark-wrapper d-flex flex-column align-center pa-3 w-100"
+                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; min-height: 260px;">
+                  <div class="d-flex flex-column align-center mb-2">
+                    <img src="/img/icons/blocks_icons/nozzlesvg.svg" width="32" height="32" class="mb-1" />
+                    <span class="micro-label" style="font-size: 0.85rem; font-weight: bold; text-align: center;">SPEED
+                      FACTOR</span>
+                  </div>
+
+                  <div class="slider-fill flex-grow-1 d-flex justify-center w-100 py-2">
                     <v-slider v-model="speedFactor" min="1" max="200" vertical hide-details color="blue"
                       @change="updateSpeedFactor" />
                   </div>
-                  <v-text-field v-model.number="speedFactor" type="number" dense outlined hide-details
-                    class="sleek-input slider-number-input mt-3" style="max-width: 80px;" @change="updateSpeedFactor" />
+
+                  <v-text-field v-model.number="speedFactor" type="number" dense outlined hide-details suffix="%"
+                    class="sleek-input slider-number-input mt-2" style="max-width: 90px;" @change="updateSpeedFactor" />
                 </div>
-                <div class="dark-wrapper d-flex flex-column align-center justify-center pa-3 w-100"
-                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                  <v-icon small color="grey lighten-1" class="mb-1">mdi-printer-3d-nozzle</v-icon>
-                  <span class="micro-label mb-2" style="font-size: 0.65rem; text-align: center;">EXTRUDER</span>
-                  <div class="slider-fill">
+
+                <div class="dark-wrapper d-flex flex-column align-center pa-3 w-100"
+                  style="flex: 1; background: rgba(0,0,0,0.2); border-radius: 8px; min-height: 220px;">
+                  <div class="d-flex flex-column align-center mb-2">
+                    <img src="/img/icons/blocks_icons/extrudesvg.svg" width="32" height="32" class="mb-1" />
+                    <span class="micro-label"
+                      style="font-size: 0.85rem; font-weight: bold; text-align: center;">EXTRUDER FACTOR</span>
+                  </div>
+
+                  <div class="slider-fill flex-grow-1 d-flex justify-center w-100 py-2">
                     <v-slider v-model="extrusionFactor" min="1" max="200" vertical hide-details color="blue"
                       @change="updateExtrusionFactor" />
                   </div>
-                  <v-text-field v-model.number="extrusionFactor" type="number" dense outlined hide-details
-                    class="sleek-input slider-number-input mt-3" style="max-width: 80px;"
+
+                  <v-text-field v-model.number="extrusionFactor" type="number" dense outlined hide-details suffix="%"
+                    class="sleek-input slider-number-input mt-2" style="max-width: 90px;"
                     @change="updateExtrusionFactor" />
                 </div>
               </div>
 
-              <div class="control-module z-offset-box d-flex flex-column align-center justify-center px-4 py-6 w-100" style="flex: 0.8; min-width: 100px;">
+              <div
+                class="control-module z-offset-box d-flex flex-column align-center justify-space-between px-4 py-6 w-100 h-100"
+                style="flex: 0.8; min-width: 100px;">
                 <span class="section-title mb-4">Z-OFFSET</span>
-                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.25)">0.25</v-btn>
-                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.05)">0.05</v-btn>
-                <v-btn class="unified-btn mb-1 w-100" depressed @click="adjustZOffset(0.01)">0.01</v-btn>
-                <v-btn class="unified-btn mb-4 w-100" depressed @click="adjustZOffset(0.005)">0.005</v-btn>
-                <div class="z-value-glow my-2">{{ zOffsetLocal.toFixed(3) }}</div>
-                <v-btn class="unified-btn mb-2 w-100" depressed icon @click="adjustZOffset(0.1)">
-                  <img src="/img/icons/blocks_icons/afastar_aproximar_aproximar.svg" width="24" height="24" />
+                <v-btn class="unified-btn mb-3 w-100" depressed @click="adjustZOffset(0.25)">0.100</v-btn>
+                <v-btn class="unified-btn mb-3 w-100" depressed @click="adjustZOffset(0.05)">0.050</v-btn>
+                <v-btn class="unified-btn mb-3 w-100" depressed @click="adjustZOffset(0.01)">0.025</v-btn>
+                <v-btn class="unified-btn mb-4 w-100" depressed @click="adjustZOffset(0.005)">0.010</v-btn>
+                <div class="z-value-glow my-4">{{ zOffsetLocal.toFixed(3) }}</div>
+
+                <v-btn class="unified-btn mb-3 w-100" depressed icon @click="adjustZOffset(0.1)">
+                  <img src="/img/icons/blocks_icons/afastar_aproximar_aproximar.svg" width="30" height="30" />
                 </v-btn>
-                <v-btn class="unified-btn w-100" depressed icon @click="adjustZOffset(-0.1)">
-                  <img src="/img/icons/blocks_icons/afastar_aproximar_afastar.svg" width="24" height="24" />
+                <v-btn class="unified-btn mb-3 w-100" depressed icon @click="adjustZOffset(-0.1)">
+                  <img src="/img/icons/blocks_icons/afastar_aproximar_afastar.svg" width="30" height="30" />
                 </v-btn>
               </div>
 
-              <div class="control-module d-flex flex-nowrap justify-space-between px-4 py-6 w-100" style="flex: 2.5; gap: 8px; min-width: 240px;">
-                <div v-for="axis in ['X', 'Y', 'Z', 'E/R']" :key="axis" class="axis-col d-flex flex-column align-center justify-center" style="flex: 1;">
-                  
-                  <div v-if="axis === 'E/R'" class="font-weight-black mb-1 text-center" style="font-size: 0.55rem; color: #4caf50; letter-spacing: 0.5px; line-height: 1;">EXTRUDE</div>
+              <div class="control-module d-flex flex-nowrap justify-space-between px-4 py-6 w-100"
+                style="flex: 2.5; gap: 8px; min-width: 240px;">
+                <div v-for="axis in ['X', 'Y', 'Z', 'Ext']" :key="axis"
+                  class="axis-col d-flex flex-column align-center justify-space-between" style="flex: 1;">
+                  <div v-if="axis === 'Ext'" class="font-weight-black mb-1 text-center"
+                    style="font-size: 0.55rem; color: #4caf50; letter-spacing: 0.5px; line-height: 1;">EXTRUDE</div>
                   <div v-else style="height: 12px; margin-bottom: 4px;"></div>
 
                   <template v-if="axis === 'Z'">
-                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 25)">+25</v-btn>
-                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', 1)">+1</v-btn>
-                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis('Z', 25)">+25</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis('Z', 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-5 w-100" depressed @click="moveAxis('Z', 0.1)">+0.1</v-btn>
                   </template>
                   <template v-else>
-                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 100)">+100</v-btn>
-                    <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis(axis, 10)">+10</v-btn>
-                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis(axis, 1)">+1</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis(axis, 100)">+100</v-btn>
+                    <v-btn class="unified-btn mb-3 w-100" depressed @click="moveAxis(axis, 10)">+10</v-btn>
+                    <v-btn class="unified-btn mb-5 w-100" depressed @click="moveAxis(axis, 1)">+1</v-btn>
                   </template>
-                  
+
                   <v-btn height="36" width="100%" :color="axisColor(axis)"
-                    class="my-2 elevation-3 font-weight-bold rounded-lg label-btn" @click="homeAxis(axis)">{{ axis }}</v-btn>
-                    
+                    class="my-2 elevation-3 font-weight-bold rounded-lg label-btn" @click="homeAxis(axis)">
+                    <img v-if="axis === 'X'" src="/img/icons/blocks_icons/home_xsvg.svg" width="22" height="22" />
+                    <img v-else-if="axis === 'Y'" src="/img/icons/blocks_icons/home_ysvg.svg" width="22" height="22" />
+                    <img v-else-if="axis === 'Z'" src="/img/icons/blocks_icons/home_zsvg.svg" width="22" height="22" />
+                    <span v-else>{{ axis }}</span>
+                  </v-btn>
+
                   <template v-if="axis === 'Z'">
                     <v-btn class="unified-btn mb-2 mt-3 w-100" depressed @click="moveAxis('Z', -0.1)">-0.1</v-btn>
                     <v-btn class="unified-btn mb-2 w-100" depressed @click="moveAxis('Z', -1)">-1</v-btn>
@@ -80,125 +101,130 @@
                     <v-btn class="unified-btn w-100" depressed @click="moveAxis(axis, -100)">-100</v-btn>
                   </template>
 
-                  <div v-if="axis === 'E/R'" class="font-weight-black mt-2 text-center" style="font-size: 0.55rem; color: #ff5252; letter-spacing: 0.5px; line-height: 1;">RETRACT</div>
+                  <div v-if="axis === 'Ext'" class="font-weight-black mt-2 text-center"
+                    style="font-size: 0.55rem; color: #ff5252; letter-spacing: 0.5px; line-height: 1;">RETRACT</div>
                   <div v-else style="height: 12px; margin-top: 8px;"></div>
-
                 </div>
               </div>
             </div>
-
-            <div class="flex-grow-1"></div>
-
             <v-row dense class="flex-grow-0" align="stretch">
-
-              <v-col cols="12" xl="7" class="d-flex px-2 px-xl-0 pr-xl-2 mb-4 mb-xl-0">
-                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
-                  style="background: rgba(0,0,0,0.25); border-radius: 8px;">
-
-                  <v-row dense>
-                    <v-col cols="12" sm="6" class="d-flex flex-column mb-2 mb-sm-0" style="gap: 4px;">
-                      <span class="micro-label">PRESSURE ADVANCE</span>
-                      <v-text-field v-model="pressureAdvance" type="number" dense outlined hide-details suffix="s"
-                        class="sleek-input" @change="updatePressureAdvance" />
-                    </v-col>
-                    <v-col cols="12" sm="6" class="d-flex flex-column" style="gap: 4px;">
-                      <span class="micro-label">SMOOTH TIME</span>
-                      <v-text-field v-model="smoothTime" type="number" dense outlined hide-details suffix="s"
-                        class="sleek-input" @change="updatePressureAdvance" />
-                    </v-col>
-                  </v-row>
-
+              <v-col cols="12" class="d-flex px-2">
+                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-row justify-center align-center"
+                  style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: 12px;">
+                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1" height="60" depressed
+                    @click="doSend('G28')">
+                    <img src="/img/icons/blocks_icons/home_allsvg.svg" width="24" height="24" class="mr-2" />
+                    HOME ALL
+                  </v-btn>
+                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1" height="60" depressed
+                    @click="doSend('M84')">
+                    <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" width="24" height="24" class="mr-2" />
+                    MOTORS OFF
+                  </v-btn>
+                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1" height="60" depressed
+                    @click="doSend('MACRO_1')">
+                    <img src="/img/icons/blocks_icons/z_tiltsvg.svg" width="25" height="25" class="mr-2" />
+                    Z TILT
+                  </v-btn>
                 </div>
               </v-col>
-
-              <v-col cols="12" xl="5" class="d-flex px-2 px-xl-0 pl-xl-2">
-                <div class="dark-wrapper pa-3 w-100 h-100 d-flex flex-column justify-center"
-                  style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: 8px;">
-                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('G28')">HOME ALL</v-btn>
-                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('M84')">MOTORS OFF</v-btn>
-                  <v-btn class="bottom-action-btn font-weight-bold rounded-lg" height="34" depressed
-                    @click="doSend('MACRO_1')">Z TILT</v-btn>
-                </div>
-              </v-col>
-
             </v-row>
           </div>
         </v-col>
 
         <v-col cols="12" lg="6" xl="6" class="d-flex flex-column mb-4 px-3">
-          <div class="control-module pa-6 d-flex flex-column h-100 w-100" style="gap: 15px;">
-            <div class="dark-wrapper pa-4 d-flex flex-column w-100 overflow-y-auto"
-              style="background: rgba(0,0,0,0.2); border-radius: 8px; flex-grow: 1; min-height: 0;">
+          <div class="dark-wrapper pa-2 d-flex flex-column w-100 h-100"
+            style="background: rgba(0,0,0,0.2); border-radius: 8px; gap: 15px;">
 
-              <div class="d-flex flex-row flex-wrap justify-center mb-6" style="gap: 12px; width: 100%;">
+            <div class="dark-wrapper pa-4" style="background: rgba(0,0,0,0.2); border-radius: 8px;">
+              <div class="d-flex flex-row flex-wrap justify-center" style="gap: 12px; width: 100%;">
                 <v-col v-for="n in activeGateCount" :key="`gate-icon-${n}`" cols="auto"
-                  class="d-flex flex-column align-center px-1">
-                  <span class="gate-label mb-1">Gate {{ n - 1 }}</span>
+                  class="d-flex flex-column align-center px-2">
+                  <span class="gate-label mb-2">Gate {{ n - 1 }}</span>
                   <div class="gate-img-wrapper mb-2" :class="{ 'active-gate': n - 1 === selectedGate }"
-                    @click="selectedGate = n - 1" style="display: flex; align-items: center; justify-content: center;">
-                    <img src="/img/icons/blocks_icons/spool-full.svg" width="80" height="80" class="gate-icon" />
+                    @click="selectedGate = n - 1"
+                    style="display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <img src="/img/icons/blocks_icons/AMU spoll 1svg.svg" width="56" height="56" class="gate-icon" />
                   </div>
                   <div class="gate-filament-status"
                     :style="{ backgroundColor: getGateColor(n - 1), width: '100%', height: '8px', borderRadius: '4px', opacity: n - 1 === selectedGate ? 1 : 0.4 }">
                   </div>
                 </v-col>
               </div>
+            </div>
 
-              <div v-if="gates.length > 0" class="d-flex flex-column flex-xl-row align-center w-100" style="gap: 15px; flex-grow: 1;">
-                
-                <div class="d-flex justify-center mmu-graph-area w-100" style="flex: 1 1 auto; min-height: 350px; height: auto;">
+            <div v-if="gates.length > 0" class="d-flex flex-column flex-xl-row align-stretch w-100 flex-grow-1"
+              style="gap: 15px;">
+              <div class="dark-wrapper pa-2 d-flex flex-column justify-center align-center"
+                style="flex: 1.5; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                <div class="mmu-graph-area w-100 d-flex justify-center" style="height: 400px;">
                   <mmu-filament-status />
                 </div>
+              </div>
 
-                <div class="d-flex flex-column justify-center w-100" style="flex: 1; gap: 20px; min-width: 160px; max-width: 100%;">
-
-                  <div class="d-flex flex-column w-100" style="gap: 12px;">
-                    <div class="d-flex justify-space-between align-center">
-                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Slot</span>
-                      <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;">{{ selectedGate }}</span>
-                    </div>
-
-                    <div class="d-flex justify-space-between align-center">
-                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Status</span>
-                      <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;"
-                        :style="{ color: gates[selectedGate] && (gates[selectedGate].status === 'Ready' || gates[selectedGate].status === 'Buffered') ? '#4caf50' : '#ff5252' }">
-                        {{ gates[selectedGate] ? gates[selectedGate].status : '--' }}
-                      </span>
-                    </div>
-
-                    <div class="d-flex justify-space-between align-center">
-                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Color</span>
-                      <div
-                        :style="{ backgroundColor: gates[selectedGate] ? gates[selectedGate].color : '#333', width: '14px', height: '14px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.4)' }">
-                      </div>
-                    </div>
-
-                    <div class="d-flex justify-space-between align-center">
-                      <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Material</span>
-                      <span class="gate-data-val font-weight-black" style="font-size: 1.1rem;">
-                        {{ gates[selectedGate] ? gates[selectedGate].material : '--' }}
-                      </span>
+              <div class="d-flex flex-column" style="flex: 1; gap: 15px;">
+                <div class="dark-wrapper pa-4 d-flex flex-column"
+                  style="background: rgba(0,0,0,0.2); border-radius: 8px; gap: 12px;">
+                  <div class="d-flex justify-space-between align-center">
+                    <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Slot</span>
+                    <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;">{{ selectedGate }}</span>
+                  </div>
+                  <div class="d-flex justify-space-between align-center">
+                    <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Status</span>
+                    <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;"
+                      :style="{ color: gates[selectedGate] && (gates[selectedGate].status === 'Ready' || gates[selectedGate].status === 'Buffered') ? '#4caf50' : '#ff5252' }">
+                      {{ gates[selectedGate] ? gates[selectedGate].status : '--' }}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-space-between align-center">
+                    <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Color</span>
+                    <div
+                      :style="{ backgroundColor: gates[selectedGate] ? gates[selectedGate].color : '#333', width: '18px', height: '18px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.4)' }">
                     </div>
                   </div>
-
-                  <div class="d-flex flex-column w-100" style="gap: 8px;">
-                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed
-                      @click="doSend('LOAD_FILAMENT')">LOAD</v-btn>
-                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed
-                      @click="doSend('UNLOAD_FILAMENT')">UNLOAD</v-btn>
-                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed
-                      @click="doSend('EJECT')">EJECT</v-btn>
-                    <v-btn small class="font-weight-black rounded-lg" color="black" height="35" depressed
-                      @click="doSend('CHECK_GATES')">CHECK GATES</v-btn>
+                  <div class="d-flex justify-space-between align-center">
+                    <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Material</span>
+                    <span class="gate-data-val font-weight-black" style="font-size: 1.1rem;">
+                      {{ gates[selectedGate] ? gates[selectedGate].material : '--' }}
+                    </span>
                   </div>
+                </div>
+
+                <div class="dark-wrapper pa-4 d-flex flex-column flex-grow-1"
+                  style="background: rgba(0,0,0,0.2); border-radius: 8px; gap: 8px;">
+                  <v-btn small class="font-weight-black rounded-lg mmu-action-btn" color="black" height="45" depressed
+                    @click="doSend('LOAD_FILAMENT')">
+                    <span class="btn-inner">
+                      <img src="/img/icons/blocks_icons/load_filamentsvg.svg" width="25" />
+                      <span>LOAD</span>
+                    </span>
+                  </v-btn>
+                  <v-btn small class="font-weight-black rounded-lg mmu-action-btn" color="black" height="45" depressed
+                    @click="doSend('UNLOAD_FILAMENT')">
+                    <span class="btn-inner">
+                      <img src="/img/icons/blocks_icons/change_filamentsvg.svg" width="25" />
+                      <span>UNLOAD</span>
+                    </span>
+                  </v-btn>
+                  <v-btn small class="font-weight-black rounded-lg mmu-action-btn" color="black" height="45"
+                    depressed @click="doSend('EJECT')">
+                    <span class="btn-inner">
+                      <img src="/img/icons/blocks_icons/ejectsvg.svg" width="25" />
+                      <span>EJECT</span>
+                    </span>
+                  </v-btn>
+                  <v-btn small class="font-weight-black rounded-lg mmu-action-btn" color="black" height="45" depressed
+                    @click="doSend('CHECK_GATES')">
+                    <span class="btn-inner">
+                      <img src="/img/icons/blocks_icons/routine_checksvg.svg" width="25" />
+                      <span>CHECK GATES</span>
+                    </span>
+                  </v-btn>
                 </div>
               </div>
             </div>
           </div>
         </v-col>
-
       </v-row>
     </div>
   </panel>
@@ -244,7 +270,7 @@ export default class AxisPanel extends Mixins(MmuMixin) {
       return {
         status: statusMap[rawStatus] || 'Unknown',
         material: mmu.gate_material?.[index] || '--',
-        color: this.formColorString(mmu.gate_color?.[index]) 
+        color: this.formColorString(mmu.gate_color?.[index])
       }
     })
   }
@@ -259,7 +285,7 @@ export default class AxisPanel extends Mixins(MmuMixin) {
   }
 
   axisColor(axis: string) {
-    const colors: Record<string, string> = { X: '#ff5252', Y: '#4caf50', Z: '#2196f3', 'E/R': '#ff9800' }
+    const colors: Record<string, string> = { X: '#ff5252', Y: '#4caf50', Z: '#2196f3', 'Ext': '#ff9800' }
     return colors[axis] || '#fff'
   }
 
@@ -399,7 +425,7 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 
 .slider-fill {
   width: 100%;
-  height: 160px; 
+  height: 160px;
   display: flex;
   justify-content: center;
   flex: 0 0 auto;
@@ -474,5 +500,25 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 .mmu-graph-area :deep(.status-text) {
   font-size: 14px !important;
   font-weight: 800 !important;
+}
+
+.mmu-graph-area :deep(svg) {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.mmu-action-btn {
+  width: 100% !important;
+}
+
+.mmu-action-btn .btn-inner {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  width: 100%;
+}
+
+.mmu-action-btn .btn-inner span {
+  text-align: center;
 }
 </style>
