@@ -132,7 +132,7 @@
                 <span class="white--text font-weight-bold" style="font-size: 0.75rem;">{{ displayProgress }}%</span>
               </v-progress-circular>
               
-              <div class="d-flex flex-column overflow-hidden mr-2" style="min-width: 100px; max-width: 220px;">
+              <div class="d-flex flex-column overflow-hidden mr-4" style="min-width: 100px; max-width: 250px;">
                 <span class="white--text font-weight-bold text-uppercase primary--text" style="letter-spacing: 1px; font-size: 0.8rem;">
                   {{ isStandby ? 'Standby' : (isPrinting ? 'Printing' : 'Paused') }}
                 </span>
@@ -141,24 +141,24 @@
                 </span>
               </div>
 
-              <v-divider vertical class="mx-3" style="height: 35px; opacity: 0.2;" v-if="!isStandby"></v-divider>
+              <v-divider vertical class="mx-2" style="height: 35px; opacity: 0.2;" v-if="!isStandby"></v-divider>
               
-              <div v-if="!isStandby" class="d-flex align-center flex-grow-1 justify-space-around px-1 text-center overflow-hidden">
-                <div class="d-flex flex-column mx-1">
+              <div v-if="!isStandby" class="d-flex align-center flex-grow-1 justify-space-around px-2 text-center overflow-hidden">
+                <div class="d-flex flex-column">
                   <span class="white--text" style="font-size: 0.6rem; opacity: 0.5; font-weight: bold;">ESTIMATE</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.9rem;">{{ printEstimate }}</span>
+                  <span class="white--text font-weight-bold" style="font-size: 0.85rem;">{{ printEstimate }}</span>
                 </div>
-                <div class="d-flex flex-column mx-1">
+                <div class="d-flex flex-column">
                   <span class="white--text" style="font-size: 0.6rem; opacity: 0.5; font-weight: bold;">SLICER EST.</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.9rem;">{{ slicerEstimatedTime }}</span>
+                  <span class="white--text font-weight-bold" style="font-size: 0.85rem;">{{ slicerEstimatedTime }}</span>
                 </div>
-                <div class="d-flex flex-column mx-1">
+                <div class="d-flex flex-column">
                   <span class="white--text" style="font-size: 0.6rem; opacity: 0.5; font-weight: bold;">TOTAL</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.9rem;">{{ totalTime }}</span>
+                  <span class="white--text font-weight-bold" style="font-size: 0.85rem;">{{ totalTime }}</span>
                 </div>
-                <div class="d-flex flex-column mx-1">
+                <div class="d-flex flex-column">
                   <span class="white--text" style="font-size: 0.6rem; opacity: 0.5; font-weight: bold;">ETA</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.9rem;">{{ etaTime }}</span>
+                  <span class="white--text font-weight-bold" style="font-size: 0.85rem;">{{ etaTime }}</span>
                 </div>
               </div>
             </div>
@@ -290,7 +290,7 @@
             </div>
 
             <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2 flex-shrink-0" style="height: auto;">
-              <mmu-clog-meter style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
+              <mmu-clog-meter :mmu-encoder="mmuEncoderData" style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
               <span class="white--text font-weight-regular text-body-1" style="opacity: 0.7;">Clog/Tangle Detection</span>
             </div>
 
@@ -329,6 +329,9 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
   historyJobs: any[] = [];
   fetchedMoonrakerFiles: any[] = [];
 
+  mmuEncoderData: any = null;
+  mmuInterval: any = null;
+
   ledItems: LedItem[] = [
     { name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true },
   ];
@@ -338,10 +341,26 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
       this.isAdvancedMode = value;
     });
     this.fetchMoonrakerData();
+    
+    this.fetchMmuStatus();
+    this.mmuInterval = setInterval(this.fetchMmuStatus, 2000);
   }
 
   beforeDestroy() {
     this.$root.$off('advancedModeChanged');
+    if (this.mmuInterval) clearInterval(this.mmuInterval);
+  }
+
+  async fetchMmuStatus() {
+    try {
+      const res = await fetch('http://192.168.1.120/printer/objects/query?mmu_encoder');
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.result?.status?.mmu_encoder) {
+          this.mmuEncoderData = data.result.status.mmu_encoder;
+        }
+      }
+    } catch (e) {}
   }
 
   async fetchMoonrakerData() {
@@ -723,14 +742,12 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 
 <style scoped>
 .inner-rounded, .stat-card, .temp-card, .fans-vertical-wrapper,
-.clean-tabs-wrapper, .file-info-panel, .standby-wrapper {
+.clean-tabs-wrapper, .standby-wrapper {
   border-radius: calc(var(--master-radius, 15px) - 6px) !important;
 }
-.media-container {
-  border-radius: var(--master-radius, 15px) !important;
-}
+
 .stat-card, .temp-card, .fans-vertical-wrapper, .clean-tabs-wrapper,
-.file-info-panel, .standby-wrapper {
+.standby-wrapper {
   background: var(--master-inner-bg, rgba(255,255,255,0.05)) !important;
 }
 
@@ -743,39 +760,32 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
-/* AJUSTE CÂMARA: Mudado para Flex para garantir que o componente filho estica e mostra imagem */
 .media-container {
   width: 100%;
-  flex: 1 1 0; 
-  min-height: 560px;
-  max-height: 60vh; 
+  flex: 1 1 auto;
+  min-height: 450px;
   background: #000000;
   position: relative;
-  display: flex; 
-  align-items: center;
-  justify-content: center;
+  display: flex;
   overflow: hidden;
+  border-radius: var(--master-radius, 15px) !important;
 }
 
-/* Garante que o wrapper da webcam ocupa o espaço todo */
-::v-deep .webcam-hero {
+::v-deep .webcam-wrapper,
+::v-deep .webcam-wrapper > div {
   width: 100% !important;
   height: 100% !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
+  display: flex;
+  background: transparent !important;
 }
 
-::v-deep .webcam-hero img,
-::v-deep .webcam-hero video,
-::v-deep .webcam-hero canvas,
-::v-deep .webcam-hero .webcam-image {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  width: auto !important;
-  height: auto !important;
-  object-fit: contain !important; 
-  display: block !important;
+::v-deep .webcam-wrapper img,
+::v-deep .webcam-wrapper video,
+::v-deep .webcam-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block;
 }
 
 .absolute-fill-wrapper {
