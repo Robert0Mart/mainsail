@@ -320,7 +320,7 @@ interface LedItem {
 }
 
 @Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuClogMeter } })
-export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
+export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
   isLive = true;
   showThumbnailView = false;
   standbyTab = 0;
@@ -763,12 +763,25 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 .media-container {
   width: 100%;
   flex: 1 1 auto;
-  min-height: 450px;
+  min-height: 250px; 
   background: #000000;
   position: relative;
   display: flex;
   overflow: hidden;
   border-radius: var(--master-radius, 15px) !important;
+}
+
+@media (min-width: 600px) {
+  .media-container {
+    min-height: 350px;
+  }
+}
+
+@media (min-width: 960px) {
+  .media-container {
+    min-height: 450px;
+    max-height: 60vh;
+  }
 }
 
 ::v-deep .webcam-wrapper,
@@ -784,7 +797,7 @@ export default class OurDashboardPanel extends Mixins(BaseMixin, AfcMixin, Webca
 ::v-deep .webcam-image {
   width: 100% !important;
   height: 100% !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   display: block;
 }
 
