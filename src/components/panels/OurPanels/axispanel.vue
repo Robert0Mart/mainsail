@@ -130,11 +130,11 @@
 
                     <v-btn height="40" width="100%" :color="axisColor(axis)"
                       class="my-1 elevation-3 font-weight-bold rounded-lg label-btn px-0" @click="homeAxis(axis)">
-                      <img v-if="axis === 'X'" src="/img/icons/blocks_icons/home_xsvg.svg" width="20" height="20" />
-                      <img v-else-if="axis === 'Y'" src="/img/icons/blocks_icons/home_ysvg.svg" width="20"
-                        height="20" />
-                      <img v-else-if="axis === 'Z'" src="/img/icons/blocks_icons/home_zsvg.svg" width="20"
-                        height="20" />
+                      <img v-if="axis === 'X'" src="/img/icons/blocks_icons/home_xsvg.svg" width="30" height="30" />
+                      <img v-else-if="axis === 'Y'" src="/img/icons/blocks_icons/home_ysvg.svg" width="30"
+                        height="30" />
+                      <img v-else-if="axis === 'Z'" src="/img/icons/blocks_icons/home_zsvg.svg" width="30"
+                        height="30" />
                       <span v-else style="font-size: 0.85rem;">{{ axis }}</span>
                     </v-btn>
 
@@ -169,17 +169,17 @@
               style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: clamp(8px, 1.5vw, 10px);">
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
                 min-height="48" depressed @click="doSend('G28')">
-                <img src="/img/icons/blocks_icons/home_allsvg.svg" width="22" height="22" class="mr-2" />
+                <img src="/img/icons/blocks_icons/home_allsvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">HOME ALL</span>
               </v-btn>
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
                 min-height="48" depressed @click="doSend('M84')">
-                <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" width="22" height="22" class="mr-2" />
+                <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">MOTORS OFF</span>
               </v-btn>
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
                 min-height="48" depressed @click="doSend('MACRO_1')">
-                <img src="/img/icons/blocks_icons/bed_levellingsvg.svg" width="22" height="22" class="mr-2" />
+                <img src="/img/icons/blocks_icons/bed_levellingsvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">Z TILT</span>
               </v-btn>
             </div>
@@ -297,7 +297,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import Panel from '@/components/ui/Panel.vue'
 import MmuMixin, {
   GATE_UNKNOWN,
@@ -310,12 +310,9 @@ import MmuFilamentStatus from '@/components/panels/Mmu/MmuFilamentStatus.vue'
 
 @Component({ components: { Panel, MmuPanel, MmuFilamentStatus } })
 export default class AxisPanel extends Mixins(MmuMixin) {
-  zOffsetLocal = 0
   zOffsetStep = 0
   speedFactor = 100
   extrusionFactor = 100
-  pressureAdvance = 0.055
-  smoothTime = 0.04
   selectedGate = 0
 
   // Adds the chosen increment to the accumulator
@@ -359,18 +356,13 @@ export default class AxisPanel extends Mixins(MmuMixin) {
     return this.gates[index]?.color || '#333'
   }
 
-  @Watch('printer.gcode_move.homing_origin', { immediate: true, deep: true })
-  onHomingOriginChange(newVal: any) {
-    if (newVal && newVal[2] !== undefined) this.zOffsetLocal = newVal[2]
-  }
-
   axisColor(axis: string) {
-    const colors: Record<string, string> = { X: '#ff5252', Y: '#4caf50', Z: '#2196f3', 'Ext': '#ff9800' }
+    const colors: Record<string, string> = { X: '#2196f3', Y: '#2196f3', Z: '#2196f3', Ext: '#ff9800' }
     return colors[axis] || '#fff'
   }
 
   moveAxis(axis: string, dist: number) {
-    if (axis === 'E/R') {
+    if (axis === 'Ext') {
       this.doSend(`G91\nG1 E${dist} F300\nG90`)
     } else {
       this.doSend(`G91\nG1 ${axis}${dist} F6000\nG90`)
@@ -378,12 +370,8 @@ export default class AxisPanel extends Mixins(MmuMixin) {
   }
 
   homeAxis(axis: string) {
-    if (axis === 'E/R') return
+    if (axis === 'Ext') return
     this.doSend(`G28 ${axis}`)
-  }
-
-  adjustZOffset(step: number) {
-    this.doSend(`SET_GCODE_OFFSET Z_ADJUST=${step} MOVE=1`)
   }
 
   updateSpeedFactor() {
@@ -392,10 +380,6 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 
   updateExtrusionFactor() {
     this.doSend(`M221 S${this.extrusionFactor}`)
-  }
-
-  updatePressureAdvance() {
-    this.doSend(`SET_PRESSURE_ADVANCE ADVANCE=${this.pressureAdvance} SMOOTH_TIME=${this.smoothTime}`)
   }
 }
 </script>
@@ -548,27 +532,6 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 
 .slider-number-input ::v-deep input[type="number"] {
   -moz-appearance: textfield;
-}
-
-::v-deep .custom-mmu-panel>.v-card {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-::v-deep .custom-mmu-panel header {
-  display: none !important;
-}
-
-::v-deep .custom-mmu-panel .v-card__text {
-  padding: 0 !important;
-}
-
-::v-deep .custom-mmu-panel .mmu-clog-meter,
-::v-deep .custom-mmu-panel div[class*="clog"],
-::v-deep .custom-mmu-panel div[class*="Clog"],
-::v-deep .custom-mmu-panel .v-card__text>.row>.col-5:last-child,
-::v-deep .custom-mmu-panel svg+div.text-center {
-  display: none !important;
 }
 
 .mmu-graph-area ::v-deep text {
