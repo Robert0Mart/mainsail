@@ -134,8 +134,9 @@ import ToolheadControlPanel from '@/components/panels/ToolheadControlPanel.vue'
 import TemperaturePanel from '@/components/panels/TemperaturePanel.vue'
 import WebcamPanel from '@/components/panels/WebcamPanel.vue'
 
-import OurDashboardPanel from '@/components/panels/OurPanels/ourdashboard.vue'
+import OurDashboardPanel from '@/components/panels/OurPanels/ourDashboard.vue'
 import AxisPanel from '@/components/panels/OurPanels/axispanel.vue'
+import OurPrintingPanel from '@/components/panels/OurPanels/ourPrinting.vue'
 
 @Component({
     components: {
@@ -157,6 +158,7 @@ import AxisPanel from '@/components/panels/OurPanels/axispanel.vue'
         WebcamPanel,
         OurDashboardPanel,
         AxisPanel,
+        OurPrintingPanel
     },
 })
 export default class PageDashboard extends Mixins(DashboardMixin) {
