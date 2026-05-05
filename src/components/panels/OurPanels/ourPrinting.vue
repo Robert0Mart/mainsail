@@ -760,15 +760,16 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
+
 .media-container {
   width: 100%;
   flex: 1 1 auto;
   min-height: 250px; 
   background: #000000;
   position: relative;
-  display: flex;
   overflow: hidden;
   border-radius: var(--master-radius, 15px) !important;
+  display: block; 
 }
 
 @media (min-width: 600px) {
@@ -784,22 +785,37 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
   }
 }
 
-::v-deep .webcam-wrapper,
-::v-deep .webcam-wrapper > div {
+
+::v-deep .webcam-hero,
+::v-deep .webcam-hero * {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  display: flex;
-  background: transparent !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-::v-deep .webcam-wrapper img,
-::v-deep .webcam-wrapper video,
+
+::v-deep .webcam-hero img,
+::v-deep .webcam-hero video,
+::v-deep .webcam-hero canvas,
 ::v-deep .webcam-image {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  display: block;
+  object-fit: cover !important; 
+  aspect-ratio: unset !important; 
+  display: block !important;
 }
+
+
+::v-deep .webcam-hero .v-responsive__sizer {
+  display: none !important;
+}
+/* ------------------------------------------------------------- */
 
 .absolute-fill-wrapper {
   position: absolute;
