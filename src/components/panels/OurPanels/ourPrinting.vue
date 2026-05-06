@@ -107,7 +107,6 @@
                   </template>
                 </div>
               </div>
-
             </div>
 
             <div class="media-controls-overlay d-flex justify-start align-end pa-3" v-if="!isStandby || !showThumbnailView">
@@ -192,23 +191,29 @@
             <div class="d-flex flex-column" style="gap: 12px;">
               
               <div v-for="(object, index) in displayFans" :key="'fan-'+index" class="fan-card-compact px-3 py-1">
-                <miscellaneous-slider 
-                  :name="object.name" 
-                  :type="object.type" 
-                  :target="object.power" 
-                  :rpm="object.rpm" 
-                  :controllable="object.controllable" 
-                  :pwm="object.pwm" 
-                  :off_below="object.off_below" 
-                  :max="object.max_power" 
-                  :multi="parseInt(object.scale || '1')" 
-                />
+                <!-- NOME DA FAN AGORA VISÍVEL EM TODOS OS ECRÃS (sem d-block d-sm-none) -->
+                <div class="white--text font-weight-bold px-1 mb-1 text-truncate" style="opacity: 1; font-size: 0.75rem; letter-spacing: 0.5px;">
+                  {{ object.name.replace(/_/g, ' ') }}
+                </div>
+                <!-- WRAPPER PARA ESCONDER O NOME LATERAL CORTADO -->
+                <div class="slider-wrapper-hide-label">
+                  <miscellaneous-slider 
+                    :name="object.name" 
+                    :type="object.type" 
+                    :target="object.power" 
+                    :rpm="object.rpm" 
+                    :controllable="object.controllable" 
+                    :pwm="object.pwm" 
+                    :off_below="object.off_below" 
+                    :max="object.max_power" 
+                    :multi="parseInt(object.scale || '1')" 
+                  />
+                </div>
               </div>
               
               <v-divider class="my-1" style="border-color: rgba(255,255,255,0.1)"></v-divider>
 
               <div v-for="(led, index) in displayLeds" :key="'led-'+index" class="fan-card-compact px-3 py-3">
-                
                 <div class="d-flex align-center justify-space-between mb-2 px-1">
                   <span class="white--text text-body-2 font-weight-bold d-flex align-center">
                     <span class="led-icon-wrap mr-2" :class="led.enabled ? 'led-on' : 'led-off'">
@@ -247,7 +252,6 @@
                     </span>
                   </div>
                 </transition>
-
               </div>
 
             </div>
@@ -257,19 +261,20 @@
         <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column h-100">
           <div class="d-flex flex-column flex-grow-1 overflow-y-auto" style="gap: 16px;"> 
             
-            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-4 flex-shrink-0"> 
-              <img :src="'/img/icons/blocks_icons/' + temp.i" width="24" height="24" class="mr-3 flex-shrink-0" style="max-width: 24px; max-height: 24px; filter: brightness(0) invert(1);" />
-              <span class="text-caption white--text font-weight-bold mr-auto">{{ temp.n }}</span>
+            <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-3 flex-shrink-0"> 
+              <img :src="'/img/icons/blocks_icons/' + temp.i" width="22" height="22" class="mr-2 mr-sm-3 flex-shrink-0" style="filter: brightness(0) invert(1);" />
               
-              <div class="d-flex align-center justify-end" style="gap: 12px;">
+              <span class="text-caption white--text font-weight-bold text-truncate pr-2" style="flex: 1 1 auto; min-width: 0;">{{ temp.n }}</span>
+              
+              <div class="d-flex align-center justify-end flex-shrink-0" style="gap: 8px;">
                 <div class="text-right">
-                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Current</div>
-                  <div class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">{{ temp.v }}°C</div>
+                  <div class="white--text" style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Current</div>
+                  <div class="white--text font-weight-bold" style="font-size: 0.9rem; line-height: 1.2;">{{ temp.v }}°C</div>
                   <div v-if="temp.h != null" class="white--text font-weight-bold" style="font-size: 0.7rem; line-height: 1;">{{ temp.h }}%</div>
                 </div>
                 
-                <div v-if="temp.t != null" class="text-left pl-3" style="border-left: 1px solid rgba(255,255,255,0.3);">
-                  <div class="white--text" style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">Target</div>
+                <div v-if="temp.t != null" class="text-left pl-2" style="border-left: 1px solid rgba(255,255,255,0.3);">
+                  <div class="white--text" style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">Target</div>
                   
                   <div v-if="temp.k" class="d-flex align-center">
                     <input 
@@ -279,19 +284,18 @@
                       @change="(e) => setTemperature(temp.k, e.target.value)"
                       @keyup.enter="(e) => { e.target.blur(); setTemperature(temp.k, e.target.value); }"
                     />
-                    <span class="white--text ml-1 font-weight-bold" style="font-size: 0.95rem;">°C</span>
+                    <span class="white--text ml-1 font-weight-bold" style="font-size: 0.85rem;">°C</span>
                   </div>
-                  <div v-else class="white--text font-weight-bold" style="font-size: 0.95rem; line-height: 1.2;">
+                  <div v-else class="white--text font-weight-bold" style="font-size: 0.9rem; line-height: 1.2;">
                     {{ temp.t }}°C
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2 flex-shrink-0" style="height: auto;">
-              <mmu-flowguard-meter style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
-              <span class="white--text font-weight-regular text-body-1" style="opacity: 0.7;">Clog/Tangle Detection</span>
+              <span class="white--text font-weight-regular text-body-1 mb-3" style="opacity: 0.85;">Clog/Tangle Detection</span>
+              <mmu-flowguard-meter style="max-width: 140px; width: 100%;" />
             </div>
 
           </div>
@@ -744,7 +748,7 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .media-container {
   width: 100%;
   flex: 1 1 auto; 
-  min-height: 250px; 
+  aspect-ratio: 4 / 3; 
   background: #000000;
   position: relative;
   display: flex;
@@ -754,6 +758,7 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 
 @media (min-width: 600px) {
   .media-container {
+    aspect-ratio: unset;
     min-height: 350px;
   }
 }
@@ -763,6 +768,32 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
     min-height: 450px;
     max-height: 60vh;
   }
+}
+
+/* FIX DA BARRA PRETA EM FULLSCREEN NO MOBILE */
+.media-container:fullscreen {
+  aspect-ratio: auto !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+}
+.media-container:-webkit-full-screen {
+  aspect-ratio: auto !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+}
+
+/* FORÇAR A CÂMARA A CENTRAR EM FULLSCREEN */
+::v-deep .webcam-hero {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+::v-deep .webcam-hero img,
+::v-deep .webcam-hero video {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  margin: auto !important;
 }
 
 .absolute-fill-wrapper {
@@ -820,12 +851,22 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
 
 .stat-card { text-align: center; padding: 12px !important; margin: 4px !important; }
-.temp-card { width: 100%; min-height: 58px; display: flex; padding: 0 20px !important; margin-bottom: 8px; }
+
+/* REDUZIDO PADDING PARA NÃO CORTAR OS NÚMEROS */
+.temp-card { width: 100%; min-height: 58px; display: flex; padding: 0 12px !important; margin-bottom: 8px; }
 
 .fan-card-compact {
   background: rgba(0,0,0,0.15);
   border-radius: calc(var(--master-radius, 15px) - 8px);
   margin: 4px 8px; padding: 8px 12px !important;
+}
+
+/* Esconder o nome lateral padrão do MiscellaneousSlider */
+::v-deep .slider-wrapper-hide-label .v-icon + span {
+  display: none !important;
+}
+::v-deep .slider-wrapper-hide-label .v-icon + div {
+  display: none !important;
 }
 
 .led-icon-wrap { display: inline-flex; align-items: center; transition: filter 0.3s ease; }
@@ -837,7 +878,8 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 ::v-deep .custom-switch .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
 
 .target-input {
-  width: 50px;
+  /* Ligeiramente mais pequeno para caber melhor no mobile */
+  width: 44px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -865,4 +907,12 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .h-100         { height: 100% !important; }
 .flex-shrink-0 { flex-shrink: 0 !important; }
 .relative      { position: relative; }
+
+/* Esconder apenas a barra do slider nos telemóveis (ecrãs até 599px) */
+@media (max-width: 599px) {
+  ::v-deep .fan-card-compact .v-slider,
+  ::v-deep .fan-card-compact .v-input__slider {
+    display: none !important;
+  }
+}
 </style>
