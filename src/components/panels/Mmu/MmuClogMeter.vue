@@ -106,7 +106,7 @@ export default class MmuClogMeter extends Mixins(BaseMixin, MmuMixin) {
 
     mounted() {
         this.fetchEncoderData();
-        // Vai buscar info à impressora real a cada 2 segundos
+        
         this.pollingInterval = setInterval(this.fetchEncoderData, 2000);
     }
 
@@ -117,7 +117,7 @@ export default class MmuClogMeter extends Mixins(BaseMixin, MmuMixin) {
     async fetchEncoderData() {
         try {
             // Pede ao Moonraker o estado exato do mmu_encoder
-            const res = await fetch('http://192.168.1.112/printer/objects/query?mmu_encoder');
+            const res = await fetch('http://192.168.1.20/printer/objects/query?mmu_encoder');
             const data = await res.json();
             if (data && data.result && data.result.status && data.result.status.mmu_encoder) {
                 this.localEncoderData = data.result.status.mmu_encoder;

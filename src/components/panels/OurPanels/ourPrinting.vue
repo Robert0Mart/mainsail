@@ -290,7 +290,7 @@
             </div>
 
             <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2 flex-shrink-0" style="height: auto;">
-              <mmu-clog-meter :mmu-encoder="mmuEncoderData" style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
+              <mmu-flowguard-meter style="max-width: 140px; width: 100%; margin-bottom: 12px;" />
               <span class="white--text font-weight-regular text-body-1" style="opacity: 0.7;">Clog/Tangle Detection</span>
             </div>
 
@@ -310,7 +310,7 @@ import WebcamMixin from '@/components/mixins/webcam'
 import MiscellaneousSlider from '@/components/inputs/MiscellaneousSlider.vue'
 import MiscellaneousMixin from '@/components/mixins/miscellaneous'
 import WebcamWrapper from "@/components/webcams/WebcamWrapper.vue"
-import MmuClogMeter from '@/components/panels/Mmu/MmuClogMeter.vue' 
+import MmuFlowguardMeter from '@/components/panels/Mmu/MmuFlowguardMeter.vue' 
 
 interface LedItem {
   name: string;
@@ -319,7 +319,7 @@ interface LedItem {
   enabled: boolean;
 }
 
-@Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuClogMeter } })
+@Component({ components: { WebcamWrapper, MiscellaneousSlider, MmuFlowguardMeter } })
 export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, WebcamMixin, MiscellaneousMixin) {
   isLive = true;
   showThumbnailView = false;
@@ -328,9 +328,6 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
   thumbnailUrl: string = ''; 
   historyJobs: any[] = [];
   fetchedMoonrakerFiles: any[] = [];
-
-  mmuEncoderData: any = null;
-  mmuInterval: any = null;
 
   ledItems: LedItem[] = [
     { name: 'Led', klipperName: 'Chamber_lightning', brightness: 100, enabled: true },
@@ -341,26 +338,10 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
       this.isAdvancedMode = value;
     });
     this.fetchMoonrakerData();
-    
-    this.fetchMmuStatus();
-    this.mmuInterval = setInterval(this.fetchMmuStatus, 2000);
   }
 
   beforeDestroy() {
     this.$root.$off('advancedModeChanged');
-    if (this.mmuInterval) clearInterval(this.mmuInterval);
-  }
-
-  async fetchMmuStatus() {
-    try {
-      const res = await fetch('http://192.168.1.120/printer/objects/query?mmu_encoder');
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.result?.status?.mmu_encoder) {
-          this.mmuEncoderData = data.result.status.mmu_encoder;
-        }
-      }
-    } catch (e) {}
   }
 
   async fetchMoonrakerData() {
@@ -760,16 +741,15 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .active-tab   { background: rgba(255,255,255,0.15) !important; color: #ffffff !important; }
 .inactive-tab { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
 
-
 .media-container {
   width: 100%;
-  flex: 1 1 auto;
+  flex: 1 1 auto; 
   min-height: 250px; 
   background: #000000;
   position: relative;
+  display: flex;
   overflow: hidden;
   border-radius: var(--master-radius, 15px) !important;
-  display: block; 
 }
 
 @media (min-width: 600px) {
@@ -784,38 +764,6 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
     max-height: 60vh;
   }
 }
-
-
-::v-deep .webcam-hero,
-::v-deep .webcam-hero * {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-
-::v-deep .webcam-hero img,
-::v-deep .webcam-hero video,
-::v-deep .webcam-hero canvas,
-::v-deep .webcam-image {
-  object-fit: cover !important; 
-  aspect-ratio: unset !important; 
-  display: block !important;
-}
-
-
-::v-deep .webcam-hero .v-responsive__sizer {
-  display: none !important;
-}
-/* ------------------------------------------------------------- */
 
 .absolute-fill-wrapper {
   position: absolute;
