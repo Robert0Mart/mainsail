@@ -8,6 +8,7 @@
     <div class="pa-6 h-100"> 
       <v-row align="stretch" class="h-100">
         
+        <!-- COLUNA 1: CÂMARA E FICHEIROS -->
         <v-col cols="12" lg="6" xl="5" class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column col-left-wrapper h-100">
           
           <div class="clean-tabs-wrapper d-flex mb-4 flex-shrink-0">
@@ -120,17 +121,9 @@
 
           <div class="d-flex align-center pa-4 mt-4 inner-rounded flex-shrink-0 overflow-hidden" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); min-height: 85px;">
             <div class="d-flex align-center flex-grow-1 overflow-hidden">
-              <v-progress-circular 
-                :rotate="-90" 
-                :size="48" 
-                :width="4" 
-                :value="displayProgress" 
-                color="var(--v-primary-base)"
-                class="mr-4 flex-shrink-0"
-              >
+              <v-progress-circular :rotate="-90" :size="48" :width="4" :value="displayProgress" color="var(--v-primary-base)" class="mr-4 flex-shrink-0">
                 <span class="white--text font-weight-bold" style="font-size: 0.75rem;">{{ displayProgress }}%</span>
               </v-progress-circular>
-              
               <div class="d-flex flex-column overflow-hidden mr-4" style="min-width: 100px; max-width: 250px;">
                 <span class="white--text font-weight-bold text-uppercase primary--text" style="letter-spacing: 1px; font-size: 0.8rem;">
                   {{ isStandby ? 'Standby' : (isPrinting ? 'Printing' : 'Paused') }}
@@ -139,9 +132,7 @@
                   {{ activeFilename ? activeFilename : 'Ready to print' }}
                 </span>
               </div>
-
               <v-divider vertical class="mx-2" style="height: 35px; opacity: 0.2;" v-if="!isStandby"></v-divider>
-              
               <div v-if="!isStandby" class="d-flex align-center flex-grow-1 justify-space-around px-2 text-center overflow-hidden">
                 <div class="d-flex flex-column">
                   <span class="white--text" style="font-size: 0.6rem; opacity: 0.5; font-weight: bold;">ESTIMATE</span>
@@ -174,7 +165,8 @@
 
         </v-col>
 
-        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column h-100">
+        <!-- COLUNA 2: FANS E LEDS (Sem h-100 para empilhar no topo sem buracos!) -->
+        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0">
           <div class="flex-shrink-0">
             <v-row dense>
               <v-col cols="6" v-for="stat in mainStats" :key="stat.label">
@@ -186,16 +178,14 @@
             </v-row>
           </div>
 
-          <div class="fans-vertical-wrapper mt-4 pa-4 flex-grow-1 overflow-y-auto">
-            <span class="text-caption white--text font-weight-bold mb-3 d-block px-1">CONTROLS</span>
+          <div class="fans-vertical-wrapper mt-4 pa-4 d-flex flex-column">
+            <span class="text-caption white--text font-weight-bold mb-3 d-block px-1 flex-shrink-0">CONTROLS</span>
+            
             <div class="d-flex flex-column" style="gap: 12px;">
-              
               <div v-for="(object, index) in displayFans" :key="'fan-'+index" class="fan-card-compact px-3 py-1">
-                <!-- NOME DA FAN AGORA VISÍVEL EM TODOS OS ECRÃS (sem d-block d-sm-none) -->
                 <div class="white--text font-weight-bold px-1 mb-1 text-truncate" style="opacity: 1; font-size: 0.75rem; letter-spacing: 0.5px;">
                   {{ object.name.replace(/_/g, ' ') }}
                 </div>
-                <!-- WRAPPER PARA ESCONDER O NOME LATERAL CORTADO -->
                 <div class="slider-wrapper-hide-label">
                   <miscellaneous-slider 
                     :name="object.name" 
@@ -210,9 +200,11 @@
                   />
                 </div>
               </div>
-              
-              <v-divider class="my-1" style="border-color: rgba(255,255,255,0.1)"></v-divider>
+            </div>
+            
+            <v-divider class="my-3" style="border-color: rgba(255,255,255,0.1)"></v-divider>
 
+            <div class="d-flex flex-column" style="gap: 12px;">
               <div v-for="(led, index) in displayLeds" :key="'led-'+index" class="fan-card-compact px-3 py-3">
                 <div class="d-flex align-center justify-space-between mb-2 px-1">
                   <span class="white--text text-body-2 font-weight-bold d-flex align-center">
@@ -253,13 +245,13 @@
                   </div>
                 </transition>
               </div>
-
             </div>
           </div>
         </v-col>
 
-        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column h-100">
-          <div class="d-flex flex-column flex-grow-1 overflow-y-auto" style="gap: 16px;"> 
+        <!-- COLUNA 3: TEMPS E FLOW GUARD (Sem h-100, empilhado ao topo naturalmente) -->
+        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6">
+          <div class="d-flex flex-column" style="gap: 16px;"> 
             
             <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-3 flex-shrink-0"> 
               <img :src="'/img/icons/blocks_icons/' + temp.i" width="22" height="22" class="mr-2 mr-sm-3 flex-shrink-0" style="filter: brightness(0) invert(1);" />
@@ -277,12 +269,19 @@
                   <div class="white--text" style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">Target</div>
                   
                   <div v-if="temp.k" class="d-flex align-center">
+                    <!-- FIX DO INPUT DE TEMPERATURA: Totalmente invulnerável ao refresh do servidor! -->
                     <input 
                       type="number" 
                       class="target-input font-weight-bold" 
-                      :value="temp.t" 
-                      @change="(e) => setTemperature(temp.k, e.target.value)"
-                      @keyup.enter="(e) => { e.target.blur(); setTemperature(temp.k, e.target.value); }"
+                      :placeholder="temp.t" 
+                      @focus="(e) => { e.target.value = temp.t; e.target.select(); }"
+                      @blur="(e) => { e.target.value = ''; }"
+                      @keyup.enter="(e) => { 
+                        if(e.target.value !== '') {
+                          setTemperature(temp.k, e.target.value); 
+                        }
+                        e.target.blur();
+                      }"
                     />
                     <span class="white--text ml-1 font-weight-bold" style="font-size: 0.85rem;">°C</span>
                   </div>
@@ -293,7 +292,7 @@
               </div>
             </div>
 
-            <div class="temp-card d-flex flex-column align-center justify-center py-4 mt-2 flex-shrink-0" style="height: auto;">
+            <div class="temp-card d-flex flex-column align-center justify-center py-4 mb-0" style="height: auto;">
               <span class="white--text font-weight-regular text-body-1 mb-3" style="opacity: 0.85;">Clog/Tangle Detection</span>
               <mmu-flowguard-meter style="max-width: 140px; width: 100%;" />
             </div>
@@ -877,8 +876,12 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 ::v-deep .custom-switch .v-input--switch__thumb { color: #ffffff !important; }
 ::v-deep .custom-switch .v-input--switch__track { background-color: rgba(255,255,255,0.4) !important; }
 
+/* Mágica da cor do placeholder para parecer texto natural! */
+.target-input::placeholder {
+  color: #ffffff;
+  opacity: 1;
+}
 .target-input {
-  /* Ligeiramente mais pequeno para caber melhor no mobile */
   width: 44px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -908,7 +911,7 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .flex-shrink-0 { flex-shrink: 0 !important; }
 .relative      { position: relative; }
 
-/* Esconder apenas a barra do slider nos telemóveis (ecrãs até 599px) */
+
 @media (max-width: 599px) {
   ::v-deep .fan-card-compact .v-slider,
   ::v-deep .fan-card-compact .v-input__slider {
