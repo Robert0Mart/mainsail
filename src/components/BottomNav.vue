@@ -28,42 +28,31 @@ import {
 
 @Component
 export default class BottomNav extends Vue {
-    // 1. Estado inicial lido do localStorage
     private isAdvanced = localStorage.getItem('advancedMode') === 'true'
 
     mounted() {
-        // 2. Escuta a mudança global do evento que criámos no SettingsAdvancedTab
         this.$root.$on('advancedModeChanged', (val: boolean) => {
             this.isAdvanced = val;
         });
     }
 
-    // 3. Definição da lista de itens
     get navItems() {
         return [
             { to: '/', icon: mdiViewDashboard, exact: true, advanced: false },
-            { to: '/console', icon: mdiConsole, exact: false, advanced: true }, // Marcado como avançado
+            { to: '/console', icon: mdiConsole, exact: false, advanced: true },
             { to: '/files', icon: mdiFileDocumentOutline, exact: false, advanced: false },
             { to: '/history', icon: mdiHistory, exact: false, advanced: false },
             { to: '/config', icon: mdiWrench, exact: false, advanced: false },
         ]
     }
 
-    // 4. Filtro que decide o que mostrar
     get filteredNavItems() {
-        return this.navItems.filter(item => {
-            // Se o modo avançado estiver desativado e o item for avançado, esconde-o
-            if (!this.isAdvanced && item.advanced) {
-                return false;
-            }
-            return true;
-        });
+        return this.navItems.filter(item => !item.advanced || this.isAdvanced);
     }
 }
 </script>
 
 <style scoped>
-/* O teu CSS mantém-se igual */
 .bottom-nav-wrapper {
     position: fixed;
     bottom: 20px;
@@ -76,20 +65,21 @@ export default class BottomNav extends Vue {
 }
 
 .bottom-nav-pill {
-    background-color: #1e1e1e;
+    background-color: #212121;
     border-radius: 40px;
     padding: 8px 16px;
     display: flex;
-    gap: 12px;
+    gap: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     pointer-events: auto; 
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 .nav-btn {
     color: rgba(255, 255, 255, 0.6) !important;
     transition: all 0.3s ease;
-    width: 45px !important;
-    height: 45px !important;
+    width: 42px !important;
+    height: 42px !important;
 }
 
 .active-btn {
@@ -99,5 +89,16 @@ export default class BottomNav extends Vue {
 
 .nav-btn:hover {
     color: #ffffff !important;
+}
+
+@media (max-width: 600px) {
+    .bottom-nav-pill {
+        padding: 6px 12px;
+        gap: 4px;
+    }
+    .nav-btn {
+        width: 38px !important;
+        height: 38px !important;
+    }
 }
 </style>
