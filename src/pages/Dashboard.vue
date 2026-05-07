@@ -9,8 +9,6 @@
                             <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
                                 <our-dashboard-panel class="transparent-bg" />
                             </div>
-                            <v-divider vertical class="hidden-sm-and-down clean-divider"></v-divider>
-                            <v-divider class="hidden-md-and-up clean-divider"></v-divider>
                         </v-card>
 
                         <v-card class="d-flex flex-column clean-dashboard-card" elevation="4">
@@ -196,3 +194,17 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
     extractPanelId(name: string) { return name.split('_')[1] ?? null }
 }
 </script>
+
+
+<style scoped>
+.clean-dashboard-card {
+    background-color: transparent !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-height: var(--master-panel-height) !important;
+    width: var(--master-panel-width) !important;
+    display: flex;
+    overflow: hidden;
+}
+</style>

@@ -181,8 +181,8 @@ export default class Panel extends Mixins(BaseMixin) {
 }
 
 /* This targets ALL v-cards across the entire app */
-html body .v-application .v-card.v-sheet,
-html body .v-application .v-card {
+html body .v-application .v-card.panel.v-sheet,
+html body .v-application .v-card.panel {
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
@@ -211,7 +211,7 @@ html body .v-application .v-card.panel .v-toolbar>.v-toolbar__content {
    ========================================================================= */
 :root {
     /* Colors & Borders */
-    --master-bg: rgb(159, 8, 8);
+    --master-bg: rgb(56, 56, 56);
     --master-radius: 24px;
     --master-border: 1px solid rgba(255, 255, 255, 0.1);
 

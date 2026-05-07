@@ -63,7 +63,7 @@
               <div class="d-flex flex-column flex-md-row align-stretch w-100"
                 style="gap: clamp(10px, 2vw, 15px); flex: 3.3;">
 
-                <div class="control-module z-offset-box d-flex flex-column align-center px-2 px-sm-4 py-3 py-md-5 w-100"
+                <div class="dark-wrapper z-offset-box d-flex flex-column align-center px-2 px-sm-4 py-3 py-md-5 w-100"
                   style="flex: 0.8; min-width: 0; gap: 6px;">
                   <span class="section-title mb-1 mb-sm-2" style="font-size: 0.9rem;">Z-OFFSET</span>
 
@@ -102,7 +102,7 @@
                   <v-btn class="unified-btn w-100 mt-1" height="36" depressed @click="zOffsetStep = 0">RESET</v-btn>
                 </div>
 
-                <div class="control-module d-flex flex-nowrap justify-space-around px-1 px-sm-3 py-3 py-md-5 w-100"
+                <div class="dark-wrapper d-flex flex-nowrap justify-space-around px-1 px-sm-3 py-3 py-md-5 w-100"
                   style="flex: 2.5; gap: 4px; min-width: 0; overflow-x: auto;">
                   <div v-for="axis in ['X', 'Y', 'Z', 'Ext']" :key="axis"
                     class="axis-col d-flex flex-column align-center justify-space-between"
@@ -385,17 +385,6 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 </script>
 
 <style scoped>
-
-.dark-wrapper {
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-  padding: 10px;
-}
-
-.control-module {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-}
 
 .section-title {
   font-size: 0.75rem;
