@@ -8,7 +8,6 @@
     <div class="pa-6 h-100"> 
       <v-row align="stretch" class="h-100">
         
-        <!-- COLUNA 1: CÂMARA E FICHEIROS -->
         <v-col cols="12" lg="6" xl="5" class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column col-left-wrapper h-100">
           
           <div class="clean-tabs-wrapper d-flex mb-4 flex-shrink-0">
@@ -61,15 +60,14 @@
                   <img src="/img/icons/blocks_icons/downsvg.svg" width="16" height="16" class="flex-shrink-0" style="max-width: 16px; max-height: 16px; filter: brightness(0) invert(1);" />
                 </div>
 
-                <!-- FIX: Removido o flex-grow-1 para as abas ficarem ajustadas e criado espaçamento perfeito -->
                 <div class="standby-mini-tabs d-flex flex-shrink-0 mx-4">
                   <div class="mini-tab" :class="standbyTab === 0 ? 'active-mini-tab' : ''" @click="standbyTab = 0">
-                    <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="16" height="16" class="flex-shrink-0" style="max-width: 16px; max-height: 16px; filter: brightness(0) invert(1);" />
-                    <span class="mini-tab-label ml-2 white--text">Files</span>
+                    <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="16" height="16" class="flex-shrink-0 tab-icon" />
+                    <span class="mini-tab-label ml-2">Files</span>
                   </div>
-                  <div class="mini-tab" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
-                    <img src="/img/icons/blocks_icons/timesvg.svg" width="16" height="16" class="flex-shrink-0" style="max-width: 16px; max-height: 16px; filter: brightness(0) invert(1);" />
-                    <span class="mini-tab-label ml-2 white--text">Queue</span>
+                  <div class="mini-tab" style="margin-left: 60px;" :class="standbyTab === 1 ? 'active-mini-tab' : ''" @click="standbyTab = 1">
+                    <img src="/img/icons/blocks_icons/timesvg.svg" width="16" height="16" class="flex-shrink-0 tab-icon" />
+                    <span class="mini-tab-label ml-2">Queue</span>
                     <span class="badge ml-2 white--text">{{ queuedJobs.length }}</span>
                   </div>
                 </div>
@@ -147,7 +145,6 @@
           </div>
         </v-col>
 
-        <!-- COLUNA 2: CONTROLS -->
         <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0">
           
           <div class="flex-shrink-0" v-if="isAdvancedMode">
@@ -199,7 +196,6 @@
           </div>
         </v-col>
 
-        <!-- COLUNA 3: TEMPS E FLOW GUARD -->
         <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6">
           <div class="d-flex flex-column" style="gap: 16px;"> 
             <div v-for="temp in visibleTemperatureCards" :key="temp.n" class="temp-card d-flex align-center px-3 flex-shrink-0"> 
@@ -279,25 +275,110 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
   async fetchMoonrakerData() {
     const IP = "192.168.1.120";
     try {
-      let res = await fetch(`http://${IP}/server/history/list?limit=15`);
+      let res = await fetch(`/server/history/list?limit=15`);
+      if (!res.ok) res = await fetch(`http://${IP}/server/history/list?limit=15`);
       if (res.ok) { const d = await res.json(); this.historyJobs = d.result.jobs; }
-      let resF = await fetch(`http://${IP}/server/files/list?root=gcodes`);
+    } catch(e) {
+      try {
+        const fallbackRes = await fetch(`http://${IP}/server/history/list?limit=15`);
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData?.result?.jobs) this.historyJobs = fallbackData.result.jobs;
+      } catch(err) {}
+    }
+
+    try {
+      let resF = await fetch(`/server/files/list?root=gcodes`);
+      if (!resF.ok) resF = await fetch(`http://${IP}/server/files/list?root=gcodes`);
       if (resF.ok) { const dF = await resF.json(); this.fetchedMoonrakerFiles = dF.result; }
-    } catch(e) {}
+    } catch(e) {
+      try {
+        const fallbackRes = await fetch(`http://${IP}/server/files/list?root=gcodes`);
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData?.result) this.fetchedMoonrakerFiles = fallbackData.result;
+      } catch(err) {}
+    }
   }
 
   get queuedJobs() { return this.$store.state.jobQueue?.queued_jobs || []; }
+  
   get recentFiles() {
+    const IP_PRINTER = "192.168.1.120";
     let jobs = this.historyJobs.length > 0 ? this.historyJobs : (this.$store.state.history?.jobs?.slice(0, 15) || []);
-    return jobs.map((job: any) => ({
-      name: (job.filename || '').split('/').pop() || 'Unknown',
-      filament: job.filament_used ? `${(job.filament_used / 1000).toFixed(2)} m` : '--',
-      time: job.print_duration ? `${Math.floor(job.print_duration / 3600)}h ${Math.floor((job.print_duration % 3600) / 60)}m` : '--',
-      statusIcon: job.status === 'completed' ? 'yessvg.svg' : 'nosvg.svg'
-    }));
+    return jobs.map((job: any) => {
+      let thumbUrl = null;
+      let files = [...(this.fetchedMoonrakerFiles || [])];
+      if (this.$store.state.files?.gcodes?.items) files = [...files, ...this.$store.state.files.gcodes.items];
+      
+      const jobBaseName = (job.filename || '').split('/').pop();
+      let found = files.find((f: any) => (f.filename || '').split('/').pop() === jobBaseName);
+      
+      if (found && found.thumbnails && found.thumbnails.length > 0) {
+        const thumb = [...found.thumbnails].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+        if (thumb && thumb.relative_path) {
+          let cleanPath = thumb.relative_path.startsWith('/') ? thumb.relative_path.substring(1) : thumb.relative_path;
+          thumbUrl = `http://${IP_PRINTER}/server/files/gcodes/${cleanPath}`;
+        }
+      }
+
+      return {
+        name: jobBaseName || 'Unknown',
+        filament: job.filament_used ? `${(job.filament_used / 1000).toFixed(2)} m` : '--',
+        time: job.print_duration ? `${Math.floor(job.print_duration / 3600)}h ${Math.floor((job.print_duration % 3600) / 60)}m` : '--',
+        statusIcon: job.status === 'completed' ? 'yessvg.svg' : 'nosvg.svg',
+        thumbUrl: thumbUrl
+      };
+    });
   }
 
   get activeFilename() { return this.printer?.print_stats?.filename || ''; }
+  
+  @Watch('activeFilename', { immediate: true })
+  async onFilenameChange(newFilename: string) {
+    const IP_PRINTER = "192.168.1.120";
+    if (!newFilename) {
+      this.thumbnailUrl = '';
+      return;
+    }
+    
+    try {
+      const metaFunc = this.$store.getters['files/getFileMetadata'];
+      if (typeof metaFunc === 'function') {
+        const meta = metaFunc(newFilename);
+        if (meta && meta.thumbnails && meta.thumbnails.length > 0) {
+          const best = [...meta.thumbnails].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+          if (best && best.relative_path) {
+            let cleanPath = best.relative_path.startsWith('/') ? best.relative_path.substring(1) : best.relative_path;
+            this.thumbnailUrl = `http://${IP_PRINTER}/server/files/gcodes/${cleanPath}`;
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+    
+    try {
+      const safePath = newFilename.split('/').map(encodeURIComponent).join('/');
+      let res = await fetch(`/server/files/metadata?filename=${safePath}`).catch(() => null);
+      if (!res || !res.ok) {
+        res = await fetch(`http://${IP_PRINTER}/server/files/metadata?filename=${safePath}`);
+      }
+      
+      if (res && res.ok) {
+        const data = await res.json();
+        const thumbs = data.result?.thumbnails;
+        if (thumbs && thumbs.length > 0) {
+          const best = [...thumbs].sort((a: any, b: any) => (b.width || 0) - (a.width || 0))[0];
+          if (best && best.relative_path) {
+            let cleanPath = best.relative_path.startsWith('/') ? best.relative_path.substring(1) : best.relative_path;
+            this.thumbnailUrl = `http://${IP_PRINTER}/server/files/gcodes/${cleanPath}`;
+            return;
+          }
+        }
+      }
+    } catch (e) {}
+    
+    this.thumbnailUrl = '';
+  }
+
   get currentCam() { const cams = this.$store.getters['gui/webcams/getWebcams']; return cams?.[0] || { service: 'mjpeg', stream_url: '' }; }
   get printer() { return this.$store.state.printer || {} }
   get isPrinting() { return this.printer?.print_stats?.state === 'printing'; }
@@ -405,7 +486,6 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 
 .standby-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4) !important; z-index: 10; }
 
-/* FIX DAS ABAS VISÍVEIS E BEM POSICIONADAS */
 .standby-mini-tabs {
   display: flex;
   height: 36px; margin: 0 16px; border-radius: 4px;
@@ -415,11 +495,19 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
   display: flex; align-items: center; justify-content: center;
   padding: 4px 8px; cursor: pointer;
   border-bottom: 2px solid transparent; transition: all 0.2s ease;
-  opacity: 0.4; 
+  opacity: 0.4; color: #ffffff;
+}
+.mini-tab .tab-icon {
+  filter: brightness(0) invert(1);
+  transition: all 0.2s ease;
 }
 .active-mini-tab { 
   opacity: 1 !important; 
   border-bottom: 2px solid #2196f3 !important; 
+  color: #2196f3 !important;
+}
+.active-mini-tab .tab-icon {
+  filter: brightness(0) invert(56%) sepia(91%) saturate(3015%) hue-rotate(188deg) brightness(101%) contrast(97%) !important;
 }
 
 .stat-card { text-align: center; }
@@ -428,7 +516,6 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 
 ::v-deep .slider-wrapper-hide-label .v-icon + span, ::v-deep .slider-wrapper-hide-label .v-icon + div { display: none !important; }
 
-/* FIX DO INPUT E ESCONDER AS SETAS PADRÃO DO BROWSER */
 .target-input { 
   width: 44px; 
   background: rgba(0,0,0,0.3); 
@@ -450,7 +537,6 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
   margin: 0 !important;
 }
 
-/* FIX PARA O SCROLL DOS FICHEIROS FUNCIONAR CORRETAMENTE NO FLEXBOX */
 .standby-content {
   flex: 1 1 auto;
   overflow-y: auto !important;
