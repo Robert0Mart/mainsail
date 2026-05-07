@@ -28,12 +28,16 @@ import {
 
 @Component
 export default class BottomNav extends Vue {
-    private isAdvanced = localStorage.getItem('advancedMode') === 'true'
+    isAdvanced = localStorage.getItem('advancedMode') === 'true'
 
     mounted() {
         this.$root.$on('advancedModeChanged', (val: boolean) => {
             this.isAdvanced = val;
         });
+    }
+
+    beforeDestroy() {
+        this.$root.$off('advancedModeChanged');
     }
 
     get navItems() {
@@ -47,7 +51,12 @@ export default class BottomNav extends Vue {
     }
 
     get filteredNavItems() {
-        return this.navItems.filter(item => !item.advanced || this.isAdvanced);
+        return this.navItems.filter(item => {
+            if (item.advanced) {
+                return this.isAdvanced === true;
+            }
+            return true;
+        });
     }
 }
 </script>
@@ -69,7 +78,7 @@ export default class BottomNav extends Vue {
     border-radius: 40px;
     padding: 8px 16px;
     display: flex;
-    gap: 8px;
+    gap: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     pointer-events: auto; 
     border: 1px solid rgba(255,255,255,0.05);
@@ -78,8 +87,8 @@ export default class BottomNav extends Vue {
 .nav-btn {
     color: rgba(255, 255, 255, 0.6) !important;
     transition: all 0.3s ease;
-    width: 42px !important;
-    height: 42px !important;
+    width: 45px !important;
+    height: 45px !important;
 }
 
 .active-btn {
@@ -94,11 +103,11 @@ export default class BottomNav extends Vue {
 @media (max-width: 600px) {
     .bottom-nav-pill {
         padding: 6px 12px;
-        gap: 4px;
+        gap: 8px;
     }
     .nav-btn {
-        width: 38px !important;
-        height: 38px !important;
+        width: 40px !important;
+        height: 40px !important;
     }
 }
 </style>
