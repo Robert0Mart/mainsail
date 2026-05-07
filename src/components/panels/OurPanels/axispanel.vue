@@ -385,10 +385,6 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 </script>
 
 <style scoped>
-::v-deep .blocks-axis-panel {
-  background: linear-gradient(145deg, #1c1c22, #141419) !important;
-  border-radius: 16px !important;
-}
 
 .dark-wrapper {
   background: rgba(0, 0, 0, 0.25);
@@ -440,7 +436,7 @@ export default class AxisPanel extends Mixins(MmuMixin) {
 }
 
 .active-gate {
-  background: rgba(255, 255, 255, 0.12);
+  background: zrgba(5, 178, 226, 0.12);
   transform: translateY(-2px);
   border-color: rgba(255, 255, 255, 0.1);
 }

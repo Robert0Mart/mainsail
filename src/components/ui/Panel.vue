@@ -1,62 +1,53 @@
 <template>
-    <v-card
-        :class="[
-            'panel',
-            cardClass,
-            marginBottom ? 'mb-3 mb-md-6' : '',
-            !expand ? 'expanded' : '',
-            fullscreen ? 'panel-fullscreen' : ''
-        ]"
-        :loading="loading"
-        :elevation="elevation"
-        :dense="dense">
-        <v-toolbar
-            flat
-            dense
-            :color="toolbarColor"
-            :class="getToolbarClass"
-            :height="panelToolbarHeight"
+    <v-card :class="[
+        'panel',
+        cardClass,
+        marginBottom ? 'mb-3 mb-md-6' : '',
+        !expand ? 'expanded' : '',
+        fullscreen ? 'panel-fullscreen' : ''
+    ]" :loading="loading" :elevation="elevation" :dense="dense">
+        <v-toolbar flat dense :color="toolbarColor" :class="getToolbarClass" :height="panelToolbarHeight"
             class="panel-toolbar">
             <slot name="buttons-left" />
-            
+
             <v-toolbar-title class="d-flex align-center">
                 <slot v-if="hasIconSlot" name="icon" />
                 <v-icon v-if="icon !== null && !hasIconSlot" left>{{ icon }}</v-icon>
-                
+
                 <div class="d-flex flex-column ml-2">
                     <span v-if="title" class="subheading">{{ title }}</span>
                     <span v-if="subtitle" class="caption grey--text text--darken-1">{{ subtitle }}</span>
                 </div>
             </v-toolbar-title>
-            
+
             <slot name="buttons-title" />
             <v-spacer />
-            
+
             <v-toolbar-items v-show="hasButtonsSlot || collapsible || closable || fullscreenable">
                 <div v-if="expand || !hideButtonsOnCollapse" class="d-flex align-center">
                     <slot name="buttons" />
                 </div>
-                
+
                 <v-btn v-if="fullscreenable" icon class="btn-fullscreen" :ripple="true" @click="toggleFullscreen">
                     <v-icon>{{ fullscreen ? mdiFullscreenExit : mdiFullscreen }}</v-icon>
                 </v-btn>
-                
+
                 <v-btn v-if="collapsible" icon class="btn-collapsible" :ripple="true" @click="expand = !expand">
                     <v-icon :class="expand ? '' : 'icon-rotate-90'">{{ mdiChevronDown }}</v-icon>
                 </v-btn>
-                
+
                 <v-btn v-if="closable" icon class="btn-close" :ripple="true" @click="closePanel">
                     <v-icon>{{ mdiClose }}</v-icon>
                 </v-btn>
             </v-toolbar-items>
         </v-toolbar>
-        
+
         <v-expand-transition>
             <div v-show="expand || !collapsible">
                 <v-card-text>
                     <slot />
                 </v-card-text>
-                
+
                 <v-divider v-if="hasFooterSlot" />
                 <v-card-actions v-if="hasFooterSlot" class="panel-footer">
                     <slot name="footer" />
@@ -87,7 +78,7 @@ export default class Panel extends Mixins(BaseMixin) {
     @Prop({ default: '' }) declare readonly subtitle: string | TranslateResult
     @Prop({ default: false }) declare readonly collapsible: boolean
     @Prop({ required: true }) declare readonly cardClass: string
-    @Prop({ default: '' }) declare readonly toolbarColor: string 
+    @Prop({ default: '' }) declare readonly toolbarColor: string
     @Prop({ default: '' }) declare readonly toolbarClass: string
     @Prop({ default: false }) declare readonly loading: boolean
     @Prop({ default: true }) declare readonly marginBottom: boolean
@@ -146,9 +137,9 @@ export default class Panel extends Mixins(BaseMixin) {
     border-bottom-right-radius: 4px;
 }
 
-.btn-collapsible > *,
-.btn-close > *,
-.btn-fullscreen > * {
+.btn-collapsible>*,
+.btn-close>*,
+.btn-fullscreen>* {
     will-change: transform;
     transition: transform 500ms;
 }
@@ -183,8 +174,15 @@ export default class Panel extends Mixins(BaseMixin) {
    APPLY GLOBAL MASTER STYLES
    These rules look for the variables you set in Dashboard.vue
    ========================================================================= */
-html body .v-application .v-card.panel.v-sheet,
-html body .v-application .v-card.panel {
+.dark-wrapper {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    padding: 10px;
+}
+
+/* This targets ALL v-cards across the entire app */
+html body .v-application .v-card.v-sheet,
+html body .v-application .v-card {
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
@@ -196,5 +194,34 @@ html body .v-application .v-card.panel {
 .v-dialog .v-card.panel {
     min-height: auto !important;
     height: auto !important;
+}
+
+html body .v-application .v-card.panel .v-toolbar,
+html body .v-application .v-card.panel .v-toolbar.theme--dark,
+html body .v-application .v-card.panel .v-toolbar>.v-toolbar__content {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+</style>
+
+<style>
+/* =========================================================================
+   👑 GLOBAL DESIGN MASTER CONTROL (The "Brain")
+   We keep this in Dashboard.vue so the wrapper card can see it.
+   ========================================================================= */
+:root {
+    /* Colors & Borders */
+    --master-bg: rgb(159, 8, 8);
+    --master-radius: 24px;
+    --master-border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* Dimensions */
+    --master-panel-height: 65vh;
+    --master-panel-width: calc(100vw - 32px);
+    /* adjust 32px to match your padding */
+
+    /* Inner elements */
+    --master-inner-bg: rgba(255, 255, 255, 0.05);
+    --master-inner-border: rgba(255, 255, 255, 0.1);
 }
 </style>
