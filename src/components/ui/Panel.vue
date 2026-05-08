@@ -84,7 +84,6 @@ export default class Panel extends Mixins(BaseMixin) {
     @Prop({ default: true }) declare readonly marginBottom: boolean
     @Prop({ default: false }) declare readonly hideButtonsOnCollapse: boolean
 
-    // Added props to make the component more versatile and feature-rich
     @Prop({ default: false }) declare readonly closable: boolean
     @Prop({ default: false }) declare readonly fullscreenable: boolean
     @Prop({ default: undefined }) declare readonly elevation: string | number | undefined
@@ -124,14 +123,11 @@ export default class Panel extends Mixins(BaseMixin) {
     }
 
     @Emit('close')
-    closePanel() {
-        // Emits 'close' event for the parent component to handle
-    }
+    closePanel() {}
 }
 </script>
 
 <style scoped>
-/* Logic for panel interaction remains scoped */
 .expanded header.v-toolbar {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -170,58 +166,47 @@ export default class Panel extends Mixins(BaseMixin) {
 </style>
 
 <style>
-/* =========================================================================
-   APPLY GLOBAL MASTER STYLES
-   These rules look for the variables you set in Dashboard.vue
-   ========================================================================= */
-.dark-wrapper {
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 20px;
-    padding: 10px;
+:root {
+    --master-bg: #565656;
+    --master-radius: 24px;
+    --master-border: 1px solid hsla(0, 0%, 100%, 0.1);
+    --master-panel-height: 65vh;
+    --master-panel-width: calc(100vw - 32px);
+    --master-inner-bg: rgba(255, 255, 255, 0.05);
+    --master-inner-border: #ffffff1a;
 }
 
-/* This targets ALL v-cards across the entire app */
-html body .v-application .v-card.panel.v-sheet,
-html body .v-application .v-card.panel {
+html body .v-application .v-card,
+html body .v-application .v-sheet.v-card,
+html body .v-application .panel,
+html body .v-application .unified-history-panel,
+html body .v-application .unified-stats-panel,
+html body .v-application .blocks-main-panel,
+html body .v-application .unified-list-container,
+html body .v-application .master-panel {
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
 }
 
-.clean-dashboard-card .v-card.panel,
-.transparent-bg .v-card.panel,
-.inner-card-wrapper .v-card.panel,
-.v-dialog .v-card.panel {
+html body .v-application .v-card .v-toolbar,
+html body .v-application .v-card .v-toolbar.theme--dark,
+html body .v-application .v-card .v-toolbar > .v-toolbar__content {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+.clean-dashboard-card .v-card,
+.transparent-bg .v-card,
+.inner-card-wrapper .v-card,
+.v-dialog .v-card {
     min-height: auto !important;
     height: auto !important;
 }
 
-html body .v-application .v-card.panel .v-toolbar,
-html body .v-application .v-card.panel .v-toolbar.theme--dark,
-html body .v-application .v-card.panel .v-toolbar>.v-toolbar__content {
-    background-color: transparent !important;
-    background: transparent !important;
-}
-</style>
-
-<style>
-/* =========================================================================
-   👑 GLOBAL DESIGN MASTER CONTROL (The "Brain")
-   We keep this in Dashboard.vue so the wrapper card can see it.
-   ========================================================================= */
-:root {
-    /* Colors & Borders */
-    --master-bg: rgb(56, 56, 56);
-    --master-radius: 24px;
-    --master-border: 1px solid rgba(255, 255, 255, 0.1);
-
-    /* Dimensions */
-    --master-panel-height: 65vh;
-    --master-panel-width: calc(100vw - 32px);
-    /* adjust 32px to match your padding */
-
-    /* Inner elements */
-    --master-inner-bg: rgba(255, 255, 255, 0.05);
-    --master-inner-border: rgba(255, 255, 255, 0.1);
+.dark-wrapper {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: var(--master-radius);
+    padding: 10px;
 }
 </style>
