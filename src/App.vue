@@ -65,9 +65,22 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
         }
     }
 
+    private baseDPR = window.devicePixelRatio
+
     mounted() {
         document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
         this.$vuetify.application.left = 0
+        this.updateAntiZoom()
+        window.addEventListener('resize', this.updateAntiZoom)
+    }
+
+    beforeDestroy() {
+        window.removeEventListener('resize', this.updateAntiZoom)
+    }
+
+    updateAntiZoom() {
+        const scale = this.baseDPR / window.devicePixelRatio
+        document.documentElement.style.setProperty('--anti-zoom', String(scale))
     }
 }
 </script>
@@ -82,6 +95,11 @@ html, body {
 }
 
 .v-app-bar__nav-icon { display: none !important; }
+
+.v-app-bar,
+.bottom-nav-wrapper {
+    zoom: var(--anti-zoom, 1) !important;
+}
 .main-no-sidebar { padding-left: 0px !important; margin-left: 0px !important; }
 
 .full-width-container {

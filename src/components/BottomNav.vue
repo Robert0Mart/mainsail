@@ -1,17 +1,25 @@
 <template>
-    <div class="bottom-nav-wrapper">
-        <div class="bottom-nav-pill">
-            <v-btn 
-                v-for="item in filteredNavItems" 
-                :key="item.to"
-                icon 
-                :exact="item.exact" 
-                :to="item.to" 
-                class="nav-btn" 
-                active-class="active-btn"
-            >
-                <v-icon>{{ item.icon }}</v-icon>
-            </v-btn>
+    <div>
+        <div class="nav-trigger-strip" @mouseenter="show" />
+        <div
+            class="bottom-nav-wrapper"
+            :class="{ 'nav-visible': isVisible }"
+            @mouseenter="show"
+            @mouseleave="scheduleHide"
+        >
+            <div class="bottom-nav-pill">
+                <v-btn
+                    v-for="item in filteredNavItems"
+                    :key="item.to"
+                    icon
+                    :exact="item.exact"
+                    :to="item.to"
+                    class="nav-btn"
+                    active-class="active-btn"
+                >
+                    <v-icon>{{ item.icon }}</v-icon>
+                </v-btn>
+            </div>
         </div>
     </div>
 </template>
@@ -29,15 +37,28 @@ import {
 @Component
 export default class BottomNav extends Vue {
     isAdvanced = localStorage.getItem('advancedMode') === 'true'
+    isVisible = false
+    private hideTimer: ReturnType<typeof setTimeout> | null = null
 
     mounted() {
-        this.$root.$on('advancedModeChanged', (val: boolean) => {
-            this.isAdvanced = val;
-        });
+        this.$root.$on('advancedModeChanged', (val: boolean) => { this.isAdvanced = val })
     }
 
     beforeDestroy() {
-        this.$root.$off('advancedModeChanged');
+        this.$root.$off('advancedModeChanged')
+        if (this.hideTimer) clearTimeout(this.hideTimer)
+    }
+
+    show() {
+        if (this.hideTimer) { clearTimeout(this.hideTimer); this.hideTimer = null }
+        this.isVisible = true
+    }
+
+    scheduleHide() {
+        this.hideTimer = setTimeout(() => {
+            this.isVisible = false
+            this.hideTimer = null
+        }, 600)
     }
 
     get navItems() {
@@ -51,26 +72,38 @@ export default class BottomNav extends Vue {
     }
 
     get filteredNavItems() {
-        return this.navItems.filter(item => {
-            if (item.advanced) {
-                return this.isAdvanced === true;
-            }
-            return true;
-        });
+        return this.navItems.filter(item => !item.advanced || this.isAdvanced)
     }
 }
 </script>
 
 <style scoped>
+.nav-trigger-strip {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    z-index: 99;
+}
+
 .bottom-nav-wrapper {
     position: fixed;
-    bottom: 20px;
+    bottom: -100px;
     left: 0;
     width: 100%;
     display: flex;
     justify-content: center;
     z-index: 100;
-    pointer-events: none; 
+    pointer-events: none;
+    opacity: 0;
+    transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+.nav-visible {
+    bottom: 20px;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .bottom-nav-pill {
@@ -80,7 +113,6 @@ export default class BottomNav extends Vue {
     display: flex;
     gap: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    pointer-events: auto; 
     border: 1px solid rgba(255,255,255,0.05);
 }
 

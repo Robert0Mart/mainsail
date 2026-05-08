@@ -1,17 +1,29 @@
 <template>
     <div>
         <template v-if="redesignMode">
-                <v-row justify="center" class="mt-4 ma-0 pa-0">
-                    <v-col cols="12" class="pa-0 ma-0">
-                    <div class="d-flex flex-column" style="gap: 50px;">
+            <nav class="dot-nav">
+                <div
+                    v-for="panel in dotNavPanels"
+                    :key="panel.id"
+                    class="dot-nav-item"
+                    :class="{ 'dot-nav-active': activePanel === panel.id }"
+                    @click="scrollToPanel(panel.id)"
+                >
+                    <span class="dot-nav-tooltip">{{ panel.label }}</span>
+                </div>
+            </nav>
 
-                        <v-card class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
+            <v-row justify="center" class="ma-0 pa-0">
+                <v-col cols="12" class="pa-0 ma-0">
+                    <div class="d-flex flex-column" style="gap: 120px;">
+
+                        <v-card id="panel-printing" class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4" style="scroll-snap-align: center;">
                             <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
                                 <our-dashboard-panel class="transparent-bg" />
                             </div>
                         </v-card>
 
-                        <v-card class="d-flex flex-column clean-dashboard-card" elevation="4">
+                        <v-card id="panel-axis" class="d-flex flex-column clean-dashboard-card" elevation="4" style="scroll-snap-align: center;">
                             <div class="flex-grow-1 w-100 pa-5">
                                 <axis-panel class="transparent-bg" />
                             </div>
@@ -169,10 +181,50 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
         'extruder-control-panel',
     ]
 
+    dotNavPanels = [
+        { id: 'panel-printing', label: 'Printing Dashboard' },
+        { id: 'panel-axis', label: 'Axis Control' },
+    ]
+    activePanel = 'panel-printing'
+    private observer: IntersectionObserver | null = null
+
     mounted() {
         this.$root.$on('advancedModeChanged', (val: boolean) => {
             this.isAdvanced = val
         })
+        this.$nextTick(() => {
+            this.setupObserver()
+            if (this.redesignMode) {
+                document.getElementById('page-container')?.classList.add('dashboard-snap')
+            }
+        })
+    }
+
+    beforeDestroy() {
+        this.$root.$off('advancedModeChanged')
+        if (this.observer) this.observer.disconnect()
+        document.getElementById('page-container')?.classList.remove('dashboard-snap')
+    }
+
+    setupObserver() {
+        const scrollContainer = document.getElementById('page-container')
+        this.observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) this.activePanel = entry.target.id
+                })
+            },
+            { root: scrollContainer, rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+        )
+        this.dotNavPanels.forEach(panel => {
+            const el = document.getElementById(panel.id)
+            if (el) this.observer!.observe(el)
+        })
+    }
+
+    scrollToPanel(id: string) {
+        const el = document.getElementById(id)
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
     shouldShowPanel(componentName: string) {
@@ -196,6 +248,12 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 </script>
 
 
+<style>
+#page-container.dashboard-snap {
+    scroll-snap-type: y mandatory;
+}
+</style>
+
 <style scoped>
 .clean-dashboard-card {
     background-color: transparent !important;
@@ -206,5 +264,58 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
     width: var(--master-panel-width) !important;
     display: flex;
     overflow: hidden;
+}
+
+.dot-nav {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    zoom: var(--anti-zoom, 1);
+}
+
+.dot-nav-item {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot-nav-item:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(1.3);
+}
+
+.dot-nav-active {
+    background: #2196f3 !important;
+    transform: scale(1.4);
+}
+
+.dot-nav-tooltip {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.dot-nav-item:hover .dot-nav-tooltip {
+    opacity: 1;
 }
 </style>
