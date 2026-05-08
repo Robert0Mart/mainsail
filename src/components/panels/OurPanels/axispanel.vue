@@ -108,7 +108,7 @@
                     class="axis-col d-flex flex-column align-center justify-space-between"
                     style="flex: 1; min-width: 40px; max-width: 80px;">
                     <div v-if="axis === 'Ext'" class="font-weight-black mb-1 text-center"
-                      style="font-size: 0.5rem; color: #4caf50; letter-spacing: 0px; line-height: 1;">EXTRUDE</div>
+                      style="font-size: 0.9rem; color: #4caf50; letter-spacing: 0px; line-height: 1;">EXTRUDE</div>
                     <div v-else style="height: 10px; margin-bottom: 4px;"></div>
 
                     <template v-if="axis === 'Z'">
@@ -156,7 +156,7 @@
                     </template>
 
                     <div v-if="axis === 'Ext'" class="font-weight-black mt-1 text-center"
-                      style="font-size: 0.5rem; color: #ff5252; letter-spacing: 0px; line-height: 1;">RETRACT</div>
+                      style="font-size: 0.9rem; color: #ff5252; letter-spacing: 0px; line-height: 1;">RETRACT</div>
                     <div v-else style="height: 10px; margin-top: 4px;"></div>
                   </div>
                 </div>

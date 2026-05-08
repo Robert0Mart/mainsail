@@ -1,16 +1,16 @@
 <template>
   <panel title="Printing Dashboard" icon="mdi-monitor-dashboard" card-class="blocks-main-panel" center-title>
     <div class="pa-1 h-100">
-      <v-row align="center" justify="center" class="h-100"> <v-col cols="12" lg="6" xl="5"
-          class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column justify-center col-left-wrapper h-100" style="gap: 24px;">
-          <div class="dark-wrapper d-flex mb-4 flex-shrink-0">
-            <v-btn class="tab-btn flex-grow-1" :class="!showThumbnailView ? 'active-tab' : 'inactive-tab'" depressed
+      <v-row align="stretch" justify="center"> <v-col cols="12" lg="6" xl="5"
+          class="pr-lg-6 mb-6 mb-lg-0 d-flex flex-column col-left-wrapper" style="gap: 24px;">
+          <div class="dark-wrapper d-flex mb-4 flex-shrink-0" style="gap: 8px;">
+            <v-btn class="tab-btn dark-wrapper flex-grow-1" :class="!showThumbnailView ? 'active-tab' : 'inactive-tab'" depressed
               @click="showThumbnailView = false">
               <img src="/img/icons/blocks_icons/sensorssvg.svg" width="18" height="18" class="mr-2 flex-shrink-0"
                 style="filter: brightness(0) invert(1);" />
               <span class="white--text">CAM</span>
             </v-btn>
-            <v-btn class="tab-btn flex-grow-1" :class="showThumbnailView ? 'active-tab' : 'inactive-tab'" depressed
+            <v-btn class="tab-btn dark-wrapper flex-grow-1" :class="showThumbnailView ? 'active-tab' : 'inactive-tab'" depressed
               @click="showThumbnailView = true">
               <img src="/img/icons/blocks_icons/file_iconsvg.svg" width="18" height="18" class="mr-2 flex-shrink-0"
                 style="filter: brightness(0) invert(1);" />
@@ -96,141 +96,138 @@
               </v-btn>
             </div>
           </div>
-          <div class="dark-wrapper d-flex align-center pa-2 mt-4 flex-shrink-0 overflow-hidden"
-            style="min-height: 85px;">
+          <div class="dark-wrapper d-flex align-center pa-4 mt-4 overflow-hidden"
+            style="min-height: clamp(100px, 12vh, 160px); flex: 0 0 auto;">
             <div class="d-flex align-center flex-grow-1 overflow-hidden">
-              <v-progress-circular :rotate="-90" :size="46" :width="4" :value="displayProgress"
-                color="var(--v-primary-base)" class="mr-4 flex-shrink-0">
-                <span class="white--text font-weight-bold" style="font-size: 0.7rem;">{{ displayProgress }}%</span>
+              <v-progress-circular :rotate="-90" :size="64" :width="5" :value="displayProgress"
+                color="var(--v-primary-base)" class="mr-5 flex-shrink-0">
+                <span class="white--text font-weight-bold" style="font-size: 0.85rem;">{{ displayProgress }}%</span>
               </v-progress-circular>
 
-              <div class="d-flex flex-column overflow-hidden flex-grow-1" style="min-width: 0; max-width: 180px;">
+              <div class="d-flex flex-column overflow-hidden flex-grow-1" style="min-width: 0; max-width: 220px;">
                 <span class="white--text font-weight-bold text-uppercase primary--text"
-                  style="letter-spacing: 1px; font-size: 0.75rem; line-height: 1.2;">
+                  style="letter-spacing: 1px; font-size: 1rem; line-height: 1.3;">
                   {{ isStandby ? 'Standby' : (isPrinting ? 'Printing' : 'Paused') }}
                 </span>
-                <span class="white--text text-caption text-truncate"
-                  style="opacity: 0.7; font-size: 0.75rem !important;">
+                <span class="white--text text-truncate"
+                  style="opacity: 0.7; font-size: 0.85rem;">
                   {{ activeFilename ? activeFilename : 'Ready to print' }}
                 </span>
               </div>
 
-              <v-divider vertical class="mx-4" style="height: 35px; opacity: 0.1;" v-if="!isStandby"></v-divider>
+              <v-divider vertical class="mx-5" style="height: 45px; opacity: 0.1;" v-if="!isStandby"></v-divider>
 
               <div v-if="!isStandby"
-                class="d-flex align-center flex-grow-1 justify-space-between px-2 text-center overflow-hidden"
-                style="max-width: 200px;">
-                <div class="d-flex flex-column">
+                class="d-flex align-center flex-shrink-0 justify-space-between px-2 text-center"
+                style="gap: 20px;">
+                <div class="d-flex flex-column align-center">
                   <span class="white--text"
-                    style="font-size: 0.55rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px;">ESTIMATE</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.8rem;">{{ printEstimate }}</span>
+                    style="font-size: 0.65rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;">ESTIMATE</span>
+                  <span class="white--text font-weight-bold" style="font-size: 1rem; white-space: nowrap;">{{ printEstimate }}</span>
                 </div>
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column align-center">
                   <span class="white--text"
-                    style="font-size: 0.55rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px;">TOTAL</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.8rem;">{{ totalTime }}</span>
+                    style="font-size: 0.65rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;">TOTAL</span>
+                  <span class="white--text font-weight-bold" style="font-size: 1rem; white-space: nowrap;">{{ totalTime }}</span>
                 </div>
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column align-center">
                   <span class="white--text"
-                    style="font-size: 0.55rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px;">ETA</span>
-                  <span class="white--text font-weight-bold" style="font-size: 0.8rem;">{{ etaTime }}</span>
+                    style="font-size: 0.65rem; opacity: 0.5; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;">ETA</span>
+                  <span class="white--text font-weight-bold" style="font-size: 1rem; white-space: nowrap;">{{ etaTime }}</span>
                 </div>
               </div>
             </div>
 
-            <div class="d-flex align-center flex-shrink-0 ml-4" style="gap: 12px;">
-              <v-btn fab small :color="isPrinting ? 'amber darken-2' : 'success darken-1'" depressed
+            <div class="d-flex align-center flex-shrink-0 ml-4" style="gap: 14px;">
+              <v-btn fab :color="isPrinting ? 'amber darken-2' : 'success darken-1'" depressed
                 @click="dynamicStartAction">
-                <img :src="'/img/icons/blocks_icons/' + dynamicStartIcon" width="18" height="18"
+                <img :src="'/img/icons/blocks_icons/' + dynamicStartIcon" width="24" height="24"
                   style="filter: brightness(0) invert(1);" />
               </v-btn>
-              <v-btn v-if="!isStandby" fab small color="error" depressed @click="$socket.emit('printer.print.cancel')">
-                <img src="/img/icons/blocks_icons/stopsvg.svg" width="18" height="18"
+              <v-btn v-if="!isStandby" fab color="error" depressed @click="$socket.emit('printer.print.cancel')">
+                <img src="/img/icons/blocks_icons/stopsvg.svg" width="24" height="24"
                   style="filter: brightness(0) invert(1);" />
               </v-btn>
             </div>
           </div>
         </v-col>
-        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column h-100">
-          <div class="dark-wrapper pa-4 d-flex flex-column flex-grow-1"> <span
-              class="text-caption white--text font-weight-bold mb-3 d-block px-1 flex-shrink-0">CONTROLS</span>
-            <div class="d-flex flex-column flex-grow-1 justify-space-between" style="gap: 12px;">
-              <div v-for="(object, index) in displayFans" :key="'fan-' + index" class="fan-card-compact px-3 py-1">
-                <div class="white--text font-weight-bold px-1 mb-1 text-truncate"
-                  style="font-size: 0.75rem; letter-spacing: 0.5px;">{{ object.name.replace(/_/g, ' ') }}</div>
-                <div class="slider-wrapper-hide-label">
-                  <miscellaneous-slider :name="object.name" :type="object.type" :target="object.power" :rpm="object.rpm"
-                    :controllable="object.controllable" :pwm="object.pwm" :off_below="object.off_below"
-                    :max="object.max_power" :multi="parseInt(object.scale || '1')" />
+        <v-col cols="12" md="6" lg="3" xl="4" class="px-lg-4 mb-6 mb-md-0 d-flex flex-column">
+          <div class="dark-wrapper pa-4 d-flex flex-column flex-grow-1">
+            <span class="text-caption white--text font-weight-bold mb-3 d-block px-1 flex-shrink-0">CONTROLS</span>
+            <div class="d-flex flex-column flex-grow-1 justify-space-between">
+              <div class="d-flex flex-column" style="gap: 6px;">
+                <div v-for="(object, index) in displayFans" :key="'fan-' + index" class="fan-card-compact px-3 py-1">
+                  <div class="white--text font-weight-bold px-1 mb-1 text-truncate"
+                    style="font-size: 0.75rem; letter-spacing: 0.5px;">{{ object.name.replace(/_/g, ' ') }}</div>
+                  <div class="slider-wrapper-hide-label">
+                    <miscellaneous-slider :name="object.name" :type="object.type" :target="object.power" :rpm="object.rpm"
+                      :controllable="object.controllable" :pwm="object.pwm" :off_below="object.off_below"
+                      :max="object.max_power" :multi="parseInt(object.scale || '1')" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <v-divider class="my-3" style="border-color: rgba(255,255,255,0.1)"></v-divider>
-            <div v-for="(led, index) in displayLeds" :key="'led-' + index" class="fan-card-compact px-3 py-3">
-              <div class="d-flex align-center justify-space-between mb-2 px-1">
-                <span class="white--text text-body-2 font-weight-bold d-flex align-center"><img
-                    src="/img/icons/blocks_icons/LEDssvg.svg" width="18" height="18" class="mr-2"
-                    style="filter: brightness(0) invert(1);" /> {{ led.name }}</span>
-                <v-switch v-model="led.enabled" dense hide-details class="mt-0 pt-0 custom-switch" color="primary"
-                  @change="onLedToggle(led)" />
-              </div>
-              <transition name="fade-slide">
-                <div v-if="led.enabled" class="d-flex align-center px-1" style="gap: 8px;">
-                  <img src="/img/icons/blocks_icons/light_barsvg.svg" width="18" height="18"
-                    style="filter: brightness(0) invert(1);" />
-                  <v-slider v-model="led.brightness" :min="0" :max="100" :step="1" hide-details dense
-                    color="amber darken-1" class="flex-grow-1 my-0" @change="onLedBrightnessChange(led)" />
-                  <img src="/img/icons/blocks_icons/sun svg.svg" width="18" height="18"
-                    style="filter: brightness(0) invert(1);" />
+              <div v-for="(led, index) in displayLeds" :key="'led-' + index" class="fan-card-compact px-3 py-3">
+                <div class="d-flex align-center justify-space-between mb-2 px-1">
+                  <span class="white--text text-body-2 font-weight-bold d-flex align-center"><img
+                      src="/img/icons/blocks_icons/LEDssvg.svg" width="18" height="18" class="mr-2"
+                      style="filter: brightness(0) invert(1);" /> {{ led.name }}</span>
+                  <v-switch v-model="led.enabled" dense hide-details class="mt-0 pt-0 custom-switch" color="primary"
+                    @change="onLedToggle(led)" />
                 </div>
-              </transition>
+                <transition name="fade-slide">
+                  <div v-if="led.enabled" class="d-flex align-center px-1" style="gap: 8px;">
+                    <img src="/img/icons/blocks_icons/light_barsvg.svg" width="18" height="18"
+                      style="filter: brightness(0) invert(1);" />
+                    <v-slider v-model="led.brightness" :min="0" :max="100" :step="1" hide-details dense
+                      color="amber darken-1" class="flex-grow-1 my-0" @change="onLedBrightnessChange(led)" />
+                    <img src="/img/icons/blocks_icons/sun svg.svg" width="18" height="18"
+                      style="filter: brightness(0) invert(1);" />
+                  </div>
+                </transition>
+              </div>
             </div>
           </div>
+          <div class="dark-wrapper pa-2 flex-shrink-0 mt-4">
+            <v-row dense>
+              <v-col cols="6" v-for="stat in mainStats" :key="stat.label" class="pa-1">
+                <div class="dark-wrapper pa-3 d-flex align-center justify-space-between">
+                  <span class="text-caption white--text text-uppercase font-weight-bold">{{ stat.label }}</span>
+                  <div class="white--text font-weight-bold text-subtitle-1 ml-2">{{ stat.value }} <small class="white--text">{{ stat.unit }}</small></div>
+                </div>
+              </v-col>
+            </v-row>
+          </div>
         </v-col>
-        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6">
-          <div class="d-flex flex-column" style="gap: 16px;">
-            <div class="dark-wrapper pa-2 d-flex flex-column" style="gap: 4px;">
+        <v-col cols="12" md="6" lg="3" xl="3" class="pl-lg-6 d-flex flex-column">
+          <div class="d-flex flex-column flex-grow-1" style="gap: 16px;">
+            <div class="dark-wrapper pa-3 d-flex flex-column" style="gap: 8px;">
               <div v-for="temp in visibleTemperatureCards" :key="temp.n"
-                class="dark-wrapper d-flex align-center px-3 py-2 flex-shrink-0">
-                <img :src="'/img/icons/blocks_icons/' + temp.i" width="22" height="22" class="mr-3"
+                class="dark-wrapper d-flex align-center px-3 py-3 flex-shrink-0">
+                <img :src="'/img/icons/blocks_icons/' + temp.i" width="24" height="24" class="mr-3"
                   style="filter: brightness(0) invert(1);" />
-                <span class="text-caption white--text font-weight-bold text-truncate pr-2"
-                  style="flex: 1 1 auto; min-width: 0;">{{ temp.n }}</span>
-                <div class="d-flex align-center justify-end flex-shrink-0" style="gap: 8px;">
+                <span class="white--text font-weight-bold text-truncate pr-2"
+                  style="flex: 1 1 auto; min-width: 0; font-size: 0.8rem;">{{ temp.n }}</span>
+                <div class="d-flex align-center justify-end flex-shrink-0" style="gap: 10px;">
                   <div class="text-right">
                     <div class="white--text"
-                      style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Current
+                      style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1;">Current
                     </div>
-                    <div class="white--text font-weight-bold" style="font-size: 0.9rem; line-height: 1.2;">{{ temp.v
-                    }}°C
+                    <div class="white--text font-weight-bold" style="font-size: 1rem; line-height: 1.3;">{{ temp.v }}°C
                     </div>
                   </div>
                   <div v-if="temp.t != null" class="text-left pl-2"
                     style="border-left: 1px solid rgba(255,255,255,0.3);">
                     <div class="white--text"
-                      style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">
+                      style="font-size: 0.6rem; font-weight: bold; text-transform: uppercase; line-height: 1; margin-bottom: 2px;">
                       Target</div>
                     <div v-if="temp.k" class="d-flex align-center">
                       <input type="number" class="target-input font-weight-bold" :placeholder="temp.t"
                         @keyup.enter="(e) => { if (e.target.value !== '') setTemperature(temp.k, e.target.value); e.target.blur(); }" />
-                      <span class="white--text ml-1 font-weight-bold" style="font-size: 0.85rem;">°C</span>
+                      <span class="white--text ml-1 font-weight-bold" style="font-size: 0.95rem;">°C</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="flex-shrink-0 dark-wrapper pa-2">
-              <v-row dense>
-                <v-col cols="6" v-for="stat in mainStats" :key="stat.label">
-                  <div class="pa-2">
-                    <span class="text-caption white--text text-uppercase font-weight-bold">{{ stat.label }}</span>
-                    <div class="white--text font-weight-bold text-subtitle-1">{{ stat.value }} <small
-                        class="white--text">{{
-                          stat.unit }}</small></div>
-                  </div>
-                </v-col>
-              </v-row>
             </div>
 
             <div class="dark-wrapper d-flex flex-column align-center justify-center py-4 mb-0 flex-grow-1"
@@ -413,16 +410,17 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
 .tab-btn {
   font-weight: 800 !important;
   height: 38px !important;
+  border-radius: 10px !important;
 }
 
 .active-tab {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
   color: #fff !important;
 }
 
 .inactive-tab {
-  background: transparent !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .media-container {
