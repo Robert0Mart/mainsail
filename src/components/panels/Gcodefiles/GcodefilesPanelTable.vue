@@ -16,9 +16,11 @@
         item-key="filename"
         :search="search"
         :custom-filter="advancedSearch"
+        :item-class="() => 'dark-wrapper'"
         mobile-breakpoint="0"
         show-select
         @current-items="refreshMetadata">
+        
         <template #no-data>
             <div class="text-center pa-4 grey--text">{{ $t('Files.Empty') }}</div>
         </template>
@@ -70,7 +72,6 @@ export default class GcodefilesPanelTable extends Mixins(BaseMixin, GcodefilesMi
 
     set sortBy(newVal) {
         if (newVal === undefined) newVal = 'modified'
-
         this.$store.dispatch('gui/saveSetting', { name: 'view.gcodefiles.sortBy', value: newVal })
     }
 
@@ -80,7 +81,6 @@ export default class GcodefilesPanelTable extends Mixins(BaseMixin, GcodefilesMi
 
     set sortDesc(newVal) {
         if (newVal === undefined) newVal = false
-
         this.$store.dispatch('gui/saveSetting', { name: 'view.gcodefiles.sortDesc', value: newVal })
     }
 
@@ -101,7 +101,6 @@ export default class GcodefilesPanelTable extends Mixins(BaseMixin, GcodefilesMi
         for (const searchWord of searchSplits) {
             if (!value.includes(searchWord)) return false
         }
-
         return true
     }
 
@@ -118,32 +117,64 @@ export default class GcodefilesPanelTable extends Mixins(BaseMixin, GcodefilesMi
 </script>
 
 <style scoped>
+/* FIX FOR THE TOP CORNERS SHOWN IN YOUR IMAGE */
 .custom-data-table {
     background-color: transparent !important;
+    /* This rounds the actual container edges */
+    border-radius: 12px !important; 
+    overflow: hidden !important;
 }
 
+/* 1. Create a clear physical gap between rows */
+.files-table ::v-deep table {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important; 
+    padding: 0 16px; 
+}
+
+/* 2. Style the Table Header */
 .files-table ::v-deep th {
-    white-space: nowrap;
+    border-bottom: none !important;
+    color: rgba(255, 255, 255, 0.5) !important;
     text-transform: uppercase;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.7) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    font-size: 0.7rem !important;
+    padding-bottom: 4px !important;
 }
 
-.files-table ::v-deep tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+/* 3. The "Dark Wrapper" Row Fix */
+.files-table ::v-deep tr.dark-wrapper {
+    background-color: #1e1e1e !important;
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 
+                0px 2px 2px 0px rgba(0,0,0,0.14), 
+                0px 1px 5px 0px rgba(0,0,0,0.12) !important;
 }
 
-.files-table ::v-deep .v-data-table-header__icon {
-    margin-left: 7px;
+/* 4. Cell cleanup & Individual Row Rounding */
+.files-table ::v-deep tr.dark-wrapper td {
+    border-bottom: none !important;
+    background-color: transparent !important; 
+    height: 54px;
 }
 
-.files-table ::v-deep .file-list-cursor:hover {
+/* Rounding the ends of the individual rows */
+.files-table ::v-deep tr.dark-wrapper td:first-child {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}
+
+.files-table ::v-deep tr.dark-wrapper td:last-child {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* 5. Hover Effect */
+.files-table ::v-deep tr.dark-wrapper:hover {
+    background-color: #2a2a2a !important;
     cursor: pointer;
 }
 
-.files-table ::v-deep .v-data-table-header th:first-child {
-    padding-right: 0;
+/* 6. REMOVE VUETIFY LINES (Crucial for your screenshot) */
+.files-table ::v-deep .v-data-table__wrapper > table > tbody > tr > td {
+    border-bottom: none !important;
 }
 </style>

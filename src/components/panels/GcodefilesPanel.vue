@@ -1,14 +1,15 @@
 <template>
     <panel :title="$t('Files.GCodeFiles')" :icon="'blocks-gcode-icon'" card-class="gcode-files-panel mt-4">
         <v-card-text class="pa-4 pb-0">
-            <v-card outlined class="premium-toolbar px-4 py-3 mb-4 elevation-0">
+            <div class="dark-wrapper mb-8">
                 <gcodefiles-panel-header class="mb-2" />
-                <v-divider class="custom-divider mb-3" />
                 <gcodefiles-panel-header-path-size />
-            </v-card>
+            </div>
         </v-card-text>
         
-        <gcodefiles-panel-table />
+        <div class="mx-4 mb-4">
+            <gcodefiles-panel-table />
+        </div>
     </panel>
 </template>
 
@@ -47,14 +48,4 @@ export default class GcodefilesPanel extends Mixins(BaseMixin, GcodefilesMixin) 
     display: none !important;
 }
 
-/* Nova Toolbar Premium */
-.premium-toolbar {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-radius: 8px;
-}
-
-.custom-divider {
-    border-color: rgba(255, 255, 255, 0.05) !important;
-}
 </style>
