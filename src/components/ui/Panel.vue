@@ -115,70 +115,93 @@ export default class Panel extends Mixins(BaseMixin) {
 
 <style>
 :root {
-    --master-bg: #ba0000b8;
-    /* Deeper dark for better contrast */
+    /* CORES PRINCIPAIS */
+    --master-bg: #ba0000b8; 
     --master-radius: 24px;
     --master-border: 1px solid rgba(255, 255, 255, 0.08);
+    
+    /* ELEMENTOS INTERNOS GERAIS (Dark Wrappers, Cards) */
     --master-inner-bg: rgba(0, 0, 0, 0.35);
     --master-inner-border: rgba(255, 255, 255, 0.05);
+    --master-inner-radius: 20px;
+    --master-inner-padding: 15px;
+    --master-inner-margin: 8px;
+    --master-inner-gap: 8px;
+    
+    /* ITEMS INTERNOS (Botões, Inputs, Sliders) */
+    --master-inner-item-bg: rgba(255, 255, 255, 0.1);
+    --master-inner-item-hover: rgba(255, 255, 255, 0.15);
+    --master-inner-item-radius: 12px;
+    
+    /* TIPOGRAFIA E ESPAÇAMENTO */
+    --master-spacing: 12px;
+    --master-font-size: 14px;
+    --master-text-color: #ffffff;
+    --master-text-muted: rgba(255, 255, 255, 0.6);
 }
 
-/* 1. RESTORE PANEL VISIBILITY */
-/* This ensures your actual "Print History" and "Statistics" cards have a solid color */
-.v-application .panel,
-.v-application .unified-history-panel,
-.v-application .console-card,
-.v-application .v-card.v-sheet {
+/* 1. FORÇAR O PADDING GLOBAL EM TODOS OS CONTEÚDOS */
+html body .v-application .panel-content,
+html body .v-application .v-card__text,
+html body .v-application .console-container,
+html body .v-application .v-data-table {
+    padding: var(--master-inner-padding) !important;
+}
+
+/* 2. RESTAURAR VISIBILIDADE GLOBAL DOS PAINÉIS */
+html body .v-application .panel,
+html body .v-application .unified-history-panel,
+html body .v-application .console-card,
+html body .v-application .v-card.v-sheet {
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
-    /* Makes it pop against the background */
     overflow: hidden !important;
 }
 
-/* 2. KEEP THE "BIG FRAME" TRANSPARENT */
-/* This targets the outer wrappers that group panels together */
-.v-main,
-.v-application--wrap,
-.layout-wrapper,
-.v-container--fluid {
+/* 3. MANTER BACKGROUNDS ORIGINAIS LIMPOS */
+html body .v-main,
+html body .v-application--wrap,
+html body .layout-wrapper,
+html body .v-container--fluid {
     background: transparent !important;
 }
 
-/* 3. FIX INNER ELEMENTS (TABLES & SEARCH) */
-.v-application .v-data-table,
-.v-application .v-data-table__wrapper,
-.v-application .console-container,
-.v-application .console-log {
+/* 4. ELEMENTOS INTERNOS ESPECÍFICOS (Tabelas e Consola) */
+html body .v-application .v-data-table,
+html body .v-application .console-container,
+html body .v-application .console-log {
     background-color: var(--master-inner-bg) !important;
+    font-size: var(--master-font-size) !important;
+    border-radius: var(--master-inner-radius) !important;
 }
 
-.v-application .v-text-field--outlined>.v-input__control>.v-input__slot,
-.v-application .dashboard-search-input .v-input__slot {
+/* 5. INPUTS E PESQUISAS */
+html body .v-application .v-text-field--outlined > .v-input__control > .v-input__slot,
+html body .v-application .dashboard-search-input .v-input__slot {
     background-color: var(--master-inner-bg) !important;
     border: var(--master-inner-border) !important;
-    border-radius: 12px !important;
+    border-radius: var(--master-inner-radius) !important;
+    font-size: var(--master-font-size) !important;
 }
 
-/* 4. DASHBOARD SPECIFIC FIX */
-/* Ensures the small stat cards on top of your dashboard also get styled */
-.v-application .v-card.v-card--flat {
+/* 6. DASHBOARD ESPECÍFICO (Dark Wrappers) */
+html body .v-application .v-card.v-card--flat,
+html body .v-application .dark-wrapper {
     background-color: var(--master-inner-bg) !important;
-    border-radius: 12px !important;
+    border-radius: var(--master-inner-radius) !important;
+    padding: var(--master-inner-padding) !important;
+    border: var(--master-inner-border) !important;
+    font-size: var(--master-font-size) !important;
+    text-align: center;
 }
 
-.v-application .v-card.v-sheet.panel.blocks-main-panel,
-.v-application .v-card.v-sheet.panel.blocks-axis-panel {
+/* Previne que os Wrappers partam a estrutura */
+html body .v-application .v-card.v-sheet.panel.blocks-main-panel,
+html body .v-application .v-card.v-sheet.panel.blocks-axis-panel {
     background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
-}
-
-.dark-wrapper {
-    background-color: var(--master-inner-bg) !important;
-    border-radius: var(--master-radius) !important;
-    padding: 16px;
-    border: var(--master-inner-border) !important;
 }
 </style>

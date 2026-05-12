@@ -13,7 +13,7 @@
 
                 <div class="dark-wrapper d-flex justify-space-between align-center pa-2 pa-sm-3 w-100"
                   :class="$vuetify.breakpoint.mdAndUp ? 'flex-column' : 'flex-row'"
-                  :style="{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: '8px', minHeight: $vuetify.breakpoint.mdAndUp ? '130px' : 'auto', height: '100%' }">
+                  :style="{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--master-inner-radius)', minHeight: $vuetify.breakpoint.mdAndUp ? '130px' : 'auto', height: '100%' }">
 
                   <div class="d-flex align-center justify-center"
                     :class="$vuetify.breakpoint.mdAndUp ? 'flex-column mb-2' : 'flex-column mr-3'"
@@ -37,7 +37,7 @@
 
                 <div class="dark-wrapper d-flex justify-space-between align-center pa-2 pa-sm-3 w-100"
                   :class="$vuetify.breakpoint.mdAndUp ? 'flex-column' : 'flex-row'"
-                  :style="{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: '8px', minHeight: $vuetify.breakpoint.mdAndUp ? '130px' : 'auto', height: '100%' }">
+                  :style="{ flex: 1, background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--master-inner-radius)', minHeight: $vuetify.breakpoint.mdAndUp ? '130px' : 'auto', height: '100%' }">
 
                   <div class="d-flex align-center justify-center"
                     :class="$vuetify.breakpoint.mdAndUp ? 'flex-column mb-2' : 'flex-column mr-3'"
@@ -69,16 +69,16 @@
 
                   <div class="d-flex flex-wrap w-100" style="gap: 6px;">
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="addZStep(0.100)">0.100</v-btn>
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="addZStep(0.050)">0.050</v-btn>
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="addZStep(0.025)">0.025</v-btn>
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="addZStep(0.010)">0.010</v-btn>
                   </div>
 
@@ -88,18 +88,18 @@
 
                   <div class="d-flex flex-wrap w-100" style="gap: 6px;">
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="applyZStep(1)">
                       <img src="/img/icons/blocks_icons/afastar_aproximar_aproximar.svg" width="24" height="24" />
                     </v-btn>
                     <v-btn class="unified-btn px-0"
-                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px);' : 'width: 100%;'" height="36"
+                      :style="$vuetify.breakpoint.smAndDown ? 'flex: 1 1 calc(50% - 3px); border-radius: var(--master-inner-radius) !important;' : 'width: 100%; border-radius: var(--master-inner-radius) !important;'" height="36"
                       depressed @click="applyZStep(-1)">
                       <img src="/img/icons/blocks_icons/afastar_aproximar_afastar.svg" width="24" height="24" />
                     </v-btn>
                   </div>
 
-                  <v-btn class="unified-btn w-100 mt-1" height="36" depressed @click="zOffsetStep = 0">RESET</v-btn>
+                  <v-btn class="unified-btn w-100 mt-1" height="36" depressed @click="zOffsetStep = 0" style="border-radius: var(--master-inner-radius) !important;">RESET</v-btn>
                 </div>
 
                 <div class="dark-wrapper d-flex flex-nowrap justify-space-around px-1 px-sm-3 py-3 py-md-5 w-100"
@@ -113,23 +113,23 @@
 
                     <template v-if="axis === 'Z'">
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', 25)">+25</v-btn>
+                        @click="moveAxis('Z', 25)" style="border-radius: var(--master-inner-radius) !important;">+25</v-btn>
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', 1)">+1</v-btn>
+                        @click="moveAxis('Z', 1)" style="border-radius: var(--master-inner-radius) !important;">+1</v-btn>
                       <v-btn class="unified-btn mb-2 w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', 0.1)">+0.1</v-btn>
+                        @click="moveAxis('Z', 0.1)" style="border-radius: var(--master-inner-radius) !important;">+0.1</v-btn>
                     </template>
                     <template v-else>
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, 100)">+100</v-btn>
+                        @click="moveAxis(axis, 100)" style="border-radius: var(--master-inner-radius) !important;">+100</v-btn>
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, 10)">+10</v-btn>
+                        @click="moveAxis(axis, 10)" style="border-radius: var(--master-inner-radius) !important;">+10</v-btn>
                       <v-btn class="unified-btn mb-2 w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, 1)">+1</v-btn>
+                        @click="moveAxis(axis, 1)" style="border-radius: var(--master-inner-radius) !important;">+1</v-btn>
                     </template>
 
                     <v-btn height="40" width="100%" :color="axisColor(axis)"
-                      class="my-1 elevation-3 font-weight-bold rounded-lg label-btn px-0" @click="homeAxis(axis)">
+                      class="my-1 elevation-3 font-weight-bold rounded-lg label-btn px-0" @click="homeAxis(axis)" style="border-radius: var(--master-inner-radius) !important;">
                       <img v-if="axis === 'X'" src="/img/icons/blocks_icons/home_xsvg.svg" width="30" height="30" />
                       <img v-else-if="axis === 'Y'" src="/img/icons/blocks_icons/home_ysvg.svg" width="30"
                         height="30" />
@@ -140,19 +140,19 @@
 
                     <template v-if="axis === 'Z'">
                       <v-btn class="unified-btn mb-1 mt-2 w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', -0.1)">-0.1</v-btn>
+                        @click="moveAxis('Z', -0.1)" style="border-radius: var(--master-inner-radius) !important;">-0.1</v-btn>
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', -1)">-1</v-btn>
+                        @click="moveAxis('Z', -1)" style="border-radius: var(--master-inner-radius) !important;">-1</v-btn>
                       <v-btn class="unified-btn w-100 px-0" depressed height="36"
-                        @click="moveAxis('Z', -25)">-25</v-btn>
+                        @click="moveAxis('Z', -25)" style="border-radius: var(--master-inner-radius) !important;">-25</v-btn>
                     </template>
                     <template v-else>
                       <v-btn class="unified-btn mb-1 mt-2 w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, -1)">-1</v-btn>
+                        @click="moveAxis(axis, -1)" style="border-radius: var(--master-inner-radius) !important;">-1</v-btn>
                       <v-btn class="unified-btn mb-1 w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, -10)">-10</v-btn>
+                        @click="moveAxis(axis, -10)" style="border-radius: var(--master-inner-radius) !important;">-10</v-btn>
                       <v-btn class="unified-btn w-100 px-0" depressed height="36"
-                        @click="moveAxis(axis, -100)">-100</v-btn>
+                        @click="moveAxis(axis, -100)" style="border-radius: var(--master-inner-radius) !important;">-100</v-btn>
                     </template>
 
                     <div v-if="axis === 'Ext'" class="font-weight-black mt-1 text-center"
@@ -166,19 +166,19 @@
 
             <div
               class="dark-wrapper pa-2 pa-sm-3 w-100 d-flex flex-column flex-sm-row justify-center align-stretch align-sm-center"
-              style="background: rgba(0,0,0,0.25); border-radius: 8px; gap: clamp(8px, 1.5vw, 10px);">
+              style="background: rgba(0,0,0,0.25); border-radius: var(--master-inner-radius); gap: clamp(8px, 1.5vw, 10px);">
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
-                min-height="48" depressed @click="doSend('G28')">
+                min-height="48" depressed @click="doSend('G28')" style="border-radius: var(--master-inner-radius) !important;">
                 <img src="/img/icons/blocks_icons/home_allsvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">HOME ALL</span>
               </v-btn>
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
-                min-height="48" depressed @click="doSend('M84')">
+                min-height="48" depressed @click="doSend('M84')" style="border-radius: var(--master-inner-radius) !important;">
                 <img src="/img/icons/blocks_icons/disable_stepperssvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">MOTORS OFF</span>
               </v-btn>
               <v-btn class="bottom-action-btn font-weight-bold rounded-lg flex-grow-1 py-2 py-sm-3" height="auto"
-                min-height="48" depressed @click="doSend('MACRO_1')">
+                min-height="48" depressed @click="doSend('MACRO_1')" style="border-radius: var(--master-inner-radius) !important;">
                 <img src="/img/icons/blocks_icons/bed_levellingsvg.svg" width="30" height="30" class="mr-2" />
                 <span style="white-space: normal; text-align: center;">Z TILT</span>
               </v-btn>
@@ -189,9 +189,9 @@
 
         <v-col cols="12" lg="6" class="d-flex flex-column mb-4 px-1 px-sm-3">
           <div class="dark-wrapper pa-2 d-flex flex-column w-100 h-100"
-            style="background: rgba(0,0,0,0.2); border-radius: 8px; gap: clamp(10px, 2vw, 15px);">
+            style="background: rgba(0,0,0,0.2); gap: clamp(10px, 2vw, 15px);">
 
-            <div class="dark-wrapper pa-2 pa-sm-4" style="background: rgba(0,0,0,0.2); border-radius: 8px;">
+            <div class="dark-wrapper pa-2 pa-sm-4" style="background: rgba(0,0,0,0.2);">
               <v-row class="ma-0 w-100" justify="center">
                 <v-col v-for="n in activeGateCount" :key="`gate-icon-${n}`" 
                   cols="6" md="auto"
@@ -213,7 +213,7 @@
               style="gap: clamp(10px, 2vw, 15px);">
 
               <div class="dark-wrapper pa-2 d-flex flex-column justify-center align-center"
-                style="flex: 1.5; background: rgba(0,0,0,0.2); border-radius: 8px; min-height: 200px;">
+                style="flex: 1.5; background: rgba(0,0,0,0.2); min-height: 200px;">
                 <div class="mmu-graph-area w-100 d-flex justify-center"
                   style="min-height: 200px; max-height: 300px; height: 100%;">
                   <mmu-filament-status />
@@ -222,7 +222,7 @@
 
               <div class="d-flex flex-column" style="flex: 1; gap: clamp(10px, 2vw, 15px);">
                 <div class="dark-wrapper pa-3 pa-sm-4 d-flex flex-column"
-                  style="background: rgba(0,0,0,0.2); border-radius: 8px; gap: 10px;">
+                  style="background: rgba(0,0,0,0.2); gap: 10px;">
                   <div class="d-flex justify-space-between align-center">
                     <span class="gate-data-key text-uppercase grey--text" style="font-size: 0.75rem;">Slot</span>
                     <span class="gate-data-val font-weight-bold" style="font-size: 0.9rem;">{{ selectedGate }}</span>
@@ -249,10 +249,10 @@
                 </div>
 
                 <div class="dark-wrapper pa-2 pa-sm-3 d-flex flex-grow-1"
-                  style="background: rgba(0,0,0,0.2); border-radius: 8px;">
+                  style="background: rgba(0,0,0,0.2);">
                   <div class="d-flex flex-wrap w-100" style="gap: 8px;">
                     <v-btn small class="font-weight-black rounded-lg mmu-action-btn py-2 py-sm-3" color="black"
-                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px);"
+                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px); border-radius: var(--master-inner-radius) !important;"
                       @click="doSend('LOAD_FILAMENT')">
                       <span class="btn-inner d-flex flex-column align-center">
                         <img src="/img/icons/blocks_icons/load_filamentsvg.svg" width="22" class="mb-1" />
@@ -260,7 +260,7 @@
                       </span>
                     </v-btn>
                     <v-btn small class="font-weight-black rounded-lg mmu-action-btn py-2 py-sm-3" color="black"
-                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px);"
+                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px); border-radius: var(--master-inner-radius) !important;"
                       @click="doSend('UNLOAD_FILAMENT')">
                       <span class="btn-inner d-flex flex-column align-center">
                         <img src="/img/icons/blocks_icons/unload_filamentsvg.svg" width="22" class="mb-1" />
@@ -268,7 +268,7 @@
                       </span>
                     </v-btn>
                     <v-btn small class="font-weight-black rounded-lg mmu-action-btn py-2 py-sm-3" color="black"
-                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px);"
+                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px); border-radius: var(--master-inner-radius) !important;"
                       @click="doSend('EJECT')">
                       <span class="btn-inner d-flex flex-column align-center">
                         <img src="/img/icons/blocks_icons/ejectsvg.svg" width="22" class="mb-1" />
@@ -276,7 +276,7 @@
                       </span>
                     </v-btn>
                     <v-btn small class="font-weight-black rounded-lg mmu-action-btn py-2 py-sm-3" color="black"
-                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px);"
+                      height="auto" min-height="45" depressed style="flex: 1 1 calc(50% - 4px); border-radius: var(--master-inner-radius) !important;"
                       @click="doSend('CHECK_GATES')">
                       <span class="btn-inner d-flex flex-column align-center">
                         <img src="/img/icons/blocks_icons/routine_checksvg.svg" width="22" class="mb-1" />
