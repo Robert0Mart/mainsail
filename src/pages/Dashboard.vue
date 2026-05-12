@@ -17,13 +17,13 @@
                 <v-col cols="12" class="pa-0 ma-0">
                     <div class="d-flex flex-column" style="gap: 120px;">
 
-                        <v-card id="panel-printing" class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4" style="scroll-snap-align: center;">
+                        <v-card id="panel-printing" class="d-flex flex-column flex-md-row clean-dashboard-card" elevation="4">
                             <div class="flex-grow-1 w-100 pa-5" style="flex-basis: 50%;">
                                 <our-dashboard-panel class="transparent-bg" />
                             </div>
                         </v-card>
 
-                        <v-card id="panel-axis" class="d-flex flex-column clean-dashboard-card" elevation="4" style="scroll-snap-align: center;">
+                        <v-card id="panel-axis" class="d-flex flex-column clean-dashboard-card" elevation="4">
                             <div class="flex-grow-1 w-100 pa-5">
                                 <axis-panel class="transparent-bg" />
                             </div>
@@ -192,18 +192,17 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
         this.$root.$on('advancedModeChanged', (val: boolean) => {
             this.isAdvanced = val
         })
-        this.$nextTick(() => {
-            this.setupObserver()
-            if (this.redesignMode) {
-                document.getElementById('page-container')?.classList.add('dashboard-snap')
-            }
-        })
+        this.$nextTick(() => { this.setupObserver() })
     }
 
     beforeDestroy() {
         this.$root.$off('advancedModeChanged')
         if (this.observer) this.observer.disconnect()
-        document.getElementById('page-container')?.classList.remove('dashboard-snap')
+    }
+
+    scrollToPanel(id: string) {
+        const el = document.getElementById(id)
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
     setupObserver() {
@@ -220,11 +219,6 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
             const el = document.getElementById(panel.id)
             if (el) this.observer!.observe(el)
         })
-    }
-
-    scrollToPanel(id: string) {
-        const el = document.getElementById(id)
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 
     shouldShowPanel(componentName: string) {
@@ -247,12 +241,6 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 }
 </script>
 
-
-<style>
-#page-container.dashboard-snap {
-    scroll-snap-type: y mandatory;
-}
-</style>
 
 <style scoped>
 .clean-dashboard-card {
@@ -317,5 +305,4 @@ export default class PageDashboard extends Mixins(DashboardMixin) {
 
 .dot-nav-item:hover .dot-nav-tooltip {
     opacity: 1;
-}
-</style>
+}</style>

@@ -36,12 +36,15 @@ import {
 
 @Component
 export default class BottomNav extends Vue {
-    isAdvanced = localStorage.getItem('advancedMode') === 'true'
-    isVisible = false
-    private hideTimer: ReturnType<typeof setTimeout> | null = null
+    // Initialize with default values explicitly
+    public isAdvanced: boolean = localStorage.getItem('advancedMode') === 'true'
+    public isVisible: boolean = false
+    private hideTimer: any = null // Using 'any' for simpler setTimeout typing
 
     mounted() {
-        this.$root.$on('advancedModeChanged', (val: boolean) => { this.isAdvanced = val })
+        this.$root.$on('advancedModeChanged', (val: boolean) => { 
+            this.isAdvanced = val 
+        })
     }
 
     beforeDestroy() {
@@ -50,11 +53,15 @@ export default class BottomNav extends Vue {
     }
 
     show() {
-        if (this.hideTimer) { clearTimeout(this.hideTimer); this.hideTimer = null }
+        if (this.hideTimer) { 
+            clearTimeout(this.hideTimer)
+            this.hideTimer = null 
+        }
         this.isVisible = true
     }
 
     scheduleHide() {
+        if (this.hideTimer) clearTimeout(this.hideTimer)
         this.hideTimer = setTimeout(() => {
             this.isVisible = false
             this.hideTimer = null
@@ -78,6 +85,7 @@ export default class BottomNav extends Vue {
 </script>
 
 <style scoped>
+/* Styles remain exactly as you had them */
 .nav-trigger-strip {
     position: fixed;
     bottom: 0;

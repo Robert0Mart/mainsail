@@ -387,7 +387,11 @@ export default class OurPrintingPanel extends Mixins(BaseMixin, AfcMixin, Webcam
       { n: 'SCANNER', v: ths.temp, t: ths.target, i: 'sensorssvg.svg' }
     ];
   }
-  get visibleTemperatureCards() { return this.isAdvancedMode ? this.orderedTemperatureCards : this.orderedTemperatureCards.slice(0, 3); }
+  get visibleTemperatureCards() { 
+  // We check the variable AND localStorage to ensure it's always accurate
+  const isAdvanced = this.isAdvancedMode || localStorage.getItem('advancedMode') === 'true';
+  return isAdvanced ? this.orderedTemperatureCards : this.orderedTemperatureCards.slice(0, 3); 
+}
 }
 </script>
 
