@@ -68,52 +68,11 @@ export default class Panel extends Mixins(BaseMixin) {
     @Prop({ default: false }) declare readonly loading: boolean
     @Prop({ default: true }) declare readonly marginBottom: boolean
     @Prop({ default: false }) declare readonly hideButtonsOnCollapse: boolean
-<<<<<<< HEAD
-
-=======
->>>>>>> e1ff26d0754fc4ede0cd14461323e78c699e11fc
     @Prop({ default: false }) declare readonly closable: boolean
     @Prop({ default: false }) declare readonly fullscreenable: boolean
     @Prop({ default: undefined }) declare readonly elevation: string | number | undefined
     @Prop({ default: false }) declare readonly dense: boolean
 
-<<<<<<< HEAD
-    fullscreen = false
-
-    get expand() {
-        return this.$store.getters['gui/getPanelExpand'](this.cardClass, this.viewport)
-    }
-
-    set expand(newVal) {
-        this.$store.dispatch('gui/saveExpandPanel', { name: this.cardClass, value: newVal, viewport: this.viewport })
-    }
-
-    get hasIconSlot() {
-        return !!this.$slots.icon
-    }
-
-    get hasButtonsSlot() {
-        return !!this.$slots.buttons
-    }
-
-    get hasFooterSlot() {
-        return !!this.$slots.footer
-    }
-
-    get getToolbarClass() {
-        let output = this.toolbarClass
-        if (this.collapsible) output += ' collapsible'
-        return output
-    }
-
-    toggleFullscreen() {
-        this.fullscreen = !this.fullscreen
-        this.$emit('fullscreen', this.fullscreen)
-    }
-
-    @Emit('close')
-    closePanel() {}
-=======
     get expand() { return this.$store.getters['gui/getPanelExpand'](this.cardClass, this.viewport) }
     set expand(newVal) { this.$store.dispatch('gui/saveExpandPanel', { name: this.cardClass, value: newVal, viewport: this.viewport }) }
     get hasIconSlot() { return !!this.$slots.icon }
@@ -122,19 +81,10 @@ export default class Panel extends Mixins(BaseMixin) {
     get getToolbarClass() { return this.toolbarClass + (this.collapsible ? ' collapsible' : '') }
     toggleFullscreen() { this.fullscreen = !this.fullscreen; this.$emit('fullscreen', this.fullscreen); }
     @Emit('close') closePanel() { }
->>>>>>> e1ff26d0754fc4ede0cd14461323e78c699e11fc
 }
 </script>
 
 <style scoped>
-<<<<<<< HEAD
-.expanded header.v-toolbar {
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
-=======
->>>>>>> e1ff26d0754fc4ede0cd14461323e78c699e11fc
 .btn-collapsible>*,
 .btn-close>*,
 .btn-fullscreen>* {
@@ -165,25 +115,6 @@ export default class Panel extends Mixins(BaseMixin) {
 
 <style>
 :root {
-<<<<<<< HEAD
-    --master-bg: #565656;
-    --master-radius: 24px;
-    --master-border: 1px solid hsla(0, 0%, 100%, 0.1);
-    --master-panel-height: 65vh;
-    --master-panel-width: calc(100vw - 32px);
-    --master-inner-bg: rgba(255, 255, 255, 0.05);
-    --master-inner-border: #ffffff1a;
-}
-
-html body .v-application .v-card,
-html body .v-application .v-sheet.v-card,
-html body .v-application .panel,
-html body .v-application .unified-history-panel,
-html body .v-application .unified-stats-panel,
-html body .v-application .blocks-main-panel,
-html body .v-application .unified-list-container,
-html body .v-application .master-panel {
-=======
     --master-bg: #ba0000b8;
     /* Deeper dark for better contrast */
     --master-radius: 24px;
@@ -198,7 +129,6 @@ html body .v-application .master-panel {
 .v-application .unified-history-panel,
 .v-application .console-card,
 .v-application .v-card.v-sheet {
->>>>>>> e1ff26d0754fc4ede0cd14461323e78c699e11fc
     background-color: var(--master-bg) !important;
     border-radius: var(--master-radius) !important;
     border: var(--master-border) !important;
@@ -207,27 +137,6 @@ html body .v-application .master-panel {
     overflow: hidden !important;
 }
 
-<<<<<<< HEAD
-html body .v-application .v-card .v-toolbar,
-html body .v-application .v-card .v-toolbar.theme--dark,
-html body .v-application .v-card .v-toolbar > .v-toolbar__content {
-    background-color: transparent !important;
-    background: transparent !important;
-}
-
-.clean-dashboard-card .v-card,
-.transparent-bg .v-card,
-.inner-card-wrapper .v-card,
-.v-dialog .v-card {
-    min-height: auto !important;
-    height: auto !important;
-}
-
-.dark-wrapper {
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: var(--master-radius);
-    padding: 10px;
-=======
 /* 2. KEEP THE "BIG FRAME" TRANSPARENT */
 /* This targets the outer wrappers that group panels together */
 .v-main,
@@ -271,6 +180,5 @@ html body .v-application .v-card .v-toolbar > .v-toolbar__content {
     border-radius: var(--master-radius) !important;
     padding: 16px;
     border: var(--master-inner-border) !important;
->>>>>>> e1ff26d0754fc4ede0cd14461323e78c699e11fc
 }
 </style>
