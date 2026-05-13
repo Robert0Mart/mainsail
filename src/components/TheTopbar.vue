@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-app-bar app elevate-on-scroll :height="topbarHeight" class="topbar pa-0" clipped-left>
+        <v-app-bar app elevate-on-scroll :height="responsiveTopbarHeight" class="topbar pa-0" clipped-left>
             <v-app-bar-nav-icon tile @click.stop="naviDrawer = !naviDrawer" />
             
             <a href="/" class="d-flex align-center ml-2 mr-2 d-none d-sm-flex" style="cursor: pointer; text-decoration: none;" title="Ir para o Início">
@@ -125,7 +125,6 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
     mdiClose = mdiClose
     mdiCloseThick = mdiCloseThick
 
-    topbarHeight = topbarHeight
     showEmergencyStopDialog = false
     uploadSnackbar: uploadSnackbar = {
         status: false,
@@ -140,6 +139,10 @@ export default class TheTopbar extends Mixins(BaseMixin, ThemeMixin) {
 
     declare $refs: {
         fileUploadAndStart: HTMLFormElement
+    }
+
+    get responsiveTopbarHeight() {
+        return this.$vuetify.breakpoint.xsOnly ? 64 : topbarHeight
     }
 
     get gcodeInputFileAccept() { return this.isIOS ? [] : validGcodeExtensions }

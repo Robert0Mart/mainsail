@@ -3,8 +3,8 @@
         <panel
             v-if="enableUpdateManager"
             :title="$t('Machine.UpdatePanel.UpdateManager')"
-            card-class="machine-update-panel custom-glass-panel"
-            :collapsible="true">
+            card-class="machine-update-panel"
+            >
             
             <template #icon>
                 <v-avatar size="24" tile color="transparent" class="mr-2">
@@ -47,10 +47,9 @@
                         <v-divider v-if="modules.length" class="my-0" />
                         <update-panel-entry-system />
                     </template>
-                    <template v-if="showUpdateAll">
-                        <v-divider class="mb-0 mt-2 border-top-2 custom-divider" />
+                    <div v-if="showUpdateAll" class="update-all-footer">
                         <update-panel-entry-all />
-                    </template>
+                    </div>
                 </template>
                 <template v-else>
                     <v-row class="mt-0 mb-0">
@@ -141,10 +140,6 @@ export default class UpdatePanel extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
-.custom-glass-panel {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
 .custom-divider {
     border-color: rgba(255, 255, 255, 0.05) !important;
 }

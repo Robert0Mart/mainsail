@@ -3,7 +3,6 @@
     v-if="showPanel"
     :title="$t('Machine.SystemPanel.SystemLoad')"
     card-class="machine-systemload-panel elevation-0 custom-system-panel"
-    :collapsible="true"
   >
     <template #icon>
       <v-avatar size="24" class="mr-3" tile color="transparent">

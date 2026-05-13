@@ -3,7 +3,7 @@
         :title="$t('Machine.EndstopPanel.Endstops')"
         :icon="mdiArrowExpandVertical"
         card-class="machine-endstop-panel"
-        :collapsible="true">
+        >
         <v-card-text class="pb-0 pt-6">
             <EndstopPanelItem v-for="item in items" :key="item.name" :item="item" />
             <v-row v-if="items.length === 0">

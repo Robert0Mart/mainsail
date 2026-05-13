@@ -56,6 +56,7 @@
       :items-per-page.sync="countPerPage"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
+      :item-class="() => 'dark-wrapper'"
       item-key="select_id"
       show-select
       class="dashboard-table"
@@ -197,7 +198,7 @@ export default class OurHistoryListPanel extends Mixins(BaseMixin, HistoryMixin,
 }
 
 .dashboard-search-input ::v-deep .v-input__slot {
-    background-color: rgba(0, 0, 0, 0.3) !important;
+    background-color: rgba(236, 2, 2, 0.3) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 10px !important;
     padding-left: 12px !important;
@@ -207,27 +208,50 @@ export default class OurHistoryListPanel extends Mixins(BaseMixin, HistoryMixin,
     background-color: transparent !important;
 }
 
+.dashboard-table ::v-deep table {
+    border-collapse: separate !important;
+    border-spacing: 0 10px !important;
+    padding: 0 16px;
+}
+
 .dashboard-table ::v-deep th {
+    border-bottom: none !important;
+    color: rgba(255, 255, 255, 0.5) !important;
     text-transform: uppercase;
     font-size: 0.7rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.4) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    height: 52px !important;
+    padding-bottom: 4px !important;
 }
 
-.dashboard-table ::v-deep td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
-    height: 60px !important;
+.dashboard-table ::v-deep tr.dark-wrapper {
+    background-color: #1e1e1e !important;
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+                0px 2px 2px 0px rgba(0,0,0,0.14),
+                0px 1px 5px 0px rgba(0,0,0,0.12) !important;
 }
 
-.dashboard-table ::v-deep tr:hover {
-    background-color: rgba(255, 255, 255, 0.03) !important;
+.dashboard-table ::v-deep tr.dark-wrapper td {
+    border-bottom: none !important;
+    background-color: transparent !important;
+    height: 54px;
 }
 
-.dashboard-table ::v-deep .v-data-table__checkbox {
-    transform: scale(0.85);
+.dashboard-table ::v-deep tr.dark-wrapper td:first-child {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+}
+
+.dashboard-table ::v-deep tr.dark-wrapper td:last-child {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+.dashboard-table ::v-deep tr.dark-wrapper:hover {
+    background-color: #2a2a2a !important;
+    cursor: pointer;
+}
+
+.dashboard-table ::v-deep .v-data-table__wrapper > table > tbody > tr > td {
+    border-bottom: none !important;
 }
 
 .dark-settings-list {

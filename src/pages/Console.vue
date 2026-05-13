@@ -4,8 +4,13 @@
             <v-row :class="consoleDirection === 'table' ? 'order-0 mb-4' : 'order-1 mt-4'" no-gutters>
                 <v-col>
                     <v-card outlined class="premium-console-toolbar pa-2 d-flex align-center">
-                        <div class="flex-grow-1 mr-2">
-                            <console-textarea ref="gcodeCommandField" />
+                        <div class="flex-grow-1 mr-2 d-flex align-center">
+                            <console-textarea 
+                                ref="gcodeCommandField" 
+                                hide-details
+                                dense
+                                class="custom-console-input"
+                            />
                         </div>
 
                         <div class="d-flex align-center gap-2">
@@ -142,6 +147,8 @@ export default class PageConsole extends Mixins(BaseMixin, ConsoleMixin) {
     background-color: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     border-radius: 8px !important;
+    /* Ensuring a fixed height for the bar helps alignment stay consistent */
+    height: 64px; 
 }
 
 .premium-console-card {
@@ -155,7 +162,40 @@ export default class PageConsole extends Mixins(BaseMixin, ConsoleMixin) {
     gap: 8px;
 }
 
-::v-deep .v-text-field--outlined > .v-input__control > .v-input__slot {
+/* VERTICAL ALIGNMENT FIX 
+   We target the internal Vuetify structure specifically.
+*/
+.custom-console-input ::v-deep .v-input__control {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center !important;
+    height: 100% !important;
+}
+
+.custom-console-input ::v-deep .v-input__slot {
     background: rgba(0, 0, 0, 0.2) !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important; /* This centers the text vertically */
+    min-height: 40px !important;   /* Matches common button height */
+}
+
+.custom-console-input ::v-deep .v-text-field__slot {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Vuetify textareas often have a default top margin on the 'textarea' element itself */
+.custom-console-input ::v-deep textarea {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    align-self: center !important;
+}
+
+/* Ensure icons/append-inner align to center too */
+.custom-console-input ::v-deep .v-input__append-inner {
+    margin-top: 0 !important;
+    align-self: center !important;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <v-card
-        :class="['panel', cardClass, marginBottom ? 'mb-3 mb-md-6' : '', !expand ? 'expanded' : '', fullscreen ? 'panel-fullscreen' : '']"
+        :class="['panel', cardClass, marginBottom ? 'panel-spaced' : '', !expand ? 'expanded' : '', fullscreen ? 'panel-fullscreen' : '']"
         :loading="loading" :elevation="elevation" :dense="dense">
         <v-toolbar flat dense :color="toolbarColor" :class="getToolbarClass" :height="panelToolbarHeight"
             class="panel-toolbar">
@@ -15,15 +15,12 @@
             </v-toolbar-title>
             <slot name="buttons-title" />
             <v-spacer />
-            <v-toolbar-items v-show="hasButtonsSlot || collapsible || closable || fullscreenable">
-                <div v-if="expand || !hideButtonsOnCollapse" class="d-flex align-center">
+            <v-toolbar-items v-show="hasButtonsSlot || closable || fullscreenable">
+                <div class="d-flex align-center">
                     <slot name="buttons" />
                 </div>
                 <v-btn v-if="fullscreenable" icon class="btn-fullscreen" @click="toggleFullscreen">
                     <v-icon>{{ fullscreen ? mdiFullscreenExit : mdiFullscreen }}</v-icon>
-                </v-btn>
-                <v-btn v-if="collapsible" icon class="btn-collapsible" @click="expand = !expand">
-                    <v-icon :class="expand ? '' : 'icon-rotate-90'">{{ mdiChevronDown }}</v-icon>
                 </v-btn>
                 <v-btn v-if="closable" icon class="btn-close" @click="closePanel">
                     <v-icon>{{ mdiClose }}</v-icon>
@@ -85,15 +82,10 @@ export default class Panel extends Mixins(BaseMixin) {
 </script>
 
 <style scoped>
-.btn-collapsible>*,
 .btn-close>*,
 .btn-fullscreen>* {
     will-change: transform;
     transition: all 0.3s ease;
-}
-
-.icon-rotate-90 {
-    transform: rotate(90deg);
 }
 
 .panel-toolbar {
@@ -115,40 +107,59 @@ export default class Panel extends Mixins(BaseMixin) {
 
 <style>
 :root {
-    /* CORES PRINCIPAIS */
-    --master-bg: #ba0000b8; 
+    /* ── CORES PRINCIPAIS ── */
+    --master-bg-color: #464646;
+    --master-bg: color-mix(in srgb, var(--master-bg-color) 72%, transparent);
     --master-radius: 24px;
     --master-border: 1px solid rgba(255, 255, 255, 0.08);
-    
-    /* ELEMENTOS INTERNOS GERAIS (Dark Wrappers, Cards) */
+
+    /* ── ESPAÇAMENTO GLOBAL DOS PAINÉIS ──
+       Altere apenas estas três variáveis para ajustar todo o espaçamento da UI. */
+    --panel-gap: 24px;        /* margem exterior entre painéis */
+    --panel-padding: 15px;    /* padding do conteúdo interior de cada painel */
+    --panel-inner-gap: 8px;   /* espaçamento entre elementos dentro de um painel */
+
+    /* ── ELEMENTOS INTERNOS GERAIS (Dark Wrappers, Cards) ── */
     --master-inner-bg: rgba(0, 0, 0, 0.35);
     --master-inner-border: rgba(255, 255, 255, 0.05);
     --master-inner-radius: 20px;
-    --master-inner-padding: 15px;
-    --master-inner-margin: 8px;
-    --master-inner-gap: 8px;
-    
-    /* ITEMS INTERNOS (Botões, Inputs, Sliders) */
+    /* aliases para retrocompatibilidade */
+    --master-inner-padding: var(--panel-padding);
+    --master-inner-margin: var(--panel-inner-gap);
+    --master-inner-gap: var(--panel-inner-gap);
+
+    /* ── ITEMS INTERNOS (Botões, Inputs, Sliders) ── */
     --master-inner-item-bg: rgba(255, 255, 255, 0.1);
     --master-inner-item-hover: rgba(255, 255, 255, 0.15);
     --master-inner-item-radius: 12px;
-    
-    /* TIPOGRAFIA E ESPAÇAMENTO */
-    --master-spacing: 12px;
+
+    /* ── TIPOGRAFIA ── */
+    --master-spacing: var(--panel-padding);
     --master-font-size: 14px;
     --master-text-color: #ffffff;
     --master-text-muted: rgba(255, 255, 255, 0.6);
 }
 
-/* 1. FORÇAR O PADDING GLOBAL EM TODOS OS CONTEÚDOS */
+/* 1. ESPAÇAMENTO EXTERIOR: margem abaixo de cada painel */
+html body .v-application .panel.panel-spaced {
+    margin-bottom: var(--panel-gap) !important;
+}
+
+/* 2. PADDING INTERIOR: conteúdo de todos os painéis */
 html body .v-application .panel-content,
 html body .v-application .v-card__text,
 html body .v-application .console-container,
 html body .v-application .v-data-table {
-    padding: var(--master-inner-padding) !important;
+    padding: var(--panel-padding) !important;
 }
 
-/* 2. RESTAURAR VISIBILIDADE GLOBAL DOS PAINÉIS */
+/* 3. ESPAÇAMENTO ENTRE ELEMENTOS INTERNOS */
+html body .v-application .panel-content > .v-row,
+html body .v-application .panel-content > .row {
+    margin-bottom: var(--panel-inner-gap) !important;
+}
+
+/* 4. RESTAURAR VISIBILIDADE GLOBAL DOS PAINÉIS */
 html body .v-application .panel,
 html body .v-application .unified-history-panel,
 html body .v-application .console-card,
@@ -186,15 +197,14 @@ html body .v-application .dashboard-search-input .v-input__slot {
     font-size: var(--master-font-size) !important;
 }
 
-/* 6. DASHBOARD ESPECÍFICO (Dark Wrappers) */
+/* 7. DASHBOARD ESPECÍFICO (Dark Wrappers) */
 html body .v-application .v-card.v-card--flat,
 html body .v-application .dark-wrapper {
     background-color: var(--master-inner-bg) !important;
     border-radius: var(--master-inner-radius) !important;
-    padding: var(--master-inner-padding) !important;
+    padding: var(--panel-padding) !important;
     border: var(--master-inner-border) !important;
     font-size: var(--master-font-size) !important;
-    text-align: center;
 }
 
 /* Previne que os Wrappers partam a estrutura */
@@ -203,5 +213,10 @@ html body .v-application .v-card.v-sheet.panel.blocks-axis-panel {
     background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
+}
+
+/* Settings dialog: fundo sólido (usa a mesma cor base de --master-bg) */
+html body .v-application .v-card.v-sheet.panel.settings-menu-dialog {
+    background-color: var(--master-bg-color) !important;
 }
 </style>

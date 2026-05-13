@@ -61,7 +61,7 @@ export default class App extends Mixins(BaseMixin, ThemeMixin) {
             '--color-logo': this.logoColor,
             '--color-primary': this.primaryColor,
             '--panel-toolbar-icon-btn-width': panelToolbarHeight + 'px',
-            '--topbar-icon-btn-width': topbarHeight + 'px',
+            '--topbar-icon-btn-width': (this.$vuetify.breakpoint.xsOnly ? 64 : topbarHeight) + 'px',
         }
     }
 
@@ -96,10 +96,10 @@ html, body {
 
 .v-app-bar__nav-icon { display: none !important; }
 
-.v-app-bar,
-.bottom-nav-wrapper {
+.v-app-bar {
     zoom: var(--anti-zoom, 1) !important;
 }
+
 .main-no-sidebar { padding-left: 0px !important; margin-left: 0px !important; }
 
 .full-width-container {
@@ -139,14 +139,7 @@ html, body {
 .fade-enter, .fade-leave-to { opacity: 0 !important; }
 
 #app, .v-application, .v-application--wrap, .theme--dark.v-application {
-    background-color: transparent !important;
-    background: hsla(207, 76%, 31%, 1);
-    background: linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
-    background: -moz-linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
-    background: -webkit-linear-gradient(135deg, hsla(207, 76%, 31%, 1) 0%, hsla(207, 77%, 7%, 1) 100%);
-    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#13548A", endColorstr="#04131F", GradientType=1 );    
-    background-size: cover !important;
-    background-position: center center !important;
+    background: linear-gradient(170deg, #252525 0%, #070707 100%) !important;
     background-attachment: fixed !important;
     min-height: 100vh !important;
 }
