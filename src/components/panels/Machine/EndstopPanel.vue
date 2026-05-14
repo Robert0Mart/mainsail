@@ -1,24 +1,38 @@
 <template>
-    <panel
-        :title="$t('Machine.EndstopPanel.Endstops')"
-        :icon="mdiArrowExpandVertical"
-        card-class="machine-endstop-panel"
-        >
-        <v-card-text class="pb-0 pt-6">
-            <EndstopPanelItem v-for="item in items" :key="item.name" :item="item" />
-            <v-row v-if="items.length === 0">
-                <v-col class="pt-0">
-                    <p class="mb-0">{{ $t('Machine.EndstopPanel.EndstopInfo') }}</p>
-                </v-col>
-            </v-row>
-        </v-card-text>
-        <v-card-actions class="pt-3">
-            <v-spacer />
-            <v-btn icon :loading="loadings.includes('queryEndstops')" @click="syncEndstops">
-                <v-icon>{{ mdiSync }}</v-icon>
-            </v-btn>
-        </v-card-actions>
-    </panel>
+    <div>
+        <panel
+            :title="$t('Machine.EndstopPanel.Endstops')"
+            :icon="mdiArrowExpandVertical"
+            card-class="machine-endstop-panel"
+            >
+            <template #buttons>
+                <v-tooltip top>
+                    <template #activator="{ on, attrs }">
+                        <v-btn
+                            icon
+                            tile
+                            color="primary"
+                            :loading="loadings.includes('queryEndstops')"
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="syncEndstops">
+                            <v-icon>{{ mdiSync }}</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>{{ $t('Machine.EndstopPanel.Endstops') }}</span>
+                </v-tooltip>
+            </template>
+
+            <v-card-text class="pb-0 pt-6">
+                <EndstopPanelItem v-for="item in items" :key="item.name" :item="item" />
+                <v-row v-if="items.length === 0">
+                    <v-col class="pt-0">
+                        <p class="mb-0">{{ $t('Machine.EndstopPanel.EndstopInfo') }}</p>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </panel>
+    </div>
 </template>
 
 <script lang="ts">

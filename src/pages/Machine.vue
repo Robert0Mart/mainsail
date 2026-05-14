@@ -11,19 +11,19 @@
                 <system-panel class="flex-grow-1"></system-panel>
             </v-col>
 
-            <v-col cols="12" md="7" lg="6" class="update-abs-col">
+            <v-col cols="12" md="7" lg="5" class="update-abs-col">
                 <div class="update-abs-inner">
                     <update-panel></update-panel>
                 </div>
             </v-col>
 
-            <v-col cols="12" md="12" lg="2" class="d-flex flex-column">
+            <v-col cols="12" md="12" lg="3" class="d-flex flex-column">
                 <v-row dense class="flex-grow-1 ma-0">
                     <v-col
                         v-if="klipperState === 'ready'"
                         cols="12" sm="6" lg="12"
                         class="d-flex flex-column pa-0 pr-sm-2 pr-lg-0 pb-3">
-                        <endstop-panel class="flex-grow-1"></endstop-panel>
+                        <endstop-panel></endstop-panel>
                     </v-col>
                     <v-col
                         cols="12" :sm="klipperState === 'ready' ? 6 : 12" lg="12"
@@ -156,6 +156,10 @@ export default class PageMachine extends Mixins(BaseMixin) {}
 .update-abs-inner .machine-update-panel .update-all-footer {
     position: sticky !important;
     bottom: 0 !important;
+    /* break out of the list's horizontal padding so the button goes edge-to-edge */
+    width: calc(100% + 2 * var(--panel-padding)) !important;
+    margin-left: calc(-1 * var(--panel-padding)) !important;
+    margin-right: calc(-1 * var(--panel-padding)) !important;
     background-color: var(--master-bg) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1 !important;
@@ -168,6 +172,17 @@ export default class PageMachine extends Mixins(BaseMixin) {}
         overflow-y: auto !important;
         padding: 0 !important;
     }
+}
+
+/* ── Solid toolbar headers ── */
+html body .v-application .machine-page-container .panel-toolbar {
+    background-color: var(--master-bg-color) !important;
+}
+
+/* ── Endstop panel: shrink-wrap with scroll when items load ── */
+.machine-endstop-panel .panel-content {
+    max-height: 220px;
+    overflow-y: auto !important;
 }
 
 /* ── System panel compaction ── */

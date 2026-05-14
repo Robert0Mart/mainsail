@@ -1,9 +1,10 @@
 <template>
     <div>
-        <v-row class="pt-3">
-            <v-col class="text-center">
+        <v-row no-gutters class="pt-1">
+            <v-col class="pa-0">
                 <v-btn
                     text
+                    block
                     color="primary"
                     small
                     :disabled="['printing', 'paused'].includes(printer_state)"
