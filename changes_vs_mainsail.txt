@@ -1,0 +1,301 @@
+================================================================================
+  CHANGES VS MAINSAIL BASE
+  Branch: feat/dynamic_layout  vs  origin/mainsail-base
+  Date:   2026-05-14
+================================================================================
+
+SUMMARY
+-------
+  721 files changed
+  23,330 lines added  (+)
+  17,420 lines deleted (-)
+
+  Breakdown by category:
+    - Custom SVG icons added (blocks_icons + assets):  ~518 new image files
+    - Source code (src/):                              ~200 files changed
+    - Config / build / docs:                           ~20 files changed
+
+
+================================================================================
+1. APP LAYOUT — Sidebar removed, BottomNav added
+================================================================================
+
+FILE: src/App.vue
+  BEFORE: Used <the-sidebar> for navigation. <v-main> adjusted its left
+          padding based on sidebar state. Many dialogs (TheManualProbeDialog,
+          TheBedScrewsDialog, etc.) were registered here.
+
+  AFTER:  Sidebar removed entirely. Navigation is now a new <BottomNav>
+          component shown at the bottom of the screen. The <v-main> uses
+          class "main-no-sidebar" (no left padding). A <transition name="fade">
+          wraps every page for animated routing. Most dialog components were
+          removed from App.vue.
+
+FILE: src/components/BottomNav.vue   [NEW]
+  New bottom navigation bar replacing the left sidebar. Renders navigation
+  items as icons along the bottom of the screen.
+
+FILE: src/components/TheSidebar.vue
+  Still exists in the repo but is no longer mounted — effectively unused.
+
+FILE: src/routes/index.ts
+  Route definitions updated to match the new navigation structure.
+
+
+================================================================================
+2. DASHBOARD — Complete redesign with custom panels
+================================================================================
+
+FILE: src/pages/Dashboard.vue
+  BEFORE: Rendered standard mainsail panels in a responsive grid
+          (mobile/tablet/desktop/widescreen columns) using dynamic
+          <component :is="..."> for user-configurable layouts.
+
+  AFTER:  A flag `redesignMode = true` switches to a fullscreen scrollable
+          layout. Each panel occupies 100% of the viewport height.
+          A dot-navigator (dotNavPanels) tracks the visible panel, and
+          scrollToPanel() + setupObserver() handle smooth scroll-snapping.
+          Falls back to the original grid layout when redesignMode is false.
+
+FILE: src/components/panels/OurPanels/ourPrinting.vue   [NEW]
+  Custom "Printing Dashboard" panel (card-class: blocks-main-panel).
+  Shows print progress, controls and status in the new dashboard layout.
+
+FILE: src/components/panels/OurPanels/ourDashboard.vue   [NEW]
+  Sub-panel used inside ourPrinting. Houses the main dashboard widgets.
+
+FILE: src/components/panels/OurPanels/axispanel.vue   [NEW]
+  Custom "Machine Control" panel (card-class: blocks-axis-panel).
+  Provides axis movement controls in the dashboard scroll layout.
+
+FILE: src/components/panels/OurPanels/ourHistoryListPanel.vue   [NEW]
+  Custom history list panel replacing the standard HistoryListPanel.
+
+FILE: src/components/panels/OurPanels/ourHistoryStatistics.vue   [NEW]
+  Custom history statistics panel for the new dashboard.
+
+FILE: src/components/panels/OurPanels/ProgressBar.vue   [NEW]
+  Custom animated progress bar used inside the printing panel.
+
+
+================================================================================
+3. MACHINE PAGE — New 3-column layout with custom CSS
+================================================================================
+
+FILE: src/pages/Machine.vue
+  BEFORE: Standard 2-column layout.
+
+  AFTER:  3-column layout (lg: System 4/12, Update 5/12, Endstops+Logs 3/12).
+          Extensive custom CSS added for:
+            - Vertically centered page (.machine-page-container)
+            - Update panel with absolute positioning so it fills the row
+              height without pushing the row taller
+            - Scrollable Update list with floating toolbar and sticky footer
+            - Endstop panel: content-sized with max-height scroll (220px)
+            - Solid color toolbar headers for all machine page panels
+            - System panel and Update panel entry compaction (tighter spacing)
+
+FILE: src/components/panels/Machine/SystemPanel.vue
+  - Icon replaced: custom SVG (LCD_settingssvg.svg) via <v-avatar>.
+  - "DEVICES" button added to panel header (#buttons slot).
+  - Card class includes: "elevation-0 custom-system-panel".
+
+FILE: src/components/panels/Machine/UpdatePanel.vue
+  - Icon replaced with custom SVG (update_systemsvg.svg).
+  - Scroll list uses class "update-manager-list" (targeted by Machine.vue CSS).
+
+FILE: src/components/panels/Machine/UpdatePanel/EntryAll.vue
+  - "Update All" button is now block width (fills full panel width).
+  - Row gutters removed (no-gutters, pa-0) for true edge-to-edge button.
+
+FILE: src/components/panels/Machine/EndstopPanel.vue
+  - Sync button moved from bottom (v-card-actions) to header (#buttons slot).
+  - Component root wrapped in <div>; button wrapped in <v-tooltip>.
+
+FILE: src/components/panels/Machine/LogfilesPanel.vue
+  - Minor styling adjustments.
+
+
+================================================================================
+4. GLOBAL DESIGN TOKEN SYSTEM — Panel.vue CSS variables
+================================================================================
+
+FILE: src/components/ui/Panel.vue
+  A global (non-scoped) <style> block added with CSS custom properties
+  used across the entire UI:
+
+  Layout & Color:
+    --master-bg-color: #464646
+    --master-bg:       color-mix(#464646 72%, transparent)  (panel background)
+    --master-radius:   24px                                  (panel border radius)
+    --master-border:   1px solid rgba(255,255,255,0.08)
+
+  Spacing (change these 3 to respace the whole UI):
+    --panel-gap:       24px   outer margin between panels
+    --panel-padding:   15px   inner content padding of each panel
+    --panel-inner-gap: 8px    spacing between elements inside a panel
+
+  Inner elements (dark wrappers, cards, inputs):
+    --master-inner-bg:          rgba(0,0,0,0.35)
+    --master-inner-border:      rgba(255,255,255,0.05)
+    --master-inner-radius:      20px
+    --master-inner-item-bg:     rgba(255,255,255,0.1)
+    --master-inner-item-radius: 12px
+
+  Typography:
+    --master-font-size:   14px
+    --master-text-color:  #ffffff
+    --master-text-muted:  rgba(255,255,255,0.6)
+
+  Global rules applied via these variables:
+    - All .panel cards get the rounded dark semi-transparent look
+    - .dark-wrapper class for reusable dark inner containers
+    - blocks-main-panel and blocks-axis-panel are transparent (no card bg)
+    - Settings dialog gets solid background (--master-bg-color)
+
+
+================================================================================
+5. MODIFIED EXISTING PANELS
+================================================================================
+
+  src/components/panels/StatusPanel.vue
+  src/components/panels/TemperaturePanel.vue
+  src/components/panels/ToolheadControlPanel.vue
+  src/components/panels/ExtruderControlPanel.vue
+  src/components/panels/MiscellaneousPanel.vue
+  src/components/panels/GcodefilesPanel.vue
+  src/components/panels/HistoryListPanel.vue
+  src/components/panels/HistoryStatisticsPanel.vue
+  src/components/panels/WebcamPanel.vue
+  src/components/panels/MmuPanel.vue
+  src/components/panels/MiniconsolePanel.vue
+
+  Most of these received:
+    - Custom SVG icons from blocks_icons replacing MDI icons
+    - Padding/margin adjustments to match the new design token system
+    - Card-class or toolbar tweaks for the unified panel look
+
+FILE: src/components/panels/PowerControlPanel.vue   [DELETED]
+  The Power Control panel was removed from the project.
+
+
+================================================================================
+6. TOPBAR / SETTINGS
+================================================================================
+
+FILE: src/components/TheTopbar.vue
+  Styling updated for the no-sidebar layout (background, spacing).
+
+FILE: src/components/TheSettingsMenu.vue
+  Settings menu adapted for the new navigation model.
+
+FILE: src/components/settings/SettingsAdvancedTab.vue   [NEW]
+  New "Advanced" tab added to the settings menu.
+
+FILE: src/components/settings/SettingsControlTab.vue
+  Minor control settings adjustments.
+
+
+================================================================================
+7. PAGES
+================================================================================
+
+FILE: src/pages/Console.vue
+  Layout/styling adjustments for the new no-sidebar design.
+
+FILE: src/pages/History.vue
+  Layout/styling adjustments.
+
+
+================================================================================
+8. CUSTOM ICONS & ASSETS
+================================================================================
+
+  ~180 new SVG files added to:
+    public/img/icons/blocks_icons/
+
+  ~338 new PNG + SVG pairs added to:
+    src/assets/styles/icons/
+
+  These are custom icons replacing the standard MDI icon set throughout
+  the UI. Each action, status, and panel has a matching custom SVG.
+  Naming pattern: <name>svg.svg (vector) and <name>png.png (raster fallback)
+
+  Example icons added:
+    auto_home_icon, bed_levelling, baby_step, change_filament,
+    disable_steppers, endstop_error, extrusion_failure, factory_reset,
+    filament_sensor, home_all/x/y/z, input_shaper, nozzle, pause,
+    restart_klipper, temperature_error, update_system, wifi signal bars, etc.
+
+  Standard PWA icons removed:
+    favicon-16x16.png, favicon-32x32.png, apple-touch-icon-180x180.png,
+    icon-192-maskable.png, icon-512-maskable.png, mstile-150x150.png,
+    safari-pinned-tab.svg
+
+  Background image added:
+    public/img/mainsail-background.png
+
+
+================================================================================
+9. BUILD & CONFIG
+================================================================================
+
+  eslint.config.mjs   [NEW]  +  .eslintrc.json   [DELETED]
+    ESLint config migrated from old JSON format to new flat config format.
+
+  package.json
+    Dependencies and devDependencies updated.
+
+  package-lock.json   [DELETED]
+    Lock file removed (likely regenerated separately).
+
+  vite.config.ts
+    Vite config updated (aliases, plugins, build options).
+
+  tsconfig.json
+    TypeScript configuration adjusted.
+
+  index.html
+    Title, meta tags or PWA manifest entries changed.
+
+  public/config.json
+    App configuration defaults changed (e.g. default printer address).
+
+  public/fix-icons.cjs   [NEW]
+    Build script for processing the custom icon files.
+
+  .devcontainer/devcontainer.json   [NEW]
+    VS Code Dev Container config added for a consistent dev environment.
+
+  agent_docs/   [NEW FOLDER]
+    Documentation for AI coding agents:
+      ARCHITECTURE.md, CODE_STYLE.md, CODE_REVIEW.md,
+      CONTRIBUTING.md, UI_I18N.md, VUE_TYPESCRIPT.md,
+      examples/VueComponentExample.vue
+
+
+================================================================================
+10. STORE CHANGES
+================================================================================
+
+  Most Vuex store files (gui/, printer/, server/, files/, farm/) received
+  minor changes — primarily:
+    - Removal of trailing newlines / whitespace fixes
+    - Small logic tweaks to support new UI features (BottomNav state, etc.)
+    - No major store architecture changes
+
+  Notable: src/store/gui/navigation/ updated for BottomNav routing.
+
+
+================================================================================
+11. TESTS
+================================================================================
+
+  tests/helpers.spec.ts              [NEW]  Unit tests for helper functions.
+  tests/store/printer/getters.spec.ts [NEW] Unit tests for printer getters.
+  cypress/e2e/dashboard.cy.ts               E2E test updated for new layout.
+
+
+================================================================================
+END OF CHANGES SUMMARY
+================================================================================
